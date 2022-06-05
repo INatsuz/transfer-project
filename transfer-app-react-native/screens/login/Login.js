@@ -18,7 +18,8 @@ import {loginAction} from "../../redux/actions/loginActions";
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import {useEffect, useState} from "react";
-import {StackActions, CommonActions} from "@react-navigation/native";
+
+// import {StackActions, CommonActions} from "@react-navigation/native";
 
 async function saveTokens(tokens) {
 	let {accessToken, refreshToken} = tokens;
@@ -81,9 +82,9 @@ export default function Login(props) {
 	//Checking if logged in on startup
 	useEffect(() => {
 		// deleteTokens({accessToken: undefined, refreshToken: undefined});
-		saveTokens({
-			accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJ2YXNjb3JhbWluaG9zQGhvdG1haWwuY29tIiwiaWF0IjoxNjUzMzQwMzEzLCJleHAiOjE2NTMzNDM5MTN9.FCmGayFaGMdJ8y4gnxhHibe8aIaU-kNxYvFFyLsorCg",
-			refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJ2YXNjb3JhbWluaG9zQGhvdG1haWwuY29tIiwiaWF0IjoxNjUzMzQwMzEzLCJleHAiOjE2NTM1MTMxMTN9.6_mWLFsHlxbNpYit2gE8lpmcTk6EqF1y1AyC7gJudNY"})
+		// saveTokens({
+		// 	accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJ2YXNjb3JhbWluaG9zQGhvdG1haWwuY29tIiwiaWF0IjoxNjUzMzQwMzEzLCJleHAiOjE2NTMzNDM5MTN9.FCmGayFaGMdJ8y4gnxhHibe8aIaU-kNxYvFFyLsorCg",
+		// 	refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJ2YXNjb3JhbWluaG9zQGhvdG1haWwuY29tIiwiaWF0IjoxNjUzMzQwMzEzLCJleHAiOjE2NTM1MTMxMTN9.6_mWLFsHlxbNpYit2gE8lpmcTk6EqF1y1AyC7gJudNY"})
 		getTokens().then(({accessToken, refreshToken}) => {
 			if (accessToken || refreshToken) {
 				axios.get(`http://88.193.161.41:3000/users/checkLogin?token=${accessToken}`).then(res => {
@@ -114,9 +115,15 @@ export default function Login(props) {
 							console.log(JSON.stringify(err));
 							console.log(err.response);
 							console.log(err.response.data);
+							setIsLoading(false);
+							deleteTokens();
 						});
+					} else {
+						setIsLoading(false);
 					}
 				});
+			} else {
+				setIsLoading(false);
 			}
 		}).catch(err => {
 			console.log(err);
@@ -128,7 +135,7 @@ export default function Login(props) {
 			<ImageBackground source={require("../../assets/login_bg_2.png")} style={styles.background_image}>
 			</ImageBackground>
 			{isLoading ? (
-				<View style={[styles.container, {justifyContent:"center", alignItems:"center", height: "100%"}]}>
+				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
 					<ActivityIndicator size={"large"}/>
 				</View>
 			) : (

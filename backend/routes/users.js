@@ -20,17 +20,15 @@ router.get('/login', function (req, res, next) {
 /* GET users listing. */
 router.get('/register', function (req, res, next) {
 	let {email, password, name, birthday, userType} = req.query
-	bcrypt.genSalt(SALT_ROUNDS, function (err, salt) {
-		bcrypt.hash(password, salt, function (err, hash) {
-			getConnection().query("INSERT INTO appuser(email, password, name, birthday, userType) VALUES (?, ?, ?, ?, ?)", [email, hash, name, birthday, userType], function (error, results, fields) {
-				if (err) {
-					console.log(err.code);
-					res.status(400).json({err: "Couldn't register you"});
-					return;
-				}
+	bcrypt.hash(password, SALT_ROUNDS, function (err, hash) {
+		getConnection().query("INSERT INTO appuser(email, password, name, birthday, userType) VALUES (?, ?, ?, ?, ?)", [email, hash, name, birthday, userType], function (error, results, fields) {
+			if (err) {
+				console.log(err.code);
+				res.status(400).json({err: "Couldn't register you"});
+				return;
+			}
 
-				res.status(200).send("Account created successfully");
-			});
+			res.status(200).send("Account created successfully");
 		});
 	});
 });
@@ -69,6 +67,25 @@ router.get("/checkLogin", function (req, res, next) {
 		console.log("Not Logged In");
 		console.log(err);
 		res.status(401).json({"loggedIn": false});
+	});
+});
+
+router.get('/create_debug_user', function (req, res) {
+	let email = "vascoraminhos@hotmail.com";
+	let password = "2509";
+	let name = "Vasco Raminhos";
+	let birthday = "1999-09-25";
+	let userType = 1;
+
+	bcrypt.hash(password, SALT_ROUNDS, function (err, hash) {
+		getConnection().query("INSERT INTO appuser(email, password, name, birthday, userType) VALUES (?, ?, ?, ?, ?)", [email, hash, name, birthday, userType], function (error, results, fields) {
+			if (error) {
+				console.log(error.code);
+				res.status(400).json({err: "Couldn't register you"});
+			} else {
+				res.status(200).send("Account created successfully");
+			}
+		});
 	});
 });
 
