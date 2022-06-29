@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "w5JVIErNaQ";
 
+const ACCESS_TOKEN_DURATION = "1d";
+const REFRESH_TOKEN_DURATION = "7d";
+
 function verifyLoginCredentials(email, password) {
 	return new Promise((resolve, reject) => {
 		getConnection().query("SELECT * FROM appuser WHERE email = ?", [email], function (err, result, fields) {
@@ -30,12 +33,14 @@ function verifyLoginCredentials(email, password) {
 				}
 				let payload = {
 					ID: result[0].ID,
-					email: result[0].email
+					email: result[0].email,
+					name: result[0].name,
+					userType: result[0].userType
 				};
 				console.log(payload);
 
 				generateTokens(payload).then(tokens => {
-					resolve(tokens);
+					resolve({...tokens, payload: payload});
 				}).catch(err => {
 					reject(err);
 				});
@@ -60,13 +65,13 @@ function verifyToken(accessToken) {
 
 function generateTokens(payload) {
 	return new Promise(function (resolve, reject) {
-		jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"}, function (err, accessToken) {
+		jwt.sign(payload, JWT_SECRET, {expiresIn: ACCESS_TOKEN_DURATION}, function (err, accessToken) {
 			if (err) {
 				console.log(err);
 				reject(err);
 			}
 
-			jwt.sign(payload, JWT_SECRET, {expiresIn: "2d"}, function (err, refreshToken) {
+			jwt.sign(payload, JWT_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}, function (err, refreshToken) {
 				if (err) {
 					console.log(err);
 					reject(err);
@@ -92,6 +97,49 @@ function refreshAccessToken(refreshToken) {
 	});
 }
 
+function mustBeAuthenticated(req, res, next) {
+	let authHeader = req.header("Authorization");
+	if (!authHeader.startsWith("Bearer ")) {
+		res.status(401).json({err: "Unauthorized"});
+	}
+	let accessToken = authHeader.slice(7);
+
+	jwt.verify(accessToken, JWT_SECRET, {}, function (err, payload) {
+		if (err) {
+			res.status(401).json({err: "Unauthorized"});
+			return;
+		}
+
+		req.tokenPayload = payload;
+		next();
+	});
+}
+
+function mustBeAdmin(req, res, next) {
+	let authHeader = req.header("Authorization");
+	if (!authHeader.startsWith("Bearer ")) {
+		res.status(401).json({err: "Unauthorized"});
+	}
+	let accessToken = authHeader.slice(7);
+
+	jwt.verify(accessToken, JWT_SECRET, {}, function (err, payload) {
+		if (err) {
+			res.status(401).json({err: "Unauthorized"});
+			return;
+		}
+
+		if (payload.userType !== 1) {
+			res.status(403).json({err: "Not an admin"});
+			return;
+		}
+
+		req.tokenPayload = payload;
+		next();
+	});
+}
+
 module.exports.verifyLoginCredentials = verifyLoginCredentials;
 module.exports.verifyToken = verifyToken;
 module.exports.generateTokens = generateTokens;
+module.exports.mustBeAuthenticated = mustBeAuthenticated;
+module.exports.mustBeAdmin = mustBeAdmin;

@@ -1,8 +1,11 @@
 export const LOG_IN = 'LOG_IN';
 export const LOG_OFF = 'LOG_OFF';
 
-export const loginAction = (tokens) => ({
-	type: LOG_IN
+export const loginAction = (user) => ({
+	type: LOG_IN,
+	email: user.email,
+	name: user.name,
+	userType: user.userType
 });
 
 export const logoffAction = () => ({

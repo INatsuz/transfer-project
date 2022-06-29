@@ -10,10 +10,12 @@ CREATE TABLE UserType (
 	user_type VARCHAR(32) UNIQUE NOT NULL
 );
 
+/*
 CREATE TABLE TransferStatus (
 	ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	status VARCHAR(32) NOT NULL
 );
+*/
 
 CREATE TABLE ServiceOperator (
 	ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -32,10 +34,11 @@ CREATE TABLE Client (
 CREATE TABLE Vehicle (
 	ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(128) NOT NULL,
+	nickname VARCHAR(128),
 	brand VARCHAR(128) NOT NULL,
 	license_plate VARCHAR(16) NOT NULL,
 	seat_number TINYINT NOT NULL,
-	status ENUM('Broken', 'Working') /* Might need to be changed to Portuguese or could switch to use a different table */
+	status ENUM('Broken', 'Working') NOT NULL /* Might need to be changed to Portuguese or could switch to use a different table */
 );
 
 CREATE TABLE AppUser (
@@ -52,7 +55,7 @@ CREATE TABLE AppUser (
 );
 
 CREATE TABLE Transfer (
-	ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	person_name VARCHAR(128) NOT NULL,
 	service_operator INT UNSIGNED,
 	client INT UNSIGNED,
@@ -66,9 +69,13 @@ CREATE TABLE Transfer (
 	destination_lng FLOAT,
 	transfer_time TIMESTAMP NOT NULL,
 	flight VARCHAR(64),
-	status ENUM('PENDING', 'IN PROGRESS', 'FINISHED') NOT NULL
+	status ENUM('PENDING', 'IN PROGRESS', 'FINISHED') NOT NULL,
 	paid BOOLEAN NOT NULL,
 	driver INT UNSIGNED,
-	vehicle INT UNSIGNED
+	vehicle INT UNSIGNED,
+	FOREIGN KEY (service_operator) REFERENCES ServiceOperator(ID),
+	FOREIGN KEY (client) REFERENCES Client(ID),
+	FOREIGN KEY (driver) REFERENCES AppUser(ID),
+	FOREIGN KEY (vehicle) REFERENCES Vehicle(ID)
 );
 

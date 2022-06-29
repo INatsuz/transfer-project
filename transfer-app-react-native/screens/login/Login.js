@@ -17,9 +17,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {loginAction} from "../../redux/actions/loginActions";
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 // import {StackActions, CommonActions} from "@react-navigation/native";
+
+const IP = "81.84.159.96";
 
 async function saveTokens(tokens) {
 	let {accessToken, refreshToken} = tokens;
@@ -34,6 +36,7 @@ async function saveTokens(tokens) {
 async function deleteTokens() {
 	console.log("Deleting tokens...");
 	await SecureStore.deleteItemAsync("accessToken");
+	await SecureStore.deleteItemAsync("refreshToken");
 }
 
 async function getAccessToken() {
@@ -70,30 +73,31 @@ async function getTokens() {
 export default function Login(props) {
 	const [isLoading, setIsLoading] = useState(true);
 	const {email, setEmail, isValidStyling} = useEmailField();
+	const password = useRef("");
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (isLoggedIn) {
 			// props.navigation.navigate("Main Tab Navigator");
+			props.navigation.reset({
+				index: 0,
+				routes: [{name: "Main Tab Navigator"}]
+			});
 		}
 	}, [isLoggedIn])
 
 	//Checking if logged in on startup
 	useEffect(() => {
-		// deleteTokens({accessToken: undefined, refreshToken: undefined});
-		// saveTokens({
-		// 	accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJ2YXNjb3JhbWluaG9zQGhvdG1haWwuY29tIiwiaWF0IjoxNjUzMzQwMzEzLCJleHAiOjE2NTMzNDM5MTN9.FCmGayFaGMdJ8y4gnxhHibe8aIaU-kNxYvFFyLsorCg",
-		// 	refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJ2YXNjb3JhbWluaG9zQGhvdG1haWwuY29tIiwiaWF0IjoxNjUzMzQwMzEzLCJleHAiOjE2NTM1MTMxMTN9.6_mWLFsHlxbNpYit2gE8lpmcTk6EqF1y1AyC7gJudNY"})
 		getTokens().then(({accessToken, refreshToken}) => {
 			if (accessToken || refreshToken) {
-				axios.get(`http://88.193.161.41:3000/users/checkLogin?token=${accessToken}`).then(res => {
+				axios.get(`http://${IP}:3000/users/checkLogin?token=${accessToken}`).then(res => {
 					console.log("Verified the access token");
 					console.log(res.data.loggedIn);
 
 					if (res.data.loggedIn === true) {
-						dispatch(loginAction());
 						setIsLoading(false);
+						dispatch(loginAction(res.data.user));
 					}
 				}).catch(err => {
 					console.log(JSON.stringify(err));
@@ -101,20 +105,21 @@ export default function Login(props) {
 					console.log(err.response.data);
 
 					if (refreshToken) {
-						axios.get(`http://88.193.161.41:3000/users/renew?refreshToken=${refreshToken}&email=vascoraminhos@hotmail.com`).then(res => {
+						axios.get(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}&email=vascoraminhos@hotmail.com`).then(res => {
 							console.log("Refreshing the token");
 							console.log(res.data.accessToken);
 							console.log(res.data.refreshToken);
 
 							if (res.data.accessToken && res.data.refreshToken) {
-								saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken});
-								dispatch(loginAction());
-								setIsLoading(false);
+								saveTokens({
+									accessToken: res.data.accessToken,
+									refreshToken: res.data.refreshToken
+								}).then(() => {
+									setIsLoading(false);
+									dispatch(loginAction(res.data.user));
+								});
 							}
 						}).catch(err => {
-							console.log(JSON.stringify(err));
-							console.log(err.response);
-							console.log(err.response.data);
 							setIsLoading(false);
 							deleteTokens();
 						});
@@ -129,6 +134,21 @@ export default function Login(props) {
 			console.log(err);
 		})
 	}, []);
+
+	const handleLoginClick = event => {
+		axios.post(`http://${IP}:3000/users/login`, {
+			email: email,
+			password: password.current
+		}).then(res => {
+			if (res.data.accessToken && res.data.refreshToken) {
+				saveTokens(res.data).then(result => {
+					dispatch(loginAction(res.data.user));
+				});
+			}
+		}).catch(err => {
+			console.log(JSON.stringify(err));
+		});
+	};
 
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -146,14 +166,11 @@ export default function Login(props) {
 							<TextInput style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" onEndEditing={e => {
 								setEmail(e.nativeEvent.text);
 							}}/>
-							<TextInput secureTextEntry={true} style={styles.input} placeholder={isLoggedIn.toString()} placeholderTextColor="#A3A9AA"/>
+							<TextInput secureTextEntry={true} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" onEndEditing={e => {
+								password.current = e.nativeEvent.text;
+							}}/>
 							<View style={{width: "100%"}}>
-								<Button title={"Login"} onPress={e => {
-									props.navigation.reset({
-										index: 0,
-										routes: [{name: "Main Tab Navigator"}]
-									})
-								}}/>
+								<Button title={"Login"} onPress={handleLoginClick}/>
 							</View>
 						</View>
 					</View>
@@ -185,9 +202,9 @@ const styles = StyleSheet.create({
 
 	input: {
 		backgroundColor: "#222222",
+		borderRadius: 5,
 		borderColor: "#A3A9AA",
 		borderStyle: "solid",
-		borderRadius: 5,
 		borderWidth: 2,
 		paddingVertical: 7,
 		paddingHorizontal: 10,

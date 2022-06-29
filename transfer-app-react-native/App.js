@@ -1,14 +1,16 @@
 import {StatusBar} from 'expo-status-bar';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import {StyleSheet, Text, View, Button, Platform} from 'react-native';
-import {NavigationContainer, CommonActions} from '@react-navigation/native';
+import {Platform, StyleSheet} from 'react-native';
+import {
+	NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Login from "./screens/login/Login";
 import {useEffect, useRef, useState} from "react";
 import MainTabNavigator from "./screens/main_tab_navigator/MainTabNavigator";
 import {Provider} from "react-redux";
 import setupStore from "./redux/setupStore";
+import {useColorScheme} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const store = setupStore();
@@ -26,6 +28,8 @@ export default function App() {
 	const [notification, setNotification] = useState(false);
 	const notificationListener = useRef();
 	const responseListener = useRef();
+
+	const colorScheme = useColorScheme();
 
 	useEffect(() => {
 		registerForPushNotificationsAsync().then(token => {
@@ -50,12 +54,13 @@ export default function App() {
 
 	return (
 		<Provider store={store}>
-			<NavigationContainer>
+			<StatusBar backgroundColor="#222222" translucent={true}/>
+			<NavigationContainer theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 				<Stack.Navigator>
 					<Stack.Screen
 						name={"Login"}
 						component={Login}
-						options={{title: 'Test Screen', headerShown: false}}
+						options={{title: 'Login', headerShown: false}}
 					/>
 					<Stack.Screen
 						name={"Main Tab Navigator"}
@@ -68,9 +73,7 @@ export default function App() {
 	);
 }
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});
 
 // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
 async function sendPushNotification(expoPushToken) {

@@ -1,26 +1,58 @@
-import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Home from "../home/Home";
-import {useState} from "react";
+import {Platform, SafeAreaView, StatusBar, StyleSheet} from "react-native";
+import {useSelector} from "react-redux";
+import AssignmentsNavigator from "./assignments/AssignmentsNavigator";
+import HomeNavigator from "./home/HomeNavigator";
 
 const Tab = createBottomTabNavigator();
 
-export default function MainTabNavigator(props) {
-	const [tripNumber, setTripNumber] = useState(1);
+export default function MainTabNavigator() {
+	const userType = useSelector(state => state.login.userType);
 
 	return (
-		<Tab.Navigator>
-			<Tab.Screen name={"Home"} component={Home} options={{
-				headerShown: false, tabBarIcon: ({color, size}) => (
-					<Ionicons name="home" size={size} color={color}/>
-				)
-			}}/>
-			<Tab.Screen name={"Assignments"} component={Home} options={{
-				headerShown: false, tabBarBadge: (tripNumber > 0 ? tripNumber : undefined), tabBarIcon: ({color, size}) => (
-					<Ionicons name="car" size={size} color={color} />
-				)
-			}}/>
-		</Tab.Navigator>
+		<SafeAreaView style={styles.container}>
+			<Tab.Navigator screenOptions={{
+				tabBarActiveTintColor: '#fff',
+				tabBarInactiveTintColor: 'lightgray',
+				tabBarActiveBackgroundColor: '#AB81CD',
+				tabBarInactiveBackgroundColor: '#B18BD1',
+				tabBarStyle: {
+					backgroundColor: '#AB81CD',
+					borderTopColor: '#AB81CD'
+				}
+			}}>
+
+				<Tab.Screen name={"Home Navigator"} component={HomeNavigator} options={{
+					headerShown: false,
+					unmountOnBlur: true,
+					title: "Home",
+					tabBarIcon: ({color, size}) => (
+						<Ionicons name="home" size={size} color={color}/>
+					)
+				}}/>
+				{
+					userType === 1 &&
+					<Tab.Screen name={"AssignmentsNavigator"} component={AssignmentsNavigator} options={{
+						headerShown: false,
+						unmountOnBlur: true,
+						tabBarIcon: ({color, size}) => (
+							<Ionicons name="car" size={size} color={color}/>
+						),
+						title: "Assignments"
+					}}/>
+				}
+			</Tab.Navigator>
+		</SafeAreaView>
 	);
 };
+
+const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
+
+const styles = StyleSheet.create({
+	container: {
+		paddingTop: statusBarHeight,
+		minHeight: "100%",
+		backgroundColor: "#222222"
+	},
+});
