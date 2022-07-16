@@ -1,9 +1,10 @@
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import {useState} from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const IP = "81.84.159.96";
 
@@ -19,7 +20,6 @@ async function getTokens() {
 }
 
 const Stack = createNativeStackNavigator();
-
 
 export default function Assignments(props) {
 	const [assignments, setAssignments] = useState([]);
@@ -50,6 +50,9 @@ export default function Assignments(props) {
 
 	return (
 		<View style={styles.container}>
+			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment")}>
+				<Ionicons name="add" size={22} color={"#222222"}/>
+			</TouchableOpacity>
 			<View style={styles.section}>
 				<AssignmentList title={"All Assignments"} assignments={assignments} fetchAssignments={fetchAllAssignments} onItemPress={navigateToDetails}/>
 			</View>
@@ -60,10 +63,24 @@ export default function Assignments(props) {
 const styles = StyleSheet.create({
 	container: {
 		height: "100%",
-		backgroundColor: "#222222"
+		backgroundColor: "#222222",
+		position: "relative"
 	},
 
 	section: {
 		flex: 1
 	},
+
+	plusContainer: {
+		position: "absolute",
+		bottom: 10,
+		right: 10,
+		height: 50,
+		width: 50,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#AB81CD",
+		borderRadius: 25,
+		zIndex: 10
+	}
 });

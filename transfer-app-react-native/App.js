@@ -13,7 +13,7 @@ import setupStore from "./redux/setupStore";
 import {useColorScheme} from 'react-native';
 
 const Stack = createNativeStackNavigator();
-const store = setupStore();
+export const store = setupStore();
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({

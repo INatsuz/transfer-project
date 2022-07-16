@@ -79,7 +79,6 @@ export default function Login(props) {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			// props.navigation.navigate("Main Tab Navigator");
 			props.navigation.reset({
 				index: 0,
 				routes: [{name: "Main Tab Navigator"}]
@@ -105,7 +104,7 @@ export default function Login(props) {
 					console.log(err.response.data);
 
 					if (refreshToken) {
-						axios.get(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}&email=vascoraminhos@hotmail.com`).then(res => {
+						axios.get(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}`).then(res => {
 							console.log("Refreshing the token");
 							console.log(res.data.accessToken);
 							console.log(res.data.refreshToken);
@@ -151,7 +150,7 @@ export default function Login(props) {
 	};
 
 	return (
-		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
 			<ImageBackground source={require("../../assets/login_bg_2.png")} style={styles.background_image}>
 			</ImageBackground>
 			{isLoading ? (

@@ -1,117 +1,8 @@
 import {ScrollView, StyleSheet, View, RefreshControl, Text} from "react-native";
 import AssignmentListItem from "./AssignmentListItem";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-
-const sampleData = [
-	{
-		id: 1,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 2,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 3,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 4,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 5,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 6,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 7,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 8,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 9,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 10,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 11,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 12,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 13,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 14,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Lisboa",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}, {
-		id: 15,
-		name: "Vasco Raminhos",
-		numPeople: 5,
-		origin: "Aeroporto de Loule",
-		destination: "Torre de Belém",
-		timeDate: Date.parse("2022-06-11T10:30:00Z")
-	}
-];
+import {useIsFocused} from "@react-navigation/native";
 
 const IP = "81.84.159.96";
 
@@ -132,14 +23,19 @@ const wait = (timeout) => {
 
 export default function AssignmentList(props) {
 	const [refreshing, setRefreshing] = useState(true);
+	const isFocused = useIsFocused();
 
 	useEffect(function () {
-		props.fetchAssignments().then(() => {
-			setRefreshing(false);
-		}).catch(err => {
-			console.log(err);
-		});
-	}, []);
+		setRefreshing(true);
+		if (isFocused) {
+			props.fetchAssignments().then(() => {
+				setRefreshing(false);
+			}).catch(err => {
+				console.log(err);
+			});
+		}
+	}, [isFocused]);
+
 
 	return (
 		<View style={styles.container}>
