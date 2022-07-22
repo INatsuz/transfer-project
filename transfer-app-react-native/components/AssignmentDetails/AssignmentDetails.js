@@ -5,6 +5,7 @@ import {Chevron} from "react-native-shapes";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import {getWithAuth} from "../../utils/Requester";
 
 const IP = "81.84.159.96";
 
@@ -31,8 +32,11 @@ export default function AssignmentDetails(props) {
 	const [time, setTime] = useState(new Date(assignment.transfer_time));
 	const [driver, setDriver] = useState(assignment.driver);
 	const [driverName, setDriverName] = useState(assignment.driverName);
+	const [activeVehicle, setActiveVehicle] = useState(assignment.vehicle);
 
-	const [driverList, setDriverList] = useState([{label: assignment.driverName, value: assignment.driver, key: assignment.driver}]);
+	const [drivers, setDrivers] = useState(driver ? [{ID: assignment.driver, name: assignment.driverName}] : []);
+	const [vehicles, setVehicles] = useState(activeVehicle ? [{ID: assignment.vehicle, displayName: assignment.vehicleName}] : []);
+
 
 	let datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
 	let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
@@ -45,16 +49,31 @@ export default function AssignmentDetails(props) {
 					Authorization: `Bearer ${accessToken}`
 				}
 			}).then(res => {
-				console.log(res.data);
-				setDriverList(res.data.drivers);
+				setDrivers(res.data.drivers);
 			}).catch(err => {
 				console.log(err.response);
 			});
 		});
 	}
 
+	function updateVehicleByDriver(newDriver) {
+		console.log("Updating vehicle");
+		let cur_driver = drivers.find(el => el.ID === newDriver);
+		if (cur_driver) setActiveVehicle(cur_driver.activeVehicle);
+	}
+
+	function fetchVehicles() {
+		getWithAuth("api/getVehicles").then(res => {
+			console.log(res.data);
+			setVehicles(res.data.vehicles);
+		}).catch(err => {
+			console.log(err);
+		});
+	}
+
 	useEffect(() => {
 		if (isEditable) {
+			fetchVehicles();
 			fetchDrivers();
 		}
 	}, []);
@@ -108,6 +127,7 @@ export default function AssignmentDetails(props) {
 	});
 
 	function onSavePress() {
+		console.log(activeVehicle);
 		getTokens().then(({accessToken, refreshToken}) => {
 			axios.put(`http://${IP}:3000/api/updateTransfer`, {
 				ID: assignment.ID,
@@ -116,7 +136,8 @@ export default function AssignmentDetails(props) {
 				origin: origin,
 				destination: destination,
 				time: `${datetime.getUTCFullYear()}-${datetime.getUTCMonth() + 1}-${datetime.getUTCDate()} ${datetime.getUTCHours()}:${datetime.getUTCMinutes()}:00`,
-				driver: driver
+				driver: driver,
+				vehicle: activeVehicle
 			}, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
@@ -181,11 +202,14 @@ export default function AssignmentDetails(props) {
 					<Text style={[styles.text, styles.title]}>Driver: </Text>
 					{
 						isEditable ?
-							<RNPickerSelect value={driver} items={driverList.map(driver => {
-								return {label: driver.name, value: driver.ID, key: driver.ID}
-							})} onValueChange={(value, index) => {
-								console.log(value);
-								setDriver(value);
+							<RNPickerSelect value={driver} items={drivers.map(item => {
+								return {key: item.ID, label: item.name, value: item.ID};
+							})} onValueChange={(value) => {
+								if (value !== driver) {
+									setDriver(value);
+									updateVehicleByDriver(value);
+									console.log("Vehicle changed");
+								}
 							}} style={{
 								iconContainer: {justifyContent: "center", padding: 15},
 								inputAndroidContainer: {...styles.input, justifyContent: "center"},
@@ -197,6 +221,30 @@ export default function AssignmentDetails(props) {
 							:
 
 							<Text style={styles.text}>{driverName}</Text>
+					}
+				</View>
+				<View style={styles.section}>
+					<Text style={[styles.text, styles.title]}>Vehicle: </Text>
+					{
+						isEditable ?
+							<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+								return {key: item.ID, label: item.displayName, value: item.ID};
+							})} onValueChange={(value, index) => {
+								if (value !== activeVehicle) {
+									console.log(value);
+									setActiveVehicle(value);
+								}
+							}} style={{
+								iconContainer: {justifyContent: "center", padding: 15},
+								inputAndroidContainer: {...styles.input, justifyContent: "center"},
+								inputAndroid: styles.textStyle
+							}} Icon={() => {
+								return (<Chevron size={1.5} color="gray"/>);
+							}} useNativeAndroidPickerStyle={false}/>
+
+							:
+
+							<Text style={styles.text}>{assignment.vehicleName ? assignment.vehicleName : "No vehicle chosen"}</Text>
 					}
 				</View>
 				<View>

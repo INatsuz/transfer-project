@@ -1,11 +1,12 @@
-import {StyleSheet, Text, View, Alert} from "react-native";
+import {Alert, StyleSheet, Text, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select"
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import * as SecureStore from "expo-secure-store";
 import {useDispatch} from "react-redux";
 import {logoffAction} from "../../../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
+import {getWithAuth} from "../../../../utils/Requester";
 
 async function deleteTokens() {
 	console.log("Deleting tokens...");
@@ -13,28 +14,10 @@ async function deleteTokens() {
 	await SecureStore.deleteItemAsync("refreshToken");
 }
 
-async function getAccessToken() {
-	let token = await SecureStore.getItemAsync("accessToken");
-
-	if (token) {
-		return token;
-	} else {
-		return false;
-	}
-}
-
-async function getRefreshToken() {
-	let token = await SecureStore.getItemAsync("refreshToken");
-
-	if (token) {
-		return token;
-	} else {
-		return false;
-	}
-}
-
 export default function ProfileSection(props) {
 	const dispatch = useDispatch();
+	const [vehicles, setVehicles] = useState([]);
+	const [activeVehicle, setActiveVehicle] = useState(null);
 
 	const confirmLogoutDialog = () => {
 		Alert.alert(
@@ -60,6 +43,20 @@ export default function ProfileSection(props) {
 		);
 	}
 
+	function fetchVehicles() {
+		getWithAuth("api/getVehicles").then(res => {
+			console.log(res.data);
+			setVehicles(res.data.vehicles);
+			setActiveVehicle(res.data.vehicles[0].ID);
+		}).catch(err => {
+			console.log(err);
+		});
+	}
+
+	useEffect(() => {
+		fetchVehicles();
+	}, []);
+
 	return (
 		<View style={styles.container}>
 
@@ -70,22 +67,42 @@ export default function ProfileSection(props) {
 			<View style={[styles.area, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
 				<Text style={styles.textStyle}>Car: </Text>
 				<View style={{flex: 1}}>
-					<RNPickerSelect value={"opel"} items={[
-						{label: "Opel (11-AA-11)", value: "opel"},
-						{label: "Citroen (22-BB-22)", value: "citroen"},
-						{label: "Ford (33-CC-33)", value: "ford"},
-					]} onValueChange={() => {
+					<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+						return {key: item.ID, label: item.displayName, value: item.ID}
+					})} onValueChange={(value, index) => {
+						if (value === activeVehicle) {
+							return;
+						}
+						let original_value = activeVehicle;
+						setActiveVehicle(value);
+						Alert.alert(
+							"Confirm",
+							"Are you sure you want to change?",
+							[
+								{
+									text: "Yes",
+								},
+								{
+									text: "Cancel",
+									style: "cancel",
+									onPress: () => {
+										setActiveVehicle(original_value);
+									},
+								}
+							]
+						);
 					}} Icon={() => {
 						return <Chevron size={1.5} color="gray"/>;
 					}} useNativeAndroidPickerStyle={false} style={{
-						iconContainer: {justifyContent: "center"},
+						iconContainer: {justifyContent: "center", padding: 10},
 						inputAndroid: styles.textStyle,
 						inputAndroidContainer: {padding: 0, justifyContent: "center"}
 					}}/>
 				</View>
 			</View>
 			<View style={[styles.area, {marginBottom: 0}]}>
-				<Text style={styles.textStyle}>Assigned Jobs: {props.assignment !== [] ? props.assignmentCount : 0}</Text>
+				<Text style={styles.textStyle}>Assigned
+					Jobs: {props.assignment !== [] ? props.assignmentCount : 0}</Text>
 			</View>
 		</View>
 	);

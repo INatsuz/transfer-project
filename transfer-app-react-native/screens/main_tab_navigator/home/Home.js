@@ -30,7 +30,6 @@ export default function Home(props) {
 		return new Promise(function (resolve, reject) {
 			getTokens().then(({accessToken, refreshToken}) => {
 				axios.get(`http://${IP}:3000/api/getAssignedJobs?token=${accessToken}`).then(res => {
-					console.log(res.data);
 					setAssignments(res.data);
 					resolve()
 				}).catch(err => {

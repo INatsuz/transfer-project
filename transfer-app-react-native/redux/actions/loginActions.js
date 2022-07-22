@@ -5,7 +5,8 @@ export const loginAction = (user) => ({
 	type: LOG_IN,
 	email: user.email,
 	name: user.name,
-	userType: user.userType
+	userType: user.userType,
+	activeVehicle: user.activeVehicle
 });
 
 export const logoffAction = () => ({

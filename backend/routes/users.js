@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const {verifyLoginCredentials, verifyToken, generateTokens} = require("../utils/authentication");
-const getConnection = require('../utils/db');
+const db = require('../utils/db');
 
 const SALT_ROUNDS = 10;
 
@@ -33,14 +33,13 @@ router.post('/login', function (req, res, next) {
 router.get('/register', function (req, res, next) {
 	let {email, password, name, birthday, userType} = req.query
 	bcrypt.hash(password, SALT_ROUNDS, function (err, hash) {
-		getConnection().query("INSERT INTO appuser(email, password, name, birthday, userType) VALUES (?, ?, ?, ?, ?)", [email, hash, name, birthday, userType], function (error, results, fields) {
-			if (err) {
-				console.log(err.code);
-				res.status(400).json({err: "Couldn't register you"});
-				return;
-			}
-
+		db.query(`INSERT INTO appuser(email, password, name, birthday, userType) 
+					VALUES (?, ?, ?, ?, ?)`, [email, hash, name, birthday, userType]).then(({result, fields}) => {
 			res.status(200).send("Account created successfully");
+		}).catch(err => {
+			console.log(err.code);
+			res.status(400).json({err: "Couldn't register you"});
+			return;
 		});
 	});
 });
@@ -67,7 +66,10 @@ router.get("/checkLogin", function (req, res, next) {
 	let {token} = req.query;
 
 	verifyToken(token).then(payload => {
-		res.status(200).json({"loggedIn": true, user: {email: payload.email, name: payload.name, userType: payload.userType}});
+		res.status(200).json({
+			"loggedIn": true,
+			user: {email: payload.email, name: payload.name, userType: payload.userType}
+		});
 	}).catch(err => {
 		console.log(err);
 		res.status(401).json({"loggedIn": false});
@@ -79,7 +81,7 @@ router.get("/getUserData", function (req, res, next) {
 
 	verifyToken(token).then(payload => {
 		console.log(payload.ID);
-		getConnection().query("SELECT * FROM appuser WHERE ID = ?", [payload.ID], function (err, user, fields) {
+		db.query("SELECT * FROM appuser WHERE ID = ?", [payload.ID]).then(({result: user, fields}) => {
 			console.log(user);
 			if (user) {
 				let userData = {
@@ -106,13 +108,16 @@ router.get('/create_debug_user', function (req, res) {
 	let userType = 2;
 
 	bcrypt.hash(password, SALT_ROUNDS, function (err, hash) {
-		getConnection().query("INSERT INTO appuser(email, password, name, birthday, userType) VALUES (?, ?, ?, ?, ?)", [email, hash, name, birthday, userType], function (error, results, fields) {
-			if (error) {
-				console.log(error.code);
-				res.status(400).json({err: "Couldn't register you"});
-			} else {
-				res.status(200).send("Account created successfully");
-			}
+		if (err) {
+			res.status(400).json({err: "Couldn't register you"});
+		}
+
+		db.query("INSERT INTO appuser(email, password, name, birthday, userType) VALUES (?, ?, ?, ?, ?)",
+			[email, hash, name, birthday, userType]).then(({result, fields}) => {
+			res.status(200).send("Account created successfully");
+		}).catch(err => {
+			console.log(err.code);
+			res.status(400).json({err: "Couldn't register you"});
 		});
 	});
 });

@@ -1,9 +1,8 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, TouchableOpacity, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import {useState} from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const IP = "81.84.159.96";
@@ -19,14 +18,12 @@ async function getTokens() {
 	}
 }
 
-const Stack = createNativeStackNavigator();
-
 export default function Assignments(props) {
 	const [assignments, setAssignments] = useState([]);
 
 	const fetchAllAssignments = function () {
 		return new Promise(function (resolve, reject) {
-			getTokens().then(({accessToken, refreshToken}) => {
+			getTokens().then(({accessToken}) => {
 				axios.get(`http://${IP}:3000/api/getAllAssignments`, {
 					headers: {
 						Authorization: `Bearer ${accessToken}`
@@ -44,7 +41,6 @@ export default function Assignments(props) {
 	}
 
 	const navigateToDetails = function (assignment) {
-		console.log("Navigate to Details");
 		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isEditable: true})
 	};
 

@@ -1,4 +1,4 @@
-const getConnection = require('./db');
+const db = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
@@ -9,12 +9,7 @@ const REFRESH_TOKEN_DURATION = "7d";
 
 function verifyLoginCredentials(email, password) {
 	return new Promise((resolve, reject) => {
-		getConnection().query("SELECT * FROM appuser WHERE email = ?", [email], function (err, result, fields) {
-			if (err) {
-				reject(err);
-				return;
-			}
-
+		db.query("SELECT * FROM appuser WHERE email = ?", [email]).then(({result, fields}) => {
 			if (result.length === 0) {
 				reject("No results found in db");
 				return;
@@ -46,6 +41,8 @@ function verifyLoginCredentials(email, password) {
 				});
 
 			});
+		}).catch(err => {
+			reject(err);
 		});
 	});
 }

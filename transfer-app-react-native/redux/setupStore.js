@@ -8,4 +8,6 @@ const setupStore = () => {
 	return createStore(rootReducer);
 };
 
-export default setupStore;
+const store = setupStore();
+
+export default store;

@@ -9,11 +9,10 @@ import Login from "./screens/login/Login";
 import {useEffect, useRef, useState} from "react";
 import MainTabNavigator from "./screens/main_tab_navigator/MainTabNavigator";
 import {Provider} from "react-redux";
-import setupStore from "./redux/setupStore";
+import store from "./redux/setupStore";
 import {useColorScheme} from 'react-native';
 
 const Stack = createNativeStackNavigator();
-export const store = setupStore();
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({

@@ -48,7 +48,7 @@ CREATE TABLE AppUser (
 	name VARCHAR(128) NOT NULL,
 	birthday DATE NOT NULL,
 	userType INT UNSIGNED NOT NULL,
-	activeVehicle INT UNSIGNED,
+	activeVehicle INT UNSIGNED UNIQUE, /*Maybe it doesn't need to be unique, I don't know...*/
 	lat FLOAT,
 	lng FLOAT,
 	FOREIGN KEY (userType) REFERENCES userType(ID)

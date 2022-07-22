@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
-import {store} from "../App";
+import store from "../redux/setupStore";
 import {logoffAction} from "../redux/actions/loginActions";
 
 const IP = "81.84.159.96:3000";
