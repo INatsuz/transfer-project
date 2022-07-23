@@ -7,7 +7,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import {getWithAuth} from "../../utils/Requester";
 
-const IP = "vraminhos.com";
+const IP = "51.195.255.234";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");

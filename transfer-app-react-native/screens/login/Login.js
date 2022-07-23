@@ -9,7 +9,7 @@ import {
 	StyleSheet,
 	TextInput,
 	View,
-	ActivityIndicator
+	ActivityIndicator, Text
 } from "react-native";
 import Banner from './Banner';
 import useEmailField from "../../hooks/useEmailField";
@@ -19,7 +19,7 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import {useEffect, useRef, useState} from "react";
 
-const IP = "vraminhos.com";
+const IP = "51.195.255.234";
 
 async function saveTokens(tokens) {
 	let {accessToken, refreshToken} = tokens;
@@ -73,6 +73,7 @@ export default function Login(props) {
 	const {email, setEmail, isValidStyling} = useEmailField();
 	const password = useRef("");
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
+	const [debugView, setDebugView] = useState("");
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -97,6 +98,7 @@ export default function Login(props) {
 						dispatch(loginAction(res.data.user));
 					}
 				}).catch(err => {
+					setDebugView(debugView + "\n" + JSON.stringify(err));
 					console.log(JSON.stringify(err));
 					console.log(err.response);
 					console.log(err.response.data);
@@ -129,6 +131,9 @@ export default function Login(props) {
 			}
 		}).catch(err => {
 			console.log(err);
+			deleteTokens();
+			setDebugView(err);
+			setIsLoading(false);
 		})
 	}, []);
 
@@ -151,6 +156,7 @@ export default function Login(props) {
 		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
 			<ImageBackground source={require("../../assets/login_bg_2.png")} style={styles.background_image}>
 			</ImageBackground>
+			<Text style={{marginTop: 10}}>{debugView}</Text>
 			{isLoading ? (
 				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
 					<ActivityIndicator size={"large"}/>

@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import * as SecureStore from "expo-secure-store";
 import {useIsFocused} from "@react-navigation/native";
 
-const IP = "vraminhos.com";
+const IP = "51.195.255.234";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");

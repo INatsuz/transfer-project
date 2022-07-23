@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import store from "../redux/setupStore";
 import {logoffAction} from "../redux/actions/loginActions";
 
-const IP = "vraminhos.com:3000";
+const IP = "51.195.255.234:3000";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");
