@@ -73,7 +73,6 @@ export default function Login(props) {
 	const {email, setEmail, isValidStyling} = useEmailField();
 	const password = useRef("");
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
-	const [debugView, setDebugView] = useState("");
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -88,7 +87,6 @@ export default function Login(props) {
 	//Checking if logged in on startup
 	useEffect(() => {
 		getTokens().then(({accessToken, refreshToken}) => {
-			setDebugView(`http://${IP}:3000/users/checkLogin?token=${accessToken}`);
 			if (accessToken || refreshToken) {
 				axios.get(`http://${IP}:3000/users/checkLogin?token=${accessToken}`).then(res => {
 					console.log("Verified the access token");
@@ -99,13 +97,11 @@ export default function Login(props) {
 						dispatch(loginAction(res.data.user));
 					}
 				}).catch(err => {
-					setDebugView(debugView + "\n" + JSON.stringify(err));
 					console.log(JSON.stringify(err));
 					console.log(err.response);
 					console.log(err.response.data);
 
 					if (refreshToken) {
-						setDebugView(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}`);
 						axios.get(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}`).then(res => {
 							console.log("Refreshing the token");
 							console.log(res.data.accessToken);
@@ -134,7 +130,6 @@ export default function Login(props) {
 		}).catch(err => {
 			console.log(err);
 			deleteTokens();
-			setDebugView(err);
 			setIsLoading(false);
 		})
 	}, []);
@@ -158,7 +153,6 @@ export default function Login(props) {
 		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
 			<ImageBackground source={require("../../assets/login_bg_2.png")} style={styles.background_image}>
 			</ImageBackground>
-			<Text style={{marginTop: 10}}>{debugView}</Text>
 			{isLoading ? (
 				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
 					<ActivityIndicator size={"large"}/>
