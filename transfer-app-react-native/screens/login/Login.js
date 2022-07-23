@@ -88,6 +88,7 @@ export default function Login(props) {
 	//Checking if logged in on startup
 	useEffect(() => {
 		getTokens().then(({accessToken, refreshToken}) => {
+			setDebugView(`http://${IP}:3000/users/checkLogin?token=${accessToken}`);
 			if (accessToken || refreshToken) {
 				axios.get(`http://${IP}:3000/users/checkLogin?token=${accessToken}`).then(res => {
 					console.log("Verified the access token");
@@ -104,6 +105,7 @@ export default function Login(props) {
 					console.log(err.response.data);
 
 					if (refreshToken) {
+						setDebugView(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}`);
 						axios.get(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}`).then(res => {
 							console.log("Refreshing the token");
 							console.log(res.data.accessToken);
