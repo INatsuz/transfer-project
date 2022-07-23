@@ -1,13 +1,5 @@
 const mysql = require("mysql");
 
-// const connectionConfig = {
-// 	host: 'localhost',
-// 	user: 'inatsuz',
-// 	password: 'VRaminhos2509',
-// 	database: 'transfer_app',
-// 	timezone: 'Z'
-// };
-
 const pool = mysql.createPool({
 	connectionLimit : 10,
 	host            : 'vraminhos.com',
@@ -17,32 +9,13 @@ const pool = mysql.createPool({
 	timezone		: 'Z'
 });
 
-// function connect() {
-// 	let conn = mysql.createConnection(connectionConfig);
-// 	conn.connect(function (err) {
-// 		if (err) {
-// 			console.log(err);
-// 			setTimeout(function () {
-// 				return connect();
-// 			}, 5000);
-// 		} else {
-// 			console.log("Connected to database successfully");
-// 			return conn;
-// 		}
-// 	});
-//
-// 	return conn;
-// }
-//
-// function getConnection() {
-// 	return connect();
-// }
-
 function query(query, params, callback) {
 	return new Promise(function (resolve, reject) {
 		pool.getConnection(function (err, conn) {
 			if (err) {
+				console.log(err);
 				console.log("Could not get pool connection")
+				reject(err);
 				return;
 			}
 

@@ -19,9 +19,7 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import {useEffect, useRef, useState} from "react";
 
-// import {StackActions, CommonActions} from "@react-navigation/native";
-
-const IP = "81.84.159.96";
+const IP = "vraminhos.com";
 
 async function saveTokens(tokens) {
 	let {accessToken, refreshToken} = tokens;

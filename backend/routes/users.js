@@ -39,7 +39,6 @@ router.get('/register', function (req, res, next) {
 		}).catch(err => {
 			console.log(err.code);
 			res.status(400).json({err: "Couldn't register you"});
-			return;
 		});
 	});
 });

@@ -5,7 +5,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const IP = "81.84.159.96";
+const IP = "vraminhos.com";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");
