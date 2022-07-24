@@ -1,12 +1,12 @@
 import {StyleSheet, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
-import ProfileSection from "./profile_section/ProfileSection";
+import ProfileSection from "../../../components/ProfileSection/ProfileSection";
 import {useState} from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import {useSelector} from "react-redux";
 
-const IP = "51.195.255.234";
+const IP = "81.84.159.96";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");

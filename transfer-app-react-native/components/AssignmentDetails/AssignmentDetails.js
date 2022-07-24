@@ -1,13 +1,14 @@
-import {Button, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
+import {Alert, Button, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Chevron} from "react-native-shapes";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import {getWithAuth} from "../../utils/Requester";
+import {deleteWithAuth, getWithAuth} from "../../utils/Requester";
+import {logoffAction} from "../../redux/actions/loginActions";
 
-const IP = "51.195.255.234";
+const IP = "81.84.159.96";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");
@@ -35,7 +36,10 @@ export default function AssignmentDetails(props) {
 	const [activeVehicle, setActiveVehicle] = useState(assignment.vehicle);
 
 	const [drivers, setDrivers] = useState(driver ? [{ID: assignment.driver, name: assignment.driverName}] : []);
-	const [vehicles, setVehicles] = useState(activeVehicle ? [{ID: assignment.vehicle, displayName: assignment.vehicleName}] : []);
+	const [vehicles, setVehicles] = useState(activeVehicle ? [{
+		ID: assignment.vehicle,
+		displayName: assignment.vehicleName
+	}] : []);
 
 
 	let datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
@@ -127,7 +131,6 @@ export default function AssignmentDetails(props) {
 	});
 
 	function onSavePress() {
-		console.log(activeVehicle);
 		getTokens().then(({accessToken, refreshToken}) => {
 			axios.put(`http://${IP}:3000/api/updateTransfer`, {
 				ID: assignment.ID,
@@ -149,6 +152,30 @@ export default function AssignmentDetails(props) {
 				console.log(err.response.data);
 			});
 		});
+	}
+
+	function onDeletePress() {
+		Alert.alert(
+			"Confirm",
+			"Are you sure you want delete this assignment?",
+			[
+				{
+					text: "Yes",
+					onPress: async () => {
+						deleteWithAuth(`api/removeTransfer/${assignment.ID}`).then(res => {
+							console.log(res.data);
+							props.navigation.navigate("Assignments");
+						}).catch(err => {
+							console.log(err);
+						});
+					}
+				},
+				{
+					text: "Cancel",
+					style: "cancel"
+				}
+			]
+		);
 	}
 
 	return (
@@ -247,8 +274,11 @@ export default function AssignmentDetails(props) {
 							<Text style={styles.text}>{assignment.vehicleName ? assignment.vehicleName : "No vehicle chosen"}</Text>
 					}
 				</View>
-				<View>
+				<View style={styles.section}>
 					{isEditable && <Button title={"Save"} onPress={onSavePress}/>}
+				</View>
+				<View>
+					{isEditable && <Button color={"#E11218"} title={"Delete"} onPress={onDeletePress}/>}
 				</View>
 			</ScrollView>
 		</View>

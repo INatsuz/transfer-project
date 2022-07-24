@@ -1,4 +1,5 @@
 import {
+	ActivityIndicator,
 	Button,
 	Dimensions,
 	ImageBackground,
@@ -9,9 +10,9 @@ import {
 	StyleSheet,
 	TextInput,
 	View,
-	ActivityIndicator, Text
+	ToastAndroid
 } from "react-native";
-import Banner from './Banner';
+import Banner from '../../components/Banner/Banner';
 import useEmailField from "../../hooks/useEmailField";
 import {useDispatch, useSelector} from "react-redux";
 import {loginAction} from "../../redux/actions/loginActions";
@@ -19,7 +20,7 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import {useEffect, useRef, useState} from "react";
 
-const IP = "51.195.255.234";
+const IP = "81.84.159.96";
 
 async function saveTokens(tokens) {
 	let {accessToken, refreshToken} = tokens;
@@ -70,6 +71,7 @@ async function getTokens() {
 
 export default function Login(props) {
 	const [isLoading, setIsLoading] = useState(true);
+	const [isLoggingIn, setIsLoggingIn] = useState(false);
 	const {email, setEmail, isValidStyling} = useEmailField();
 	const password = useRef("");
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
@@ -86,6 +88,7 @@ export default function Login(props) {
 
 	//Checking if logged in on startup
 	useEffect(() => {
+		ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
 		getTokens().then(({accessToken, refreshToken}) => {
 			if (accessToken || refreshToken) {
 				axios.get(`http://${IP}:3000/users/checkLogin?token=${accessToken}`).then(res => {
@@ -135,18 +138,26 @@ export default function Login(props) {
 	}, []);
 
 	const handleLoginClick = event => {
-		axios.post(`http://${IP}:3000/users/login`, {
-			email: email,
-			password: password.current
-		}).then(res => {
-			if (res.data.accessToken && res.data.refreshToken) {
-				saveTokens(res.data).then(result => {
-					dispatch(loginAction(res.data.user));
-				});
-			}
-		}).catch(err => {
-			console.log(JSON.stringify(err));
-		});
+		if (!isLoggingIn) {
+			setIsLoggingIn(true);
+			ToastAndroid.show("Logging in...", ToastAndroid.SHORT);
+
+			axios.post(`http://${IP}:3000/users/login`, {
+				email: email,
+				password: password.current
+			}).then(res => {
+				setIsLoggingIn(false);
+				if (res.data.accessToken && res.data.refreshToken) {
+					saveTokens(res.data).then(result => {
+						dispatch(loginAction(res.data.user));
+					});
+				}
+			}).catch(err => {
+				setIsLoggingIn(false);
+				ToastAndroid.show("Login failed... Check your credentials.", ToastAndroid.SHORT);
+				console.log(JSON.stringify(err));
+			});
+		}
 	};
 
 	return (

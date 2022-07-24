@@ -3,7 +3,7 @@ import {Text, View, StyleSheet, Image} from "react-native";
 export default function Banner (props) {
 	return (
 		<View style={styles.container}>
-			<Image style={styles.image} source={require("./../../assets/logo.png")}/>
+			<Image style={styles.image} source={require("../../assets/logo.png")}/>
 			<Text style={styles.title}>Transfer Service</Text>
 		</View>
 	);

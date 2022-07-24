@@ -4,9 +4,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useEffect, useState} from "react";
 import * as SecureStore from "expo-secure-store";
 import {useDispatch} from "react-redux";
-import {logoffAction} from "../../../../redux/actions/loginActions";
+import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
-import {getWithAuth} from "../../../../utils/Requester";
+import {getWithAuth, putWithAuth} from "../../utils/Requester";
 
 async function deleteTokens() {
 	console.log("Deleting tokens...");
@@ -18,6 +18,46 @@ export default function ProfileSection(props) {
 	const dispatch = useDispatch();
 	const [vehicles, setVehicles] = useState([]);
 	const [activeVehicle, setActiveVehicle] = useState(null);
+
+	function updateActiveVehicle(vehicle) {
+		let data = {vehicle: vehicle};
+
+		putWithAuth("api/updateActiveVehicle", data).then(res => {
+			console.log("Active vehicle changed successfully");
+		}).catch(err => {
+			console.log(err);
+		});
+	}
+
+	const onVehicleValueChange = (value, index) => {
+		if (value === activeVehicle) {
+			return;
+		}
+		let original_value = activeVehicle;
+		setActiveVehicle(value);
+
+		let vehicle = vehicles.find(el => el.ID === value);
+
+		Alert.alert(
+			"Confirm",
+			`Are you sure you want to change to ${vehicle ? vehicle.displayName : "no vehicle"}.`,
+			[
+				{
+					text: "Yes",
+					onPress: () => {
+						updateActiveVehicle(value);
+					}
+				},
+				{
+					text: "Cancel",
+					style: "cancel",
+					onPress: () => {
+						setActiveVehicle(original_value);
+					},
+				}
+			]
+		);
+	};
 
 	const confirmLogoutDialog = () => {
 		Alert.alert(
@@ -47,7 +87,11 @@ export default function ProfileSection(props) {
 		getWithAuth("api/getVehicles").then(res => {
 			console.log(res.data);
 			setVehicles(res.data.vehicles);
-			setActiveVehicle(res.data.vehicles[0].ID);
+			if (res.data.vehicles.length > 0) {
+				if (res.data.vehicles[0].userID !== null) {
+					setActiveVehicle(res.data.vehicles[0].ID);
+				}
+			}
 		}).catch(err => {
 			console.log(err);
 		});
@@ -69,29 +113,7 @@ export default function ProfileSection(props) {
 				<View style={{flex: 1}}>
 					<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
 						return {key: item.ID, label: item.displayName, value: item.ID}
-					})} onValueChange={(value, index) => {
-						if (value === activeVehicle) {
-							return;
-						}
-						let original_value = activeVehicle;
-						setActiveVehicle(value);
-						Alert.alert(
-							"Confirm",
-							"Are you sure you want to change?",
-							[
-								{
-									text: "Yes",
-								},
-								{
-									text: "Cancel",
-									style: "cancel",
-									onPress: () => {
-										setActiveVehicle(original_value);
-									},
-								}
-							]
-						);
-					}} Icon={() => {
+					})} onValueChange={onVehicleValueChange} Icon={() => {
 						return <Chevron size={1.5} color="gray"/>;
 					}} useNativeAndroidPickerStyle={false} style={{
 						iconContainer: {justifyContent: "center", padding: 10},

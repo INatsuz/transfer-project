@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import store from "../redux/setupStore";
 import {logoffAction} from "../redux/actions/loginActions";
 
-const IP = "51.195.255.234:3000";
+const IP = "81.84.159.96:3000";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");
@@ -61,7 +61,8 @@ export function getWithAuth(endpoint) {
 								getWithAuth(endpoint).then(res => resolve(res));
 							}).catch(err => {
 								reject(err);
-							});;
+							});
+							;
 						});
 					}).catch(err => {
 						store.dispatch(logoffAction());
@@ -97,6 +98,82 @@ export function postWithAuth(endpoint, data) {
 						}).then(res => {
 							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
 								postWithAuth(endpoint, data).then(res => resolve(res));
+							}).catch(err => {
+								reject(err);
+							});
+						});
+					}).catch(err => {
+						store.dispatch(logoffAction());
+						reject(err);
+					});
+				} else {
+					console.log(err);
+					reject(err);
+				}
+			});
+		});
+	});
+}
+
+export function putWithAuth(endpoint, data) {
+	return new Promise(function (resolve, reject) {
+		getTokens().then(({accessToken, refreshToken}) => {
+			axios.put(`http://${IP}/${endpoint}`, data, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
+			}).then(res => {
+				if (res.status === 200) {
+					resolve(res);
+				}
+			}).catch(err => {
+				if (err.response.status === 401) {
+					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
+						axios.get(`http://${IP}/${endpoint}`, {
+							headers: {
+								Authorization: `Bearer ${newAccessToken}`
+							}
+						}).then(res => {
+							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
+								putWithAuth(endpoint, data).then(res => resolve(res));
+							}).catch(err => {
+								reject(err);
+							});
+						});
+					}).catch(err => {
+						store.dispatch(logoffAction());
+						reject(err);
+					});
+				} else {
+					console.log(err);
+					reject(err);
+				}
+			});
+		});
+	});
+}
+
+export function deleteWithAuth(endpoint) {
+	return new Promise(function (resolve, reject) {
+		getTokens().then(({accessToken, refreshToken}) => {
+			axios.delete(`http://${IP}/${endpoint}`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
+			}).then(res => {
+				if (res.status === 200) {
+					resolve(res);
+				}
+			}).catch(err => {
+				if (err.response.status === 401) {
+					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
+						axios.get(`http://${IP}/${endpoint}`, {
+							headers: {
+								Authorization: `Bearer ${newAccessToken}`
+							}
+						}).then(res => {
+							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
+								putWithAuth(endpoint, data).then(res => resolve(res));
 							}).catch(err => {
 								reject(err);
 							});
