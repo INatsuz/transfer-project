@@ -6,7 +6,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import {useSelector} from "react-redux";
 
-const IP = "81.84.159.96";
+const IP = "vraminhos.com";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");

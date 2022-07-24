@@ -14,7 +14,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-const IP = "81.84.159.96";
+const IP = "vraminhos.com";
 
 async function getTokens() {
 	let accessToken = await SecureStore.getItemAsync("accessToken");

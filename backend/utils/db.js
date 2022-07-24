@@ -1,12 +1,12 @@
 const mysql = require("mysql");
 
 const pool = mysql.createPool({
-	connectionLimit : 10,
-	host            : 'vraminhos.com',
-	user            : 'inatsuz',
-	password        : 'VRaminhos2509',
-	database        : 'transfer_app',
-	timezone		: 'Z'
+	connectionLimit: 10,
+	host: 'localhost',
+	user: 'inatsuz',
+	password: 'VRaminhos2509',
+	database: 'transfer_app',
+	timezone: 'Z'
 });
 
 function query(query, params, callback) {
@@ -20,24 +20,19 @@ function query(query, params, callback) {
 			}
 
 			conn.query(query, params, function (err, result, fields) {
+				conn.release();
 				if (callback) {
 					callback(err, result, fields);
 				}
 
 				if (err) {
-					conn.release();
 					reject(err);
 					return;
 				}
 
-				conn.release();
-
 				resolve({result: result, fields: fields});
 			});
 		});
-
-
-
 	});
 }
 

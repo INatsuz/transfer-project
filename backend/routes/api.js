@@ -131,6 +131,24 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 	});
 });
 
+router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next) {
+	let {vehicle} = req.body;
+
+	db.query("UPDATE appuser SET activeVehicle = NULL WHERE activeVehicle = ?", [vehicle]).then(({result, fields}) => {
+		console.log("Cleared previous owner of car successfully");
+		db.query(`UPDATE appuser SET activeVehicle = ? WHERE ID = ?`, [vehicle, req.tokenPayload.ID]).then(({result, fields}) => {
+			res.status(200).json({res: "Active vehicle updated with success"});
+		}).catch(err => {
+			console.log(err);
+			res.status(406).json({err: "Something went wrong with the query"});
+		});
+		console.log("Hey");
+	}).catch(err => {
+		console.log(err);
+		res.status(406).json({err: "Something went wrong with the query"});
+	});
+});
+
 router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
 	let {person_name, num_of_people, origin, destination, datetime} = req.body;
 
@@ -141,6 +159,21 @@ router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
 			[person_name, num_of_people, 0, origin, destination, datetime, 'PENDING', true]
 		).then(({result, fields}) => {
 			res.status(200).json({res: "Transfer added successfully"});
+		}).catch(err => {
+			console.log(err);
+			res.status(406).json({err: "Something went wrong with the query"});
+		});
+	} else {
+		res.status(400).json({err: "Missing parameters"});
+	}
+});
+
+router.delete("/removeTransfer/:ID", mustBeAdmin, function (req, res, next) {
+	let ID = req.params.ID;
+
+	if (ID) {
+		db.query(`DELETE FROM transfer WHERE ID = ?`, [ID]).then(({result, fields}) => {
+			res.status(200).json({res: "Transfer removed successfully"});
 		}).catch(err => {
 			console.log(err);
 			res.status(406).json({err: "Something went wrong with the query"});

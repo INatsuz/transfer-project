@@ -65,11 +65,15 @@ LEFT JOIN appuser
 ON transfer.driver = appuser.ID 
 LEFT JOIN vehicle
 ON transfer.vehicle = vehicle.ID
-WHERE transfer.status <> 'FINISHED']]></console>
+WHERE transfer.status <> 'FINISHED';
+
+UPDATE appuser SET activeVehicle = 2 WHERE ID = 2]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" object-ref="schemas/transfer_app/tables/transfer" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" />
@@ -132,7 +136,7 @@ WHERE transfer.status <> 'FINISHED']]></console>
           <deprecated-pwd value="VlJhbWluaG9zMjUwOQ==" />
         </database>
         <properties>
-          <auto-commit value="false" />
+          <auto-commit value="true" />
         </properties>
         <ssh-settings>
           <active value="false" />
