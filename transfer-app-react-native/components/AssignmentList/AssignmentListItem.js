@@ -25,7 +25,8 @@ export default function AssignmentListItem(props) {
 	);
 
 	return (
-			<TouchableOpacity style={[styles.listItemContainer, variableStyles.statusBorderColor]} onPress={() => props.onItemPress(props.data)}>
+		<TouchableOpacity onPress={() => props.onItemPress(props.data)}>
+			<View style={[styles.listItemContainer, variableStyles.statusBorderColor]} >
 				<View style={styles.listSection}>
 					<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
 					<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
@@ -38,8 +39,8 @@ export default function AssignmentListItem(props) {
 				<View style={[styles.listSection]}>
 					<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
 				</View>
-
-			</TouchableOpacity>
+			</View>
+		</TouchableOpacity>
 	);
 };
 

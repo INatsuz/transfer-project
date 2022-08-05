@@ -16,7 +16,7 @@ import {Chevron} from "react-native-shapes";
 import useOperators from "../../../hooks/useOperators";
 import {postWithAuth} from "../../../utils/Requester";
 
-export default function AddAssignment() {
+export default function AddAssignment(props) {
 	const [pickingDate, setPickingDate] = useState(false);
 	const [pickingTime, setPickingTime] = useState(false);
 
@@ -52,6 +52,7 @@ export default function AddAssignment() {
 
 		postWithAuth("api/addTransfer", data).then(res => {
 			console.log("Transfer added successfully");
+			props.navigation.navigate("Assignments");
 		}).catch(err => {
 			console.log(err);
 		});
