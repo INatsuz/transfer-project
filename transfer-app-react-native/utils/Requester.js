@@ -9,7 +9,7 @@ export const IP = "vraminhos.com:3000";
 export async function refreshTokens(refreshToken) {
 	console.log("Refreshing token (Requester util)");
 	return new Promise(function (resolve, reject) {
-		axios.get(`http://${IP}/users/renew?refreshToken=${refreshToken}`).then(res => {
+		axios.get(`http://${IP}/users/renew?refreshToken=${refreshToken}`, {timeout: 5000}).then(res => {
 			saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken}).then(() => {
 				resolve({newAccessToken: res.data.accessToken, newRefreshToken: res.data.refreshToken});
 			}).catch(err => {
@@ -39,7 +39,8 @@ export function getWithAuth(endpoint) {
 			axios.get(`http://${IP}/${endpoint}`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
-				}
+				},
+				timeout: 5000
 			}).then(res => {
 				if (res.status === 200) {
 					resolve(res);
@@ -50,7 +51,8 @@ export function getWithAuth(endpoint) {
 						axios.get(`http://${IP}/${endpoint}`, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
-							}
+							},
+							timeout: 5000
 						}).then(res => {
 							if (res.status === 200) {
 								resolve(res);
@@ -74,18 +76,20 @@ export function postWithAuth(endpoint, data) {
 			axios.post(`http://${IP}/${endpoint}`, data, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
-				}
+				},
+				timeout: 5000
 			}).then(res => {
 				if (res.status === 200) {
 					resolve(res);
 				}
 			}).catch(err => {
 				if (err.response.status === 401) {
-					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
+					refreshTokens(refreshToken).then(({newAccessToken}) => {
 						axios.post(`http://${IP}/${endpoint}`, data, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
-							}
+							},
+							timeout: 5000
 						}).then(res => {
 							if (res.status === 200) {
 								resolve(res);
@@ -109,7 +113,8 @@ export function putWithAuth(endpoint, data) {
 			axios.put(`http://${IP}/${endpoint}`, data, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
-				}
+				},
+				timeout: 5000
 			}).then(res => {
 				if (res.status === 200) {
 					resolve(res);
@@ -120,7 +125,8 @@ export function putWithAuth(endpoint, data) {
 						axios.put(`http://${IP}/${endpoint}`, data, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
-							}
+							},
+							timeout: 5000
 						}).then(res => {
 							if (res.status === 200) {
 								resolve(res);
@@ -144,7 +150,8 @@ export function deleteWithAuth(endpoint) {
 			axios.delete(`http://${IP}/${endpoint}`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
-				}
+				},
+				timeout: 5000
 			}).then(res => {
 				if (res.status === 200) {
 					resolve(res);
@@ -155,7 +162,8 @@ export function deleteWithAuth(endpoint) {
 						axios.delete(`http://${IP}/${endpoint}`, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
-							}
+							},
+							timeout: 5000
 						}).then(res => {
 							resolve(res);
 						});
