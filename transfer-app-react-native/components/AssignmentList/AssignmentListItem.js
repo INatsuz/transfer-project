@@ -44,11 +44,9 @@ export default function AssignmentListItem(props) {
 };
 
 const styles = StyleSheet.create({
-
 	listItemContainer: {
 		flexDirection: "row",
-		borderRightColor: getStatusColor(),
-		borderRightWidth: 3,
+		borderRightWidth: 5,
 		borderRadius: 10,
 		marginVertical: 5,
 		marginHorizontal: 10,
@@ -66,8 +64,7 @@ const styles = StyleSheet.create({
 
 	textStyle: {
 		color: "#fff",
-		fontSize: 16,
-		textAlign: "justify"
+		fontSize: 16
 	},
 
 	datetime: {
