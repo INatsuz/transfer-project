@@ -53,8 +53,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 5,
 		paddingHorizontal: 10,
 		minHeight: 85,
-		backgroundColor: "#181818",
-		position: "relative"
+		backgroundColor: "#181818"
 	},
 
 	listSection: {
