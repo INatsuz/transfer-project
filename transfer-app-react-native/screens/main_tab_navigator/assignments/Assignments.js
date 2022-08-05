@@ -1,41 +1,21 @@
 import {StyleSheet, TouchableOpacity, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import {useState} from "react";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-const IP = "vraminhos.com";
-
-async function getTokens() {
-	let accessToken = await SecureStore.getItemAsync("accessToken");
-	let refreshToken = await SecureStore.getItemAsync("refreshToken");
-
-	if (accessToken && refreshToken) {
-		return {accessToken: accessToken, refreshToken: refreshToken};
-	} else {
-		return false;
-	}
-}
+import {getWithAuth} from "../../../utils/Requester";
 
 export default function Assignments(props) {
 	const [assignments, setAssignments] = useState([]);
 
 	const fetchAllAssignments = function () {
 		return new Promise(function (resolve, reject) {
-			getTokens().then(({accessToken}) => {
-				axios.get(`http://${IP}:3000/api/getAllAssignments`, {
-					headers: {
-						Authorization: `Bearer ${accessToken}`
-					}
-				}).then(res => {
-					setAssignments(res.data);
-					resolve()
-				}).catch(err => {
-					console.log("Could not get transfers");
-					console.log(err);
-					reject();
-				});
+			getWithAuth("api/getAllTransfers").then(res => {
+				setAssignments(res.data.transfers);
+				resolve()
+			}).catch(err => {
+				console.log("Could not get transfers");
+				console.log(err);
+				reject();
 			});
 		});
 	}

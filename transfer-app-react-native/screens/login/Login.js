@@ -9,65 +9,17 @@ import {
 	ScrollView,
 	StyleSheet,
 	TextInput,
-	View,
-	ToastAndroid
+	ToastAndroid,
+	View
 } from "react-native";
 import Banner from '../../components/Banner/Banner';
 import useEmailField from "../../hooks/useEmailField";
 import {useDispatch, useSelector} from "react-redux";
 import {loginAction} from "../../redux/actions/loginActions";
-import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import {useEffect, useRef, useState} from "react";
-
-const IP = "vraminhos.com";
-
-async function saveTokens(tokens) {
-	let {accessToken, refreshToken} = tokens;
-
-	console.log("Saving tokens...");
-	console.log(accessToken);
-	console.log(refreshToken);
-	await SecureStore.setItemAsync("accessToken", accessToken);
-	await SecureStore.setItemAsync("refreshToken", refreshToken);
-}
-
-async function deleteTokens() {
-	console.log("Deleting tokens...");
-	await SecureStore.deleteItemAsync("accessToken");
-	await SecureStore.deleteItemAsync("refreshToken");
-}
-
-async function getAccessToken() {
-	let token = await SecureStore.getItemAsync("accessToken");
-
-	if (token) {
-		return token;
-	} else {
-		return false;
-	}
-}
-
-async function getRefreshToken() {
-	let token = await SecureStore.getItemAsync("refreshToken");
-
-	if (token) {
-		return token;
-	} else {
-		return false;
-	}
-}
-
-async function getTokens() {
-	let accessToken = await SecureStore.getItemAsync("accessToken");
-	let refreshToken = await SecureStore.getItemAsync("refreshToken");
-
-	if (accessToken && refreshToken) {
-		return {accessToken: accessToken, refreshToken: refreshToken};
-	} else {
-		return false;
-	}
-}
+import {deleteTokens, getTokens, saveTokens} from "../../utils/TokenManager";
+import {getWithAuth, IP} from "../../utils/Requester";
 
 export default function Login(props) {
 	const [isLoading, setIsLoading] = useState(true);
@@ -88,53 +40,24 @@ export default function Login(props) {
 
 	//Checking if logged in on startup
 	useEffect(() => {
-		ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
-		getTokens().then(({accessToken, refreshToken}) => {
-			if (accessToken || refreshToken) {
-				axios.get(`http://${IP}:3000/users/checkLogin?token=${accessToken}`).then(res => {
-					console.log("Verified the access token");
-					console.log(res.data.loggedIn);
+		getTokens().then(() => {
+			ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
 
-					if (res.data.loggedIn === true) {
-						setIsLoading(false);
-						dispatch(loginAction(res.data.user));
-					}
-				}).catch(err => {
-					console.log(JSON.stringify(err));
-					console.log(err.response);
-					console.log(err.response.data);
-
-					if (refreshToken) {
-						axios.get(`http://${IP}:3000/users/renew?refreshToken=${refreshToken}`).then(res => {
-							console.log("Refreshing the token");
-							console.log(res.data.accessToken);
-							console.log(res.data.refreshToken);
-
-							if (res.data.accessToken && res.data.refreshToken) {
-								saveTokens({
-									accessToken: res.data.accessToken,
-									refreshToken: res.data.refreshToken
-								}).then(() => {
-									setIsLoading(false);
-									dispatch(loginAction(res.data.user));
-								});
-							}
-						}).catch(err => {
-							setIsLoading(false);
-							deleteTokens();
-						});
-					} else {
-						setIsLoading(false);
-					}
-				});
-			} else {
+			getWithAuth("users/checkLogin").then(res => {
+				if (res.data.loggedIn) {
+					setIsLoading(false);
+					dispatch(loginAction(res.data.user));
+				}
+			}).catch(err => {
+				console.log(err);
+				deleteTokens();
 				setIsLoading(false);
-			}
+			});
 		}).catch(err => {
 			console.log(err);
 			deleteTokens();
 			setIsLoading(false);
-		})
+		});
 	}, []);
 
 	const handleLoginClick = event => {
@@ -142,7 +65,7 @@ export default function Login(props) {
 			setIsLoggingIn(true);
 			ToastAndroid.show("Logging in...", ToastAndroid.SHORT);
 
-			axios.post(`http://${IP}:3000/users/login`, {
+			axios.post(`http://${IP}/users/login`, {
 				email: email,
 				password: password.current
 			}).then(res => {
@@ -173,7 +96,7 @@ export default function Login(props) {
 					<View style={styles.content_container}>
 						<Banner/>
 						<View style={styles.inputs_container}>
-							<TextInput style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" onEndEditing={e => {
+							<TextInput keyboardType={"email-address"} caretHidden={false} style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" onEndEditing={e => {
 								setEmail(e.nativeEvent.text);
 							}}/>
 							<TextInput secureTextEntry={true} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" onEndEditing={e => {

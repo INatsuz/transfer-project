@@ -1,25 +1,7 @@
-import {ScrollView, StyleSheet, View, RefreshControl, Text} from "react-native";
+import {RefreshControl, ScrollView, StyleSheet, Text, View} from "react-native";
 import AssignmentListItem from "./AssignmentListItem";
 import {useEffect, useState} from "react";
-import * as SecureStore from "expo-secure-store";
 import {useIsFocused} from "@react-navigation/native";
-
-const IP = "vraminhos.com";
-
-async function getTokens() {
-	let accessToken = await SecureStore.getItemAsync("accessToken");
-	let refreshToken = await SecureStore.getItemAsync("refreshToken");
-
-	if (accessToken && refreshToken) {
-		return {accessToken: accessToken, refreshToken: refreshToken};
-	} else {
-		return false;
-	}
-}
-
-const wait = (timeout) => {
-	return new Promise(resolve => setTimeout(resolve, timeout));
-}
 
 export default function AssignmentList(props) {
 	const [refreshing, setRefreshing] = useState(true);

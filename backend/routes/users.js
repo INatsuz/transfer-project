@@ -1,21 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
-const {verifyLoginCredentials, verifyToken, generateTokens} = require("../utils/authentication");
+const {verifyLoginCredentials, verifyToken, generateTokens, mustBeAuthenticated} = require("../utils/authentication");
 const db = require('../utils/db');
 
 const SALT_ROUNDS = 10;
-
-// Login GET method
-router.get('/login', function (req, res, next) {
-	console.log("Test");
-	verifyLoginCredentials(req.query.email, req.query.password).then(({accessToken, refreshToken}) => {
-		res.status(200).json({accessToken: accessToken, refreshToken: refreshToken});
-	}).catch(err => {
-		console.log(err);
-		res.status(401).json({err: "Wrong credentials"});
-	});
-});
 
 // Login POST method
 router.post('/login', function (req, res, next) {
@@ -61,17 +50,10 @@ router.get("/renew", function (req, res, next) {
 	}
 });
 
-router.get("/checkLogin", function (req, res, next) {
-	let {token} = req.query;
-
-	verifyToken(token).then(payload => {
-		res.status(200).json({
-			"loggedIn": true,
-			user: {email: payload.email, name: payload.name, userType: payload.userType}
-		});
-	}).catch(err => {
-		console.log(err);
-		res.status(401).json({"loggedIn": false});
+router.get("/checkLogin", mustBeAuthenticated, function (req, res, next) {
+	res.status(200).json({
+		"loggedIn": true,
+		user: {email: req.tokenPayload.email, name: req.tokenPayload.name, userType: req.tokenPayload.userType}
 	});
 });
 

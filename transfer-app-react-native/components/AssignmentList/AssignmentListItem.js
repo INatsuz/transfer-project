@@ -1,36 +1,77 @@
 import {StyleSheet, View, Text, TouchableOpacity} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+function getStatusColor(status) {
+	switch (status) {
+		case "PENDING":
+			return "#ffc107";
+		case "IN PROGRESS":
+			return "#28a745";
+		case "FINISHED":
+			return "#17a2b8";
+	}
+}
+
 export default function AssignmentListItem(props) {
+	let datetime = new Date(props.data.transfer_time);
+	const dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
+	const timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
+
+	let variableStyles = StyleSheet.create({
+			statusBorderColor: {
+				borderRightColor: getStatusColor(props.data.status)
+			}
+		}
+	);
 
 	return (
-		<TouchableOpacity style={styles.listItemContainer} onPress={() => props.onItemPress(props.data)}>
-			<View style={styles.listSection}><Text style={styles.textStyle}>{props.data.origin}</Text></View>
-			<View style={[styles.listSection, {alignItems: "center", flex:0, paddingHorizontal: 10}]}><Ionicons name="arrow-forward" size={styles.textStyle.fontSize} color={styles.textStyle.color}/></View>
-			<View style={styles.listSection}><Text style={styles.textStyle}>{props.data.destination}</Text></View>
-		</TouchableOpacity>
+			<TouchableOpacity style={[styles.listItemContainer, variableStyles.statusBorderColor]} onPress={() => props.onItemPress(props.data)}>
+				<View style={styles.listSection}>
+					<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
+					<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
+				</View>
+				<View style={[styles.listSection, {
+					alignItems: "center",
+					flex: 0,
+					paddingHorizontal: 10
+				}]}><Ionicons name="arrow-forward" size={styles.textStyle.fontSize} color={styles.textStyle.color}/></View>
+				<View style={[styles.listSection]}>
+					<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
+				</View>
+
+			</TouchableOpacity>
 	);
 };
 
 const styles = StyleSheet.create({
+
 	listItemContainer: {
 		flexDirection: "row",
+		borderRightColor: getStatusColor(),
+		borderRightWidth: 3,
 		borderRadius: 10,
 		marginVertical: 5,
 		marginHorizontal: 10,
-		padding: 5,
+		paddingVertical: 5,
+		paddingHorizontal: 10,
 		minHeight: 85,
-		backgroundColor: "#181818"
+		backgroundColor: "#181818",
+		position: "relative"
 	},
 
 	listSection: {
 		flex: 1,
 		justifyContent: "center",
-		alignItems: "center"
 	},
 
 	textStyle: {
 		color: "#fff",
-		fontSize: 16
+		fontSize: 16,
+		textAlign: "justify"
+	},
+
+	datetime: {
+		marginTop: 5,
+		textAlign: "center"
 	}
 });

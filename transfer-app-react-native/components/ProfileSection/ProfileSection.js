@@ -2,17 +2,11 @@ import {Alert, StyleSheet, Text, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select"
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useEffect, useState} from "react";
-import * as SecureStore from "expo-secure-store";
 import {useDispatch} from "react-redux";
 import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
-
-async function deleteTokens() {
-	console.log("Deleting tokens...");
-	await SecureStore.deleteItemAsync("accessToken");
-	await SecureStore.deleteItemAsync("refreshToken");
-}
+import {deleteTokens} from "../../utils/TokenManager";
 
 export default function ProfileSection(props) {
 	const dispatch = useDispatch();
@@ -83,9 +77,8 @@ export default function ProfileSection(props) {
 		);
 	}
 
-	function fetchVehicles() {
+	async function fetchVehicles() {
 		getWithAuth("api/getVehicles").then(res => {
-			console.log(res.data);
 			setVehicles(res.data.vehicles);
 			if (res.data.vehicles.length > 0) {
 				if (res.data.vehicles[0].userID !== null) {

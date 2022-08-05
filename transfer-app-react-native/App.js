@@ -3,7 +3,8 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import {Platform, StyleSheet} from 'react-native';
 import {
-	NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
+	NavigationContainer, DefaultTheme, DarkTheme
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Login from "./screens/login/Login";
 import {useEffect, useRef, useState} from "react";
@@ -11,6 +12,7 @@ import MainTabNavigator from "./screens/main_tab_navigator/MainTabNavigator";
 import {Provider} from "react-redux";
 import store from "./redux/setupStore";
 import {useColorScheme} from 'react-native';
+import {navigationRef} from './utils/RootNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,7 +56,7 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<StatusBar backgroundColor="#222222" translucent={true}/>
-			<NavigationContainer theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+			<NavigationContainer ref={navigationRef} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 				<Stack.Navigator>
 					<Stack.Screen
 						name={"Login"}

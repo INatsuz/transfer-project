@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "w5JVIErNaQ";
 
-const ACCESS_TOKEN_DURATION = "1d";
+const ACCESS_TOKEN_DURATION = "1h";
 const REFRESH_TOKEN_DURATION = "7d";
 
 function verifyLoginCredentials(email, password) {
 	return new Promise((resolve, reject) => {
-		db.query("SELECT * FROM appuser WHERE email = ?", [email]).then(({result, fields}) => {
+		db.query("SELECT * FROM appuser WHERE email = ?", [email]).then(({result}) => {
 			if (result.length === 0) {
 				reject("No results found in db");
 				return;
@@ -96,6 +96,11 @@ function refreshAccessToken(refreshToken) {
 
 function mustBeAuthenticated(req, res, next) {
 	let authHeader = req.header("Authorization");
+
+	if (!authHeader) {
+		res.status(401).json({err: "Unauthorized"});
+	}
+
 	if (!authHeader.startsWith("Bearer ")) {
 		res.status(401).json({err: "Unauthorized"});
 	}
@@ -114,6 +119,11 @@ function mustBeAuthenticated(req, res, next) {
 
 function mustBeAdmin(req, res, next) {
 	let authHeader = req.header("Authorization");
+
+	if (!authHeader) {
+		res.status(401).json({err: "Unauthorized"});
+	}
+
 	if (!authHeader.startsWith("Bearer ")) {
 		res.status(401).json({err: "Unauthorized"});
 	}

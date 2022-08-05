@@ -50,10 +50,13 @@ LEFT JOIN appuser
 ON appuser.activeVehicle = vehicle.ID AND appuser.ID = 2
 ORDER BY userID DESC;
 
-SELECT transfer.*, appuser.name as driverName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as displayName
+# getAssignedJobs
+SELECT transfer.*, appuser.name AS driverName, serviceoperator.name AS operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as displayName
 FROM transfer 
 INNER JOIN appuser
 ON transfer.driver = appuser.ID
+LEFT JOIN serviceoperator
+ON transfer.service_operator = serviceoperator.ID
 LEFT JOIN vehicle
 ON transfer.vehicle = vehicle.ID
 WHERE transfer.status <> 'FINISHED'
@@ -67,13 +70,15 @@ LEFT JOIN vehicle
 ON transfer.vehicle = vehicle.ID
 WHERE transfer.status <> 'FINISHED';
 
-UPDATE appuser SET activeVehicle = 2 WHERE ID = 2]]></console>
+UPDATE appuser SET activeVehicle = 2 WHERE ID = 2;
+
+# Query for getOperators endpoint
+SELECT ID, name
+FROM serviceoperator;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" object-ref="schemas/transfer_app/tables/transfer" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" />
@@ -81,6 +86,7 @@ UPDATE appuser SET activeVehicle = 2 WHERE ID = 2]]></console>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" dataset="transfer_app.appuser" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" dataset="transfer_app.transfer" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" dataset="transfer_app.serviceoperator" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" dataset="transfer_app.usertype" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" dataset="transfer_app.vehicle" active-filter-id="EMPTY_FILTER">
       <filter id="54cdbab4-ca02-4db4-85ec-96c750a298b7" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND">

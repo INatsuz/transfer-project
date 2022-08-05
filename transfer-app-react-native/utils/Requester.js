@@ -1,39 +1,34 @@
 import axios from 'axios';
-import * as SecureStore from "expo-secure-store";
 import store from "../redux/setupStore";
+import {navigationRef} from "./RootNavigation";
 import {logoffAction} from "../redux/actions/loginActions";
+import {deleteTokens, getTokens, saveTokens} from "./TokenManager";
 
-const IP = "vraminhos.com:3000";
+export const IP = "81.84.159.96:3000";
 
-async function getTokens() {
-	let accessToken = await SecureStore.getItemAsync("accessToken");
-	let refreshToken = await SecureStore.getItemAsync("refreshToken");
-
-	if (accessToken && refreshToken) {
-		return {accessToken: accessToken, refreshToken: refreshToken};
-	} else {
-		return false;
-	}
-}
-
-async function saveTokens(tokens) {
-	let {accessToken, refreshToken} = tokens;
-
-	console.log("Saving tokens...");
-	console.log(accessToken);
-	console.log(refreshToken);
-	await SecureStore.setItemAsync("accessToken", accessToken);
-	await SecureStore.setItemAsync("refreshToken", refreshToken);
-}
-
-async function refreshTokens(refreshToken) {
+export async function refreshTokens(refreshToken) {
+	console.log("Refreshing token (Requester util)");
 	return new Promise(function (resolve, reject) {
 		axios.get(`http://${IP}/users/renew?refreshToken=${refreshToken}`).then(res => {
-			saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken}).then(res => {
+			saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken}).then(() => {
 				resolve({newAccessToken: res.data.accessToken, newRefreshToken: res.data.refreshToken});
+			}).catch(err => {
+				console.log(err);
+				reject(err);
 			});
 		}).catch(err => {
 			reject(err);
+		});
+	});
+}
+
+export async function logOff() {
+	console.log("Logging you off (Requester)");
+	deleteTokens().then(() => {
+		store.dispatch(logoffAction());
+		navigationRef.reset({
+			index: 0,
+			routes: [{name: "Login"}]
 		});
 	});
 }
@@ -51,22 +46,18 @@ export function getWithAuth(endpoint) {
 				}
 			}).catch(err => {
 				if (err.response.status === 401) {
-					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
+					refreshTokens(refreshToken).then(({newAccessToken}) => {
 						axios.get(`http://${IP}/${endpoint}`, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							}
 						}).then(res => {
-							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
-								getWithAuth(endpoint).then(res => resolve(res));
-							}).catch(err => {
-								reject(err);
-							});
-							;
+							if (res.status === 200) {
+								resolve(res);
+							}
 						});
 					}).catch(err => {
-						store.dispatch(logoffAction());
-						reject(err);
+						logOff().then(r => reject(err));
 					});
 				} else {
 					console.log(err);
@@ -91,20 +82,17 @@ export function postWithAuth(endpoint, data) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
-						axios.get(`http://${IP}/${endpoint}`, {
+						axios.post(`http://${IP}/${endpoint}`, data, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							}
 						}).then(res => {
-							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
-								postWithAuth(endpoint, data).then(res => resolve(res));
-							}).catch(err => {
-								reject(err);
-							});
+							if (res.status === 200) {
+								resolve(res);
+							}
 						});
 					}).catch(err => {
-						store.dispatch(logoffAction());
-						reject(err);
+						logOff().then(r => reject(err));
 					});
 				} else {
 					console.log(err);
@@ -129,20 +117,17 @@ export function putWithAuth(endpoint, data) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
-						axios.get(`http://${IP}/${endpoint}`, {
+						axios.put(`http://${IP}/${endpoint}`, data, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							}
 						}).then(res => {
-							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
-								putWithAuth(endpoint, data).then(res => resolve(res));
-							}).catch(err => {
-								reject(err);
-							});
+							if (res.status === 200) {
+								resolve(res);
+							}
 						});
 					}).catch(err => {
-						store.dispatch(logoffAction());
-						reject(err);
+						logOff().then(r => reject(err));
 					});
 				} else {
 					console.log(err);
@@ -167,16 +152,12 @@ export function deleteWithAuth(endpoint) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
-						axios.get(`http://${IP}/${endpoint}`, {
+						axios.delete(`http://${IP}/${endpoint}`, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							}
 						}).then(res => {
-							saveTokens({accessToken: newAccessToken, refreshToken: newRefreshToken}).then(res => {
-								putWithAuth(endpoint, data).then(res => resolve(res));
-							}).catch(err => {
-								reject(err);
-							});
+							resolve(res);
 						});
 					}).catch(err => {
 						store.dispatch(logoffAction());

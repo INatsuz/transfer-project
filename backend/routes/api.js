@@ -3,42 +3,52 @@ const router = express.Router();
 const {verifyToken, mustBeAuthenticated, mustBeAdmin} = require("../utils/authentication");
 const db = require('../utils/db');
 
-router.get("/getAssignedJobs", function (req, res, next) {
-	let token = req.query.token;
-
-	if (token) {
-		verifyToken(token).then(payload => {
-			db.query(`SELECT transfer.*, appuser.name as driverName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
-						FROM transfer 
-						INNER JOIN appuser
-						ON transfer.driver = appuser.ID
-						LEFT JOIN vehicle
-						ON transfer.vehicle = vehicle.ID
-						WHERE transfer.status <> 'FINISHED'
-						AND appuser.ID = ?;`, [payload.ID]).then(({result: transfers, fields}) => {
-				console.log(transfers);
-				if (transfers) {
-					res.status(200).json(transfers);
-				}
-			}).catch(err => {
-				console.log(err);
-				console.log("Something went wrong getting assigned jobs");
-			});
-		}).catch(err => {
-			console.log(err);
-			res.status(401).json({err: "Unauthorized"});
-		});
-	} else {
-		res.status(401).json({err: "Invalid token"});
-	}
+// GET getVehicles
+router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
+	db.query(`SELECT transfer.*, appuser.name as driverName, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')' ) as vehicleName
+					FROM transfer
+					LEFT JOIN appuser
+					ON transfer.driver = appuser.ID
+					LEFT JOIN serviceoperator
+					ON transfer.service_operator = serviceoperator.ID
+					LEFT JOIN vehicle
+					ON transfer.vehicle = vehicle.ID
+					`).then(({result: transfers}) => {
+		console.log(transfers);
+		res.status(200).json({transfers: transfers});
+	}).catch(err => {
+		console.log(err);
+		res.status(400).json({err: "Something went wrong when fetching the transfers"});
+	});
 });
 
+// GET getAssignedJobs
+router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, next) {
+	db.query(`SELECT transfer.*, appuser.name as driverName, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
+					FROM transfer 
+					INNER JOIN appuser
+					ON transfer.driver = appuser.ID
+					LEFT JOIN serviceoperator
+					ON transfer.service_operator = serviceoperator.ID
+					LEFT JOIN vehicle
+					ON transfer.vehicle = vehicle.ID
+					WHERE transfer.status <> 'FINISHED'
+					AND appuser.ID = ?;`, [req.tokenPayload.ID]).then(({result: transfers}) => {
+		if (transfers) {
+			res.status(200).json({transfers: transfers});
+		}
+	}).catch(err => {
+		console.log(err);
+		console.log("Something went wrong getting assigned jobs");
+	});
+});
+
+// GET getDrivers
 router.get("/getDrivers", mustBeAdmin, function (req, res, next) {
 	db.query(`SELECT appuser.ID, appuser.name, appuser.activeVehicle, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName 
 			FROM appuser 
 			LEFT JOIN vehicle 
-			ON vehicle.ID = appuser.activeVehicle`, []).then(({result: drivers, fields}) => {
-		console.log(drivers);
+			ON vehicle.ID = appuser.activeVehicle`, []).then(({result: drivers}) => {
 		res.status(200).json({drivers: drivers});
 	}).catch(err => {
 		console.log(err);
@@ -46,6 +56,17 @@ router.get("/getDrivers", mustBeAdmin, function (req, res, next) {
 	});
 });
 
+// GET getOperators
+router.get("/getOperators", mustBeAdmin, function (req, res, next) {
+	db.query(`SELECT ID, name FROM serviceoperator`, []).then(({result: operators}) => {
+		res.status(200).json({operators: operators});
+	}).catch(err => {
+		console.log(err);
+		res.status(400).json({err: "Something went wrong with the query"});
+	});
+});
+
+// GET getVehicles
 router.get("/getVehicles", mustBeAuthenticated, function (req, res, next) {
 	db.query(`SELECT vehicle.*, appuser.ID as userID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as displayName 
 				FROM vehicle 
@@ -61,28 +82,27 @@ router.get("/getVehicles", mustBeAuthenticated, function (req, res, next) {
 	})
 });
 
-router.get("/getAllAssignments", mustBeAdmin, function (req, res, next) {
-	db.query(`SELECT transfer.*, appuser.name as driverName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
-					FROM transfer 
-					LEFT JOIN appuser 
-					ON transfer.driver = appuser.ID 
-					LEFT JOIN vehicle
-					ON transfer.vehicle = vehicle.ID
-					WHERE transfer.status <> 'FINISHED'`).then(({result: transfers, fields}) => {
-		console.log(transfers);
-		res.status(200).json(transfers);
-	}).catch(err => {
-		console.log(err);
-		res.status(400).json({err: "Something went wrong when fetching the transfers"});
-	});
-});
-
+// PUT updateTransfer
 router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
-	let {ID, person_name, num_of_people, origin, destination, time, driver, vehicle} = req.body;
+	let {
+		ID,
+		person_name,
+		num_of_people,
+		flight,
+		origin,
+		destination,
+		price,
+		time,
+		driver,
+		vehicle,
+		operator,
+		observations
+	} = req.body;
 	person_name = person_name.trim();
 	origin = origin.trim();
 	destination = destination.trim();
-	console.log((vehicle !== null && !Number.isInteger(vehicle)));
+	num_of_people = parseInt(num_of_people);
+	flight = flight.toUpperCase();
 
 	if (!Number.isInteger(ID) || ID <= 0) {
 		res.status(400).json({err: "ID validation error"});
@@ -92,7 +112,9 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 		res.status(400).json({err: "Person name validation error"});
 		return;
 	}
-	if (!Number.isInteger(num_of_people) || num_of_people <= 0 || num_of_people >= 100) {
+	if (isNaN(num_of_people) || num_of_people <= 0 || num_of_people >= 100) {
+		console.log("Number of people validation error");
+		console.log("Number of people: " + num_of_people);
 		res.status(400).json({err: "Number of people validation error"});
 		return;
 	}
@@ -121,9 +143,9 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 	}
 
 	db.query(`UPDATE transfer 
-				SET person_name = ?, num_of_people = ?, origin = ?, destination = ?, transfer_time = ?, driver = ?, vehicle = ?
+				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, transfer_time = ?, driver = ?, vehicle = ?, service_operator = ?, observations = ?
 				WHERE ID = ?`,
-		[person_name, num_of_people, origin, destination, time, driver, vehicle, ID]).then(({result, fields}) => {
+		[person_name, num_of_people, flight, origin, destination, price, time, driver, vehicle, operator, observations, ID]).then(() => {
 		res.status(200).json({res: "Transfer updated with success"});
 	}).catch(err => {
 		console.log(err);
@@ -131,32 +153,45 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 	});
 });
 
-router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next) {
-	let {vehicle} = req.body;
+// PUT updateTransferStatus
+router.put("/updateTransferStatus", mustBeAuthenticated, function (req, res, next) {
+	let {ID, status} = req.body;
 
-	db.query("UPDATE appuser SET activeVehicle = NULL WHERE activeVehicle = ?", [vehicle]).then(({result, fields}) => {
-		console.log("Cleared previous owner of car successfully");
-		db.query(`UPDATE appuser SET activeVehicle = ? WHERE ID = ?`, [vehicle, req.tokenPayload.ID]).then(({result, fields}) => {
-			res.status(200).json({res: "Active vehicle updated with success"});
-		}).catch(err => {
-			console.log(err);
-			res.status(406).json({err: "Something went wrong with the query"});
-		});
-		console.log("Hey");
+	db.query("UPDATE transfer SET status = ? WHERE ID = ?", [status, ID]).then(() => {
+		res.status(200).json({res: "Transfer status updated successfully"});
 	}).catch(err => {
 		console.log(err);
 		res.status(406).json({err: "Something went wrong with the query"});
 	});
 });
 
+// PUT updateActiveVehicle
+router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next) {
+	let {vehicle} = req.body;
+
+	db.query("UPDATE appuser SET activeVehicle = NULL WHERE activeVehicle = ?", [vehicle]).then(() => {
+		console.log("Cleared previous owner of car successfully");
+		db.query(`UPDATE appuser SET activeVehicle = ? WHERE ID = ?`, [vehicle, req.tokenPayload.ID]).then(() => {
+			res.status(200).json({res: "Active vehicle updated with success"});
+		}).catch(err => {
+			console.log(err);
+			res.status(406).json({err: "Something went wrong with the query"});
+		});
+	}).catch(err => {
+		console.log(err);
+		res.status(406).json({err: "Something went wrong with the query"});
+	});
+});
+
+// POST addTransfer
 router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
-	let {person_name, num_of_people, origin, destination, datetime} = req.body;
+	let {person_name, num_of_people, price, origin, destination, flight, datetime, operator, observations} = req.body;
 
 	if (person_name && num_of_people && origin && destination && datetime) {
 		db.query(`INSERT INTO 
-						transfer(person_name, num_of_people, price, origin, destination, transfer_time, status, paid) 
-						VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
-			[person_name, num_of_people, 0, origin, destination, datetime, 'PENDING', true]
+						transfer(person_name, num_of_people, price, origin, destination, flight, transfer_time, service_operator, observations, status, paid) 
+						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			[person_name, num_of_people, price, origin, destination, flight, datetime, operator, observations, 'PENDING', true]
 		).then(({result, fields}) => {
 			res.status(200).json({res: "Transfer added successfully"});
 		}).catch(err => {
@@ -168,6 +203,8 @@ router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
 	}
 });
 
+
+// DELETE removeTransfer/:ID
 router.delete("/removeTransfer/:ID", mustBeAdmin, function (req, res, next) {
 	let ID = req.params.ID;
 

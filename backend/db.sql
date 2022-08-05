@@ -73,6 +73,7 @@ CREATE TABLE Transfer (
 	paid BOOLEAN NOT NULL,
 	driver INT UNSIGNED,
 	vehicle INT UNSIGNED,
+	observations VARCHAR(256),
 	FOREIGN KEY (service_operator) REFERENCES ServiceOperator(ID),
 	FOREIGN KEY (client) REFERENCES Client(ID),
 	FOREIGN KEY (driver) REFERENCES AppUser(ID),

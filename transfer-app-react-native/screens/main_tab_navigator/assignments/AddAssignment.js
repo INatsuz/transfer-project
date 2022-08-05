@@ -9,82 +9,57 @@ import {
 	TextInput,
 	View
 } from "react-native";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+import RNPickerSelect from "react-native-picker-select";
+import {Chevron} from "react-native-shapes";
+import useOperators from "../../../hooks/useOperators";
+import {postWithAuth} from "../../../utils/Requester";
 
-const IP = "vraminhos.com";
-
-async function getTokens() {
-	let accessToken = await SecureStore.getItemAsync("accessToken");
-	let refreshToken = await SecureStore.getItemAsync("refreshToken");
-
-	if (accessToken && refreshToken) {
-		return {accessToken: accessToken, refreshToken: refreshToken};
-	} else {
-		return false;
-	}
-}
-
-export default function AddAssignment(props) {
+export default function AddAssignment() {
 	const [pickingDate, setPickingDate] = useState(false);
 	const [pickingTime, setPickingTime] = useState(false);
 
 	const [personName, setPersonName] = useState("");
 	const [numberOfPeople, setNumberOfPeople] = useState(1);
+	const [price, setPrice] = useState("");
 	const [origin, setOrigin] = useState("");
 	const [destination, setDestination] = useState("");
 	const [date, setDate] = useState(new Date());
 	const [time, setTime] = useState(new Date());
+	const [flight, setFlight] = useState("");
+	const [operator, setOperator] = useState(null);
+	const [observations, setObservations] = useState("");
 
-	// const [driverList, setDriverList] = useState([]);
+	const [operators] = useOperators();
 
 	let dateString = String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0") + "/" + date.getFullYear();
 	let timeString = String(time.getHours()).padStart(2, "0") + ":" + String(time.getMinutes()).padStart(2, "0");
 
 	function onAddPress() {
-		getTokens().then(({accessToken, refreshToken}) => {
-			axios.post(`http://${IP}:3000/api/addTransfer`, {
-				person_name: personName,
-				num_of_people: numberOfPeople,
-				origin: origin,
-				destination: destination,
-				datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:00`
-			}, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`
-				}
-			}).then(res => {
-				console.log(res.data);
-				props.navigation.navigate("Assignments");
-			}).catch(err => {
-				console.log(err.response);
-			});
+		let data = {
+			person_name: personName,
+			num_of_people: numberOfPeople,
+			price,
+			origin,
+			destination,
+			flight,
+			datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:00`,
+			operator,
+			observations
+		};
+		console.log(data)
+
+		postWithAuth("api/addTransfer", data).then(res => {
+			console.log("Transfer added successfully");
+		}).catch(err => {
+			console.log(err);
 		});
 	}
-	//
-	// function fetchDrivers() {
-	// 	getTokens().then(({accessToken, refreshToken}) => {
-	// 		axios.get(`http://${IP}:3000/api/getDrivers`, {
-	// 			headers: {
-	// 				Authorization: `Bearer ${accessToken}`
-	// 			}
-	// 		}).then(res => {
-	// 			console.log(res.data);
-	// 			setDriverList(res.data.drivers);
-	// 		}).catch(err => {
-	// 			console.log(err.response);
-	// 		});
-	// 	});
-	// }
-	//
-	// useEffect(() => {
-	// 	fetchDrivers();
-	// }, []);
 
 	return (
 		<View style={styles.container}>
+			{/* Datetime modals */}
 			{pickingDate && <DateTimePicker value={date} mode="date" onChange={(event, date) => {
 				setPickingDate(false);
 				setDate(date);
@@ -94,24 +69,46 @@ export default function AddAssignment(props) {
 				setPickingTime(false);
 				setTime(time);
 			}}/>}
+
 			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
+					{/* Person Name field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Person Name: </Text>
 						<TextInput placeholder={"Person Name"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPersonName(value)}/>
 					</View>
+
+					{/* Number of People field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Number of People: </Text>
 						<TextInput keyboardType={"number-pad"} placeholder={"Number of People"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
 					</View>
+
+					{/* Price field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Price: </Text>
+						<TextInput keyboardType={"number-pad"} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPrice(value)}/>
+					</View>
+
+					{/* Origin field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Origin: </Text>
 						<TextInput placeholder={"Origin"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setOrigin(value)}/>
 					</View>
+
+					{/* Destination field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Destination: </Text>
 						<TextInput placeholder={"Destination"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setDestination(value)}/>
 					</View>
+
+					{/* Flight field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Flight: </Text>
+						<TextInput placeholder={"Flight"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setFlight(value)}/>
+					</View>
+
+					{/* Time/Date field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Time: </Text>
 						<Pressable onPress={() => {
@@ -120,6 +117,32 @@ export default function AddAssignment(props) {
 							<TextInput editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
 						</Pressable>
 					</View>
+
+					{/* Operators field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Operator: </Text>
+						<RNPickerSelect value={operator} items={operators.map(item => {
+							return {key: item.ID, label: item.name, value: item.ID};
+						})} onValueChange={(value) => {
+							if (value !== operator) {
+								console.log(value);
+								setOperator(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
+					</View>
+
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Observations: </Text>
+						<TextInput placeholder={"Observations"} placeholderTextColor="#A3A9AA" multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
+					</View>
+
+					{/* Add button */}
 					<View style={{paddingBottom: 10}}>
 						<Button title={"Add"} onPress={onAddPress}/>
 					</View>
@@ -142,6 +165,11 @@ const styles = StyleSheet.create({
 	text: {
 		color: "#fff",
 		fontSize: 18
+	},
+
+	pickerSelect: {
+		color: "#fff",
+		fontSize: 16
 	},
 
 	title: {
