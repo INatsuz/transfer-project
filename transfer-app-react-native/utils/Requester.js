@@ -4,7 +4,7 @@ import {navigationRef} from "./RootNavigation";
 import {logoffAction} from "../redux/actions/loginActions";
 import {deleteTokens, getTokens, saveTokens} from "./TokenManager";
 
-export const IP = "81.84.159.96:3000";
+export const IP = "vraminhos.com:3000";
 
 export async function refreshTokens(refreshToken) {
 	console.log("Refreshing token (Requester util)");
