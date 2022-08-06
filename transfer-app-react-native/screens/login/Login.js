@@ -55,8 +55,8 @@ export default function Login(props) {
 			});
 		}).catch(err => {
 			console.log(err);
-			deleteTokens();
 			setIsLoading(false);
+			deleteTokens();
 		});
 	}, []);
 

@@ -1,15 +1,23 @@
 import * as SecureStore from "expo-secure-store";
 
 export async function getTokens() {
-	return new Promise(async (resolve, reject) => {
-		let accessToken = await SecureStore.getItemAsync("accessToken");
-		let refreshToken = await SecureStore.getItemAsync("refreshToken");
-
-		if (accessToken && refreshToken) {
-			resolve({accessToken: accessToken, refreshToken: refreshToken});
-		} else {
-			reject();
-		}
+	return new Promise(function (resolve, reject) {
+		SecureStore.getItemAsync("accessToken").then(accessToken => {
+			SecureStore.getItemAsync("refreshToken").then(async refreshToken => {
+				if (accessToken && refreshToken) {
+					resolve({accessToken: accessToken, refreshToken: refreshToken});
+				} else {
+					await deleteTokens();
+					reject("One is null");
+				}
+			}).catch(async err => {
+				await deleteTokens();
+				reject(err);
+			});
+		}).catch(async err => {
+			await deleteTokens();
+			reject(err);
+		});
 	});
 }
 
