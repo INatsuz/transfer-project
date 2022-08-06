@@ -4,7 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 function getStatusColor(status) {
 	switch (status) {
 		case "PENDING":
-			return "#FFD700";
+			return "#FF9933";
 		case "IN PROGRESS":
 			return "#28a745";
 		case "FINISHED":
@@ -18,54 +18,45 @@ export default function AssignmentListItem(props) {
 	const timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
 
 	let variableStyles = StyleSheet.create({
-			fakeBorder: {
-				width: 4,
-				position: "absolute",
-				right: 0,
-				bottom: 0,
-				top: 0,
-				borderTopRightRadius: 10,
-				borderBottomRightRadius: 10,
-				backgroundColor: getStatusColor(props.data.status)
+			statusBorderColor: {
+				borderRightColor: getStatusColor(props.data.status)
 			}
 		}
 	);
 
 	return (
-		<View style={styles.listItemContainer}>
-			<TouchableOpacity onPress={() => props.onItemPress(props.data)} style={{flex: 1}}>
-				<View style={{flexDirection: "row", flex: 1, paddingRight: 4}}>
-					<View style={styles.listSection}>
-						<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
-						<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
-					</View>
-					<View style={[styles.listSection, {
-						alignItems: "center",
-						flex: 0,
-						paddingHorizontal: 10
-					}]}><Ionicons name="arrow-forward" size={styles.textStyle.fontSize} color={styles.textStyle.color}/></View>
-					<View style={[styles.listSection]}>
-						<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
-					</View>
+		<TouchableOpacity onPress={() => props.onItemPress(props.data)}>
+			<View style={[styles.listItemContainer, variableStyles.statusBorderColor]}>
+				<View style={styles.listSection}>
+					<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
+					<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
 				</View>
-			</TouchableOpacity>
-			<View style={variableStyles.fakeBorder}></View>
-		</View>
-	)
-		;
+				<View style={[styles.listSection, {
+					alignItems: "center",
+					flex: 0,
+					paddingHorizontal: 10
+				}]}><Ionicons name="arrow-forward" size={styles.textStyle.fontSize} color={styles.textStyle.color}/></View>
+				<View style={[styles.listSection]}>
+					<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
+				</View>
+				<View style={variableStyles.fakeBorder}></View>
+			</View>
+		</TouchableOpacity>
+	);
 };
 
 const styles = StyleSheet.create({
 	listItemContainer: {
 		overflow: "hidden",
+		flexDirection: "row",
 		borderRadius: 10,
-		paddingVertical: 5,
-		paddingHorizontal: 10,
+		borderRightWidth: 4,
 		marginVertical: 5,
 		marginHorizontal: 10,
+		paddingVertical: 5,
+		paddingHorizontal: 10,
 		minHeight: 85,
-		backgroundColor: "#181818",
-		position: "relative"
+		backgroundColor: "#181818"
 	},
 
 	listSection: {
@@ -75,8 +66,7 @@ const styles = StyleSheet.create({
 
 	textStyle: {
 		color: "#fff",
-		fontSize: 16,
-		textAlign: "center"
+		fontSize: 16
 	},
 
 	datetime: {

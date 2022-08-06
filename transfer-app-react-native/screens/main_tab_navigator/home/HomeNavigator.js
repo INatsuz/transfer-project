@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 function getStatusColor(status) {
 	switch (status) {
 		case "PENDING":
-			return "#FFD700";
+			return "#FF9933";
 		case "IN PROGRESS":
 			return "#28a745";
 		case "FINISHED":
