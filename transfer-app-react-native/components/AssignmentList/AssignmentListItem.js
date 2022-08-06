@@ -18,15 +18,22 @@ export default function AssignmentListItem(props) {
 	const timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
 
 	let variableStyles = StyleSheet.create({
-			statusBorderColor: {
-				borderRightColor: getStatusColor(props.data.status)
+			fakeBorder: {
+				width: 4,
+				position: "absolute",
+				right: 0,
+				bottom: 0,
+				top: 0,
+				borderTopRightRadius: 10,
+				borderBottomRightRadius: 10,
+				backgroundColor: getStatusColor(props.data.status)
 			}
 		}
 	);
 
 	return (
 		<TouchableOpacity onPress={() => props.onItemPress(props.data)}>
-			<View style={[styles.listItemContainer, variableStyles.statusBorderColor]} >
+			<View style={styles.listItemContainer}>
 				<View style={styles.listSection}>
 					<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
 					<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
@@ -39,6 +46,7 @@ export default function AssignmentListItem(props) {
 				<View style={[styles.listSection]}>
 					<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
 				</View>
+				<View style={variableStyles.fakeBorder}></View>
 			</View>
 		</TouchableOpacity>
 	);
@@ -46,15 +54,16 @@ export default function AssignmentListItem(props) {
 
 const styles = StyleSheet.create({
 	listItemContainer: {
+		overflow: "hidden",
 		flexDirection: "row",
-		borderRightWidth: 5,
 		borderRadius: 10,
 		marginVertical: 5,
 		marginHorizontal: 10,
 		paddingVertical: 5,
 		paddingHorizontal: 10,
 		minHeight: 85,
-		backgroundColor: "#181818"
+		backgroundColor: "#181818",
+		position: "relative"
 	},
 
 	listSection: {
