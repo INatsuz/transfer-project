@@ -32,35 +32,37 @@ export default function AssignmentListItem(props) {
 	);
 
 	return (
-		<TouchableOpacity onPress={() => props.onItemPress(props.data)}>
-			<View style={styles.listItemContainer}>
-				<View style={styles.listSection}>
-					<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
-					<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
+		<View style={styles.listItemContainer}>
+			<TouchableOpacity onPress={() => props.onItemPress(props.data)} style={{flex: 1}}>
+				<View style={{flexDirection: "row", flex: 1, paddingRight: 4}}>
+					<View style={styles.listSection}>
+						<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>
+						<Text style={[styles.textStyle, styles.datetime]}>{dateString} {timeString}</Text>
+					</View>
+					<View style={[styles.listSection, {
+						alignItems: "center",
+						flex: 0,
+						paddingHorizontal: 10
+					}]}><Ionicons name="arrow-forward" size={styles.textStyle.fontSize} color={styles.textStyle.color}/></View>
+					<View style={[styles.listSection]}>
+						<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
+					</View>
 				</View>
-				<View style={[styles.listSection, {
-					alignItems: "center",
-					flex: 0,
-					paddingHorizontal: 10
-				}]}><Ionicons name="arrow-forward" size={styles.textStyle.fontSize} color={styles.textStyle.color}/></View>
-				<View style={[styles.listSection]}>
-					<Text numberOfLines={3} style={styles.textStyle}>{props.data.destination}</Text>
-				</View>
-				<View style={variableStyles.fakeBorder}></View>
-			</View>
-		</TouchableOpacity>
-	);
+			</TouchableOpacity>
+			<View style={variableStyles.fakeBorder}></View>
+		</View>
+	)
+		;
 };
 
 const styles = StyleSheet.create({
 	listItemContainer: {
 		overflow: "hidden",
-		flexDirection: "row",
 		borderRadius: 10,
-		marginVertical: 5,
-		marginHorizontal: 10,
 		paddingVertical: 5,
 		paddingHorizontal: 10,
+		marginVertical: 5,
+		marginHorizontal: 10,
 		minHeight: 85,
 		backgroundColor: "#181818",
 		position: "relative"
@@ -73,7 +75,8 @@ const styles = StyleSheet.create({
 
 	textStyle: {
 		color: "#fff",
-		fontSize: 16
+		fontSize: 16,
+		textAlign: "center"
 	},
 
 	datetime: {
