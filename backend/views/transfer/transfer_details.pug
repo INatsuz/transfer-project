@@ -1,0 +1,62 @@
+extends ../includes/layout
+
+block content
+    input#datetime(type="hidden" value=transfer.transfer_time.toISOString())
+    - let dateString = String(transfer.transfer_time.getDate()).padStart(2, "0") + "/" + String(transfer.transfer_time.getMonth() + 1).padStart(2, "0") + "/" + transfer.transfer_time.getFullYear();
+    - let timeString = String(transfer.transfer_time.getHours()).padStart(2, "0") + ":" + String(transfer.transfer_time.getMinutes()).padStart(2, "0");
+
+    table.table.table-striped.table-hover.mt-2
+        tr
+            th ID
+            td= transfer.ID
+        tr
+            th Person Name
+            td= transfer.person_name
+        tr
+            th Number of People
+            td= transfer.num_of_people
+        tr
+            th Origin
+            td= transfer.origin
+        tr
+            th Destination
+            td= transfer.destination
+        tr
+            th Date/Time
+            td#datetime-field= `${dateString} ${timeString}`
+        tr
+            th Status
+            td= transfer.status
+        tr
+            th Flight
+            td= transfer.flight
+        tr
+            th Price
+            td= `${transfer.price}€`
+        tr
+            th Paid
+            if transfer.paid
+                td
+                    span.badge.text-bg-success Yes
+            else
+                td
+                    span.badge.text-bg-danger No
+        tr
+            th Driver
+            td= transfer.driver
+        tr
+            th Vehicle
+            td= transfer.vehicle
+        tr
+            th Operator
+            td= transfer.service_operator
+        tr
+            th Observations
+            td= transfer.observations
+
+block scripts
+    script.
+        let datetime = new Date(document.getElementById("datetime").value);
+        let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
+        let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
+        document.getElementById("datetime-field").innerHTML = `${dateString} ${timeString}`;

@@ -1,0 +1,13 @@
+extends includes/layout
+
+block content
+    div.row.g-0.py-2
+        div.col-12.col-sm-9.col-md-8.col-lg-6.mx-auto
+            form.mt-2(method="post", action="login")
+                div.mb-3
+                    label.form-label(for="email-input") Email
+                    input.form-control#email-input(type="email" placeholder="example@email.com" name="email")
+                div.mb-3
+                    label.form-label(for="password-input") Password
+                    input.form-control#password-input(type="password" placeholder="Password" name="password")
+                button.btn.btn-primary.form-control(type="submit") Login

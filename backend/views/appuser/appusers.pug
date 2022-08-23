@@ -1,0 +1,11 @@
+extends ../includes/layout
+
+block content
+    include appuser_table
+
+    div.my-3
+        a.btn.btn-success(href="/admin/appusers/create")
+            i.bi.bi-plus-lg
+            |  Create
+
+    +appuser_table(users)

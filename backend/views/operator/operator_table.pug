@@ -1,0 +1,22 @@
+mixin operator_table_row(row)
+    tr
+        td.align-middle= row.ID
+        td.align-middle= row.name
+        td.text-nowrap.align-middle
+            a.btn.btn-sm.btn-warning.me-1.ms-1(href=`/admin/operators/update/${row.ID}`)
+                i.bi.bi-pencil
+                |  Edit
+            a.btn.btn-sm.btn-danger.ms-1(href=`/admin/operators/delete/${row.ID}`)
+                i.bi.bi-trash
+                |  Delete
+
+mixin operator_table(data)
+    table.table.table-striped.table-hover
+        thead
+            tr
+                th ID
+                th Name
+                th
+        tbody
+            each row in data
+                +operator_table_row(row)

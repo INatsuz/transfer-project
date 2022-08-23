@@ -1,0 +1,27 @@
+extends ../includes/layout
+
+block content
+    include transfer_table
+
+    div.my-3
+        a.btn.btn-success(href="/admin/transfers/create")
+            i.bi.bi-plus-lg
+            |  Create
+
+    +transfer_table(transfers)
+
+block scripts
+    script.
+        let datetimeInputs = document.querySelectorAll(".datetime");
+        let datetimeFields = document.querySelectorAll(".datetime-field");
+        console.log(datetimeInputs);
+        console.log(datetimeFields);
+
+        for (let i = 0; i < datetimeInputs.length; i++) {
+            let datetime = new Date(datetimeInputs[i].value);
+
+            let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
+            let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
+
+            datetimeFields[i].innerHTML = `${dateString} ${timeString}`;
+        }

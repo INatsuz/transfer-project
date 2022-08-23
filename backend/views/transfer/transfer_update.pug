@@ -1,0 +1,72 @@
+extends ../includes/layout
+
+block content
+    div.row.g-0.mt-2
+        div.col-12
+            form#form(method="post" action=`/admin/transfers/update/${ID}`)
+                div.mb-3
+                    label.form-label(for="person-name") Person Name
+                    input.form-control#person-name(type="text" name="person_name" value=transfer.person_name)
+                div.mb-3
+                    label.form-label(for="origin") Origin
+                    input.form-control#origin(type="text" name="origin" value=transfer.origin)
+                div.mb-3
+                    label.form-label(for="destination") Destination
+                    input.form-control#destination(type="text" name="destination" value=transfer.destination)
+                div.mb-3
+                    label.form-label(for="num-of-people") Number of People
+                    input.form-control#num-of-people(type="number" name="num_of_people" min=1 value=transfer.num_of_people)
+                div.mb-3
+                    input#datetime-utc(type="hidden" value=transfer.transfer_time)
+                    label.form-label(for="datetime-input") Date and time
+                    input.form-control#datetime-input(type="datetime-local")
+                    input#datetime(type="hidden" name="datetime")
+                div.mb-3
+                    label.form-label(for="status") Status
+                    select.form-select#status(name="status")
+                        option(value="PENDING" selected=transfer.status === "PENDING") PENDING
+                        option(value="IN PROGRESS" selected=transfer.status === "IN PROGRESS") IN PROGRESS
+                        option(value="FINISHED" selected=transfer.status === "FINISHED") FINISHED
+                div.mb-3
+                    label.form-label(for="flight") Flight
+                    input.form-control#flight(type="text" name="flight" value=transfer.flight)
+                div.mb-3
+                    label.form-label(for="price") Price
+                    input.form-control#price(type="number" name="price" step="0.01" value=transfer.price)
+                div.mb-3
+                    label.form-label(for="isPaid") Is Paid
+                    input.form-check-input.ms-2#isPaid(type="checkbox" name="isPaid" checked=transfer.paid === 1)
+                div.mb-3
+                    label.form-label(for="driver") Driver
+                    select.form-select#driver(name="driver")
+                        each driver in drivers
+                            option(value=driver.ID selected=driver.ID === transfer.driver)= driver.name
+                div.mb-3
+                    label.form-label(for="vehicle") Vehicle
+                    select.form-select#vehicle(name="vehicle")
+                        each vehicle in vehicles
+                            option(value=vehicle.ID selected = vehicle.ID === transfer.vehicle)= vehicle.name
+                div.mb-3
+                    label.form-label(for="operator") Operator
+                    select.form-select#operator(name="operator")
+                        each operator in operators
+                            option(value=operator.ID selected = operator.ID === transfer.service_operator)= operator.name
+                div.mb-3
+                    label.form-label(for="observations") Observations
+                    textarea.form-control#observations(name="observations" rows=2)= transfer.observations
+
+                button.btn.btn-success(type="submit")
+                    i.bi.bi-pencil
+                    |  Update
+
+block scripts
+    script.
+        let og_time = new Date(document.getElementById("datetime-utc").value)
+        let adjusted_time = new Date(og_time.getTime() - og_time.getTimezoneOffset() * 60000)
+        document.getElementById("datetime-input").value = adjusted_time.toISOString().slice(0, -1);
+
+        document.getElementById("form").addEventListener("submit", function (event) {
+            let datetime = new Date(document.getElementById("datetime-input").value);
+            console.log(datetime.toISOString());
+            document.getElementById("datetime").value = datetime.toISOString()
+        });

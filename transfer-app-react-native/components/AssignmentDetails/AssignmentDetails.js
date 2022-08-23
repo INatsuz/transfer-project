@@ -121,7 +121,7 @@ export default function AssignmentDetails(props) {
 
 	return (
 		<View style={styles.container}>
-			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
 					{pickingDate && <DateTimePicker value={datetime} mode="date" onChange={(event, date) => {
 						setPickingDate(false);

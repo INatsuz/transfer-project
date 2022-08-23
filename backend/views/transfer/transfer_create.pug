@@ -1,0 +1,67 @@
+extends ../includes/layout
+
+block content
+    div.row.g-0.mt-2
+        div.col-12
+            form#form(method="post" action="/admin/transfers/create")
+                div.mb-3
+                    label.form-label(for="person-name") Person Name
+                    input.form-control#person-name(type="text" name="personName")
+                div.mb-3
+                    label.form-label(for="origin") Origin
+                    input.form-control#origin(type="text" name="origin")
+                div.mb-3
+                    label.form-label(for="destination") Destination
+                    input.form-control#destination(type="text" name="destination")
+                div.mb-3
+                    label.form-label(for="num-of-people") Number of People
+                    input.form-control#num-of-people(type="number" name="numberOfPeople" min=1)
+                div.mb-3
+                    label.form-label(for="datetime-input") Date and time
+                    input.form-control#datetime-input(type="datetime-local" name="datetime-input")
+                    input#datetime(type="hidden" name="datetime")
+                div.mb-3
+                    label.form-label(for="status") Status
+                    select.form-select#status(name="status")
+                        option(value="PENDING") PENDING
+                        option(value="IN PROGRESS") IN PROGRESS
+                        option(value="FINISHED") FINISHED
+                div.mb-3
+                    label.form-label(for="flight") Flight
+                    input.form-control#flight(type="text" name="flight")
+                div.mb-3
+                    label.form-label(for="price") Price
+                    input.form-control#price(type="number" name="price" step="0.01")
+                div.mb-3
+                    label.form-label(for="isPaid") Is Paid
+                    input.form-check-input.ms-2#isPaid(type="checkbox" name="isPaid")
+                div.mb-3
+                    label.form-label(for="driver") Driver
+                    select.form-select#driver(name="driver")
+                       each driver in drivers
+                            option(value=driver.ID)= driver.name
+                div.mb-3
+                    label.form-label(for="vehicle") Vehicle
+                    select.form-select#vehicle(name="vehicle")
+                        each vehicle in vehicles
+                            option(value=vehicle.ID)= vehicle.name
+                div.mb-3
+                    label.form-label(for="operator") Operator
+                    select.form-select#operator(name="operator")
+                        each operator in operators
+                            option(value=operator.ID)= operator.name
+                div.mb-3
+                    label.form-label(for="observations") Observations
+                    textarea.form-control#observations(name="observations" rows=2)
+
+                button.btn.btn-success(type="submit")
+                    i.bi.bi-plus-lg
+                    |  Create
+
+block scripts
+    script.
+        document.getElementById("form").addEventListener("submit", function (event) {
+            let datetime = new Date(document.getElementById("datetime-input").value);
+            console.log(datetime.toISOString());
+            document.getElementById("datetime").value = datetime.toISOString()
+        });

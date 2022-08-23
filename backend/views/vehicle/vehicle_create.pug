@@ -1,0 +1,27 @@
+extends ../includes/layout
+
+block content
+    div.row.g-0.mt-2
+        div.col-12
+            form(method="post" action="/admin/vehicles/create")
+                div.mb-3
+                    label.form-label(for="brand") Brand
+                    input.form-control#brand(type="text" name="brand")
+                div.mb-3
+                    label.form-label(for="license-plate") License Plate
+                    input.form-control#license-plate(type="text" name="license_plate")
+                div.mb-3
+                    label.form-label(for="name") Name
+                    input.form-control#name(type="text" name="name")
+                div.mb-3
+                    label.form-label(for="num-seats") Number of Seats
+                    input.form-control#num-seats(type="number" min=1 max=50 name="seat_number")
+                div.mb-3
+                    label.form-label(for="status") Status
+                    select.form-select#status(name="status")
+                        option(value="Working") Working
+                        option(value="Broken") Broken
+
+                button.btn.btn-success(type="submit")
+                    i.bi.bi-plus-lg
+                    |  Create

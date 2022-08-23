@@ -71,7 +71,7 @@ export default function AddAssignment(props) {
 				setTime(time);
 			}}/>}
 
-			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
 					{/* Person Name field */}
 					<View style={styles.section}>

@@ -2,14 +2,20 @@ const db = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
+
 const JWT_SECRET = "w5JVIErNaQ";
 
 const ACCESS_TOKEN_DURATION = "1h";
 const REFRESH_TOKEN_DURATION = "7d";
 
-function verifyLoginCredentials(email, password) {
+const USER_TYPES = {ADMIN: 1, DRIVER: 2}
+
+function verifyLoginCredentials(email, password, type) {
+	let query = "SELECT * FROM appuser WHERE email = ?" + (type ? " AND userType = ?" : "");
+	let params = (type ? [email, USER_TYPES[type]] : [email]);
+
 	return new Promise((resolve, reject) => {
-		db.query("SELECT * FROM appuser WHERE email = ?", [email]).then(({result}) => {
+		db.query(query, params).then(({result}) => {
 			if (result.length === 0) {
 				reject("No results found in db");
 				return;
@@ -24,22 +30,31 @@ function verifyLoginCredentials(email, password) {
 
 				if (!isEqual) {
 					reject("Wrong credentials");
-					return;
 				}
-				let payload = {
-					ID: result[0].ID,
-					email: result[0].email,
-					name: result[0].name,
-					userType: result[0].userType
-				};
-				console.log(payload);
 
-				generateTokens(payload).then(tokens => {
-					resolve({...tokens, payload: payload});
-				}).catch(err => {
-					reject(err);
-				});
+				resolve(result[0]);
+			});
+		}).catch(err => {
+			reject(err);
+		});
+	});
+}
 
+function verifyLoginAndGenerateTokens(email, password) {
+	return new Promise((resolve, reject) => {
+		verifyLoginCredentials(email, password).then(result => {
+			let payload = {
+				ID: result.ID,
+				email: result.email,
+				name: result.name,
+				userType: result.userType
+			};
+			console.log(payload);
+
+			generateTokens(payload).then(tokens => {
+				resolve({...tokens, payload: payload});
+			}).catch(err => {
+				reject(err);
 			});
 		}).catch(err => {
 			reject(err);
@@ -145,8 +160,19 @@ function mustBeAdmin(req, res, next) {
 	});
 }
 
+function mustHaveSession(req, res, next) {
+	if (!req.session.userID) {
+		res.status(401).redirect("/admin/login");
+		return;
+	}
+
+	next();
+}
+
 module.exports.verifyLoginCredentials = verifyLoginCredentials;
+module.exports.verifyLoginAndGenerateTokens = verifyLoginAndGenerateTokens;
 module.exports.verifyToken = verifyToken;
 module.exports.generateTokens = generateTokens;
 module.exports.mustBeAuthenticated = mustBeAuthenticated;
 module.exports.mustBeAdmin = mustBeAdmin;
+module.exports.mustHaveSession = mustHaveSession;

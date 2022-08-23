@@ -1,0 +1,15 @@
+extends ../includes/layout
+
+block content
+    div.row.g-0.mt-2
+        div.col-12
+            h4.alert.alert-danger Are you sure you want to delete this operator?
+            h5.alert.alert-warning You maybe be unable to delete this due to it being used somewhere else.
+            form(method="post" action="/admin/operators/delete")
+                input(type="hidden" value=`${ID}` name="id")
+                button.btn.btn-danger(type="submit")
+                    i.bi.bi-trash
+                    |  Delete
+                a.btn.btn-secondary.ms-1(href="/admin/operators")
+                    i.bi.bi-arrow-left
+                    |  Cancel

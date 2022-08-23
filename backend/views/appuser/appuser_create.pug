@@ -1,0 +1,30 @@
+extends ../includes/layout
+
+block content
+    div.row.g-0.mt-2
+        div.col-12
+            form(method="post" action="/admin/appusers/create")
+                div.mb-3
+                    label.form-label(for="email") Email
+                    input.form-control#email(type="email" name="email")
+                div.mb-3
+                    label.form-label(for="name") Name
+                    input.form-control#name(type="text" name="name")
+                div.mb-3
+                    label.form-label(for="birthday") Birthday
+                    input.form-control#birthday(type="date" name="birthday")
+                div.mb-3
+                    label.form-label(for="user-type") User Type
+                    select.form-select#user-type(name="userType")
+                        option(value="1") Admin
+                        option(value="2") Driver
+                div.mb-3
+                    label.form-label(for="password") Password
+                    input.form-control#password(type="password" name="password")
+                div.mb-3
+                    label.form-label(for="confirm-password") Confirm Password
+                    input.form-control#confirm-password(type="password" name="confirmPassword")
+
+                button.btn.btn-success(type="submit")
+                    i.bi.bi-plus-lg
+                    |  Create

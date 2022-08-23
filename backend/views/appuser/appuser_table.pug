@@ -1,0 +1,35 @@
+mixin appuser_table_row(row)
+    - let dateString = String(row.birthday.getDate()).padStart(2, "0") + "/" + String(row.birthday.getMonth() + 1).padStart(2, "0") + "/" + row.birthday.getFullYear();
+
+    tr
+        td.align-middle= row.ID
+        td.align-middle= row.name
+        td.align-middle= row.email
+        td.align-middle= dateString
+        td.align-middle= row.vehicle
+        td.align-middle= row.userType
+        td.text-nowrap.align-middle
+            a.btn.btn-sm.btn-primary.me-1(href=`/admin/appusers/details/${row.ID}`)
+                i.bi.bi-list
+                |  Details
+            a.btn.btn-sm.btn-warning.me-1.ms-1(href=`/admin/appusers/update/${row.ID}`)
+                i.bi.bi-pencil
+                |  Edit
+            a.btn.btn-sm.btn-danger.ms-1(href=`/admin/appusers/delete/${row.ID}`)
+                i.bi.bi-trash
+                |  Delete
+
+mixin appuser_table(data)
+    table.table.table-striped.table-hover
+        thead
+            tr
+                th ID
+                th Name
+                th Email
+                th Birthday
+                th Active Vehicle
+                th Type
+                th
+        tbody
+            each row in data
+                +appuser_table_row(row)

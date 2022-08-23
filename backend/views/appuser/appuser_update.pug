@@ -1,0 +1,27 @@
+extends ../includes/layout
+
+block content
+    div.row.g-0.mt-2
+        div.col-12
+            form(method="post" action=`/admin/appusers/update/${ID}`)
+                a.btn.btn-warning.mb-3(href=`/admin/appusers/changePassword/${ID}`)
+                    i.bi.bi-key
+                    |  Change Password
+                div.mb-3
+                    label.form-label(for="email") Email
+                    input.form-control#email(type="email" name="email" value=appuser.email)
+                div.mb-3
+                    label.form-label(for="name") Name
+                    input.form-control#name(type="text" name="name" value=appuser.name)
+                div.mb-3
+                    label.form-label(for="birthday") Birthday
+                    input.form-control#birthday(type="date" name="birthday" value=`${appuser.birthday.toISOString().slice(0, -14)}`)
+                div.mb-3
+                    label.form-label(for="user-type") User Type
+                    select.form-select#user-type(name="userType")
+                        option(value="1" selected=appuser.userType === 1) Admin
+                        option(value="2" selected=appuser.userType === 2) Driver
+
+                button.btn.btn-success(type="submit")
+                    i.bi.bi-pencil
+                    |  Update
