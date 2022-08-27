@@ -3,6 +3,7 @@ const router = express.Router();
 const {verifyLoginCredentials, mustHaveSession} = require("../utils/authentication");
 const db = require('../utils/db');
 const bcrypt = require("bcrypt");
+const {generateCSV} = require("../utils/csv-generator");
 
 const SALT_ROUNDS = 10;
 
@@ -89,7 +90,7 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 });
 
 //TODO Figure out timezone issues
-router.post("/transfers/create", mustHaveSession, function (req, res, next) {
+router.post("/transfers/create", mustHaveSession, function (req, res) {
 	console.log(req.body.isPaid);
 
 	db.query(`INSERT INTO transfer(person_name, origin, destination, num_of_people, transfer_time, status, flight, price, paid, driver, vehicle, service_operator, observations)
@@ -422,7 +423,7 @@ router.get("/operators/update/:id", mustHaveSession, function (req, res) {
 });
 
 router.post("/operators/update/:id", mustHaveSession, function (req, res) {
-	db.query("UPDATE serviceoperator SET name = ? WHERE ID = ?", [req.body.name, req.params.id]).then(({result}) => {
+	db.query("UPDATE serviceoperator SET name = ? WHERE ID = ?", [req.body.name, req.params.id]).then(() => {
 		res.redirect("/admin/operators");
 	});
 });
@@ -446,6 +447,48 @@ router.post("/operators/delete", mustHaveSession, function (req, res) {
 		console.log(err);
 	}).finally(() => {
 		res.redirect("/admin/operators");
+	});
+});
+
+router.post("/genCSV", mustHaveSession, function (req, res, next) {
+	console.log(req.body)
+
+	let queryConditions = [];
+	if (req.body.startDate !== "") {
+		queryConditions.push(`transfer.transfer_time >= CAST('${req.body.startDate}' AS DATE)`);
+	}
+	if (req.body.endDate !== "") {
+		queryConditions.push(`transfer.transfer_time <= CAST('${req.body.endDate}' AS DATE)`);
+	}
+
+	if (req.body.driver !== "null") {
+		queryConditions.push(`transfer.driver = ${req.body.driver}`);
+	}
+	if (req.body.operator !== "null") {
+		queryConditions.push(`transfer.service_operator = ${req.body.operator}`);
+	}
+
+	db.query(`SELECT
+				transfer.ID 'Transfer Number', 
+				transfer.person_name 'Person Name',
+				transfer.num_of_people 'Number of People',
+				transfer.flight 'Flight',
+				transfer.origin 'Origin',
+				transfer.destination 'Destination',
+				DATE_FORMAT(transfer.transfer_time, '%d/%m/%Y %T') 'Transfer Time',
+				transfer.status 'Status',
+				appuser.name 'Driver',
+				CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') 'Vehicle',
+				serviceoperator.name 'Operator',
+				transfer.price 'Price',
+				transfer.paid 'Is Paid',
+				transfer.observations 'Observations'
+				FROM transfer
+				LEFT JOIN appuser ON transfer.driver = appuser.ID
+				LEFT JOIN vehicle ON transfer.vehicle = vehicle.ID
+				LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID 
+				${queryConditions.length > 0 ? " WHERE " + queryConditions.join(" AND ") : ""}`).then(({result, fields}) => {
+		res.set('Content-Disposition', 'attachment; filename=export.csv').send(generateCSV(result, fields));
 	});
 });
 

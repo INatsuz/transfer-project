@@ -29,7 +29,6 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa">
-      <console name="Connection" type="STANDARD" schema="transfer_app" session="Main"><![CDATA[SELECT transfer.*, appuser.name as driverName FROM transfer INNER JOIN appuser WHERE transfer.status <> 'FINISHED' AND transfer.driver = appuser.ID]]></console>
       <console name="Transfer App DB" type="STANDARD" schema="transfer_app" session="Main"><![CDATA[SELECT transfer.*, appuser.name as driverName
 FROM transfer
 LEFT JOIN appuser
@@ -74,7 +73,27 @@ UPDATE appuser SET activeVehicle = 2 WHERE ID = 2;
 
 # Query for getOperators endpoint
 SELECT ID, name
-FROM serviceoperator;]]></console>
+FROM serviceoperator;
+
+SELECT 
+transfer.ID, 
+transfer.person_name AS `Person Name`,
+transfer.num_of_people `Number of People`,
+transfer.flight `Flight`,
+transfer.origin `Origin`,
+transfer.destination `Destination`,
+DATE_FORMAT(transfer.transfer_time, '%d/%m/%Y %T') `Transfer Time`,
+transfer.status `Status`,
+appuser.name `Driver`,
+CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') `Vehicle`,
+serviceoperator.name `Operator`,
+transfer.price `Price`,
+transfer.paid `Is Paid`,
+transfer.observations `Observations`
+FROM transfer
+LEFT JOIN appuser ON transfer.driver = appuser.ID
+LEFT JOIN vehicle ON transfer.vehicle = vehicle.ID
+LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

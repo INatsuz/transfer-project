@@ -1,12 +1,45 @@
 extends ../includes/layout
 
 block content
+    div#exportModal.modal.fade(tabindex="-1" aria-labelledby="exportModal" aria-hidden="true")
+        div.modal-dialog
+            form(method="post" action="/admin/genCSV")
+                div.modal-content
+                    div.modal-header
+                        h5#exportModalLabel.modal-title Export Transfers
+                        button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+                    div.modal-body
+                            div.mb-3
+                                label.form-label(for="start-date") Start Date
+                                input.form-control#start-date(type="date" name="startDate")
+                            div.mb-3
+                                label.form-label(for="end-date") End Date
+                                input.form-control#end-date(type="date" name="endDate")
+                            div.mb-3
+                                label.form-label(for="driver") Driver
+                                select#driver.form-select(name="driver")
+                                    option(value="null" selected) All drivers
+                                    option(value=17) Ângelo Lopes
+                                    option(value=18) Benjamim Ramos
+                            div.mb-3
+                                label.form-label(for="operator") Operator
+                                select#operator.form-select(name="operator")
+                                    option(value="null" selected) All operators
+                                    option(value=1) Conception
+                                    option(value=2) Outdoor
+                    div.modal-footer
+                        button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close
+                        button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Export
+
     include transfer_table
 
     div.my-3
         a.btn.btn-success(href="/admin/transfers/create")
             i.bi.bi-plus-lg
             |  Create
+        button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#exportModal")
+            i.bi.bi-file-earmark-arrow-down
+            |  Export
 
     +transfer_table(transfers)
 
