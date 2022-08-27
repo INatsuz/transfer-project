@@ -8,9 +8,13 @@ html
         title Transfer App Admin
         block head
     body
-        include navbar
+        include ../components/navbar
 
         div.container
+            block errors
+                if errorMessage
+                    div.my-3.alert.alert-danger(role="alert")= errorMessage
+
             block content
 
         block scripts

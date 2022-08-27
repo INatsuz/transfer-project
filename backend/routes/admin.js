@@ -29,7 +29,9 @@ router.post("/login", function (req, res) {
 	}
 
 	if (!req.body.email || !req.body.password) {
-		res.status(400).json({err: "Bad request"});
+		res.render("login", {
+			errorMessage: "You left fields empty"
+		});
 		return;
 	}
 
@@ -38,12 +40,10 @@ router.post("/login", function (req, res) {
 		req.session.userID = result.ID;
 		req.session.username = result.name;
 
-		res.status(200);
+		res.render("index", {userID: req.session.userID, username: req.session.username});
 	}).catch(err => {
 		console.log(err);
-		res.status(401);
-	}).finally(() => {
-		res.render("index", {userID: req.session.userID, username: req.session.username});
+		res.render("login", {errorMessage: "Wrong credentials"});
 	});
 });
 
@@ -85,7 +85,11 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 		});
 	}).catch(err => {
 		console.log(err);
-		res.redirect("/admin/transfers");
+		res.render("transfer/transfer_create", {
+			userID: req.session.userID,
+			username: req.session.username,
+			errorMessage: "Something went wrong getting the drivers/vehicles/operators"
+		});
 	});
 });
 
