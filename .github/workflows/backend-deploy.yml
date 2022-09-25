@@ -1,0 +1,35 @@
+name: Backend Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone or pull the changes
+    - uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        script: |
+          cd transfer-project
+          git pull
+          
+    - name: Build dockerfile
+    - uses: appleboy/ssh-action@master
+      with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd transfer-project/backend
+            docker build . -t inatsuz/personal-images:transfer-app-backend
+            docker container stop transfer-app-backend
+            docker container prune -f
+            docker container run --name transfer-app-backend -d -p 3000:3000 inatsuz/personal-images:transfer-app-backend
