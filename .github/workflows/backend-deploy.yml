@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Clone or pull the changes
-    - uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -21,8 +21,8 @@ jobs:
           cd transfer-project
           git pull
           
-    - name: Build dockerfile
-    - uses: appleboy/ssh-action@master
+    - name: Build and run container
+      uses: appleboy/ssh-action@master
       with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
