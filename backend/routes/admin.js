@@ -54,7 +54,10 @@ router.get("/logout", mustHaveSession, function (req, res) {
 
 // Transfer routes
 router.get("/transfers", mustHaveSession, function (req, res) {
-	db.query("SELECT ID, origin, destination, transfer_time, person_name, num_of_people FROM transfer").then(({result}) => {
+	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
+					transfer.person_name, transfer.num_of_people, appuser.name AS driver
+					FROM transfer
+					LEFT JOIN appuser ON transfer.driver = appuser.ID`).then(({result}) => {
 		res.render("transfer/transfers", {
 			userID: req.session.userID,
 			username: req.session.username,

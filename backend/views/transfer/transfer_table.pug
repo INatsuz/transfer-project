@@ -4,12 +4,13 @@ mixin transfer_table_row(row)
 
     tr
         td.align-middle= row.ID
+        input.datetime(type="hidden" value=row.transfer_time)
+        td.fw-bold.align-middle.datetime-field= `${dateString} ${timeString}`
         td.align-middle= row.origin
         td.align-middle= row.destination
         td.align-middle= row.person_name
         td.align-middle= row.num_of_people
-        input.datetime(type="hidden" value=row.transfer_time)
-        td.align-middle.datetime-field= `${dateString} ${timeString}`
+        td.align-middle= row.driver
 
         td.text-nowrap.align-middle
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/transfers/details/${row.ID}`)
@@ -29,11 +30,12 @@ mixin transfer_table(data)
         thead
             tr
                 th ID
+                th Date/Time
                 th Origin
                 th Destination
                 th Person
                 th People
-                th Date/Time
+                th Driver
                 th
         tbody
             each row in data
