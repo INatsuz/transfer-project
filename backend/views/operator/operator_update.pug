@@ -7,6 +7,9 @@ block content
                 div.mb-3
                     label.form-label(for="name") Name
                     input.form-control#name(type="text" name="name" value=operator.name)
+                div.mb-3
+                    label.form-label(for="commission") Commission
+                    input.form-control#commission(type="number" name="commission" step=0.01 value=(operator.commission * 100).toFixed(2))
 
                 button.btn.btn-success(type="submit")
                     i.bi.bi-pencil

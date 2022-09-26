@@ -34,6 +34,10 @@ block content
                     label.form-label(for="price") Price
                     input.form-control#price(type="number" name="price" step="0.01" value=transfer.price)
                 div.mb-3
+                    label.form-label(for="commission") Commission (in %)
+                    input.form-control#commission(type="number" name="commission" step=0.01 value=parseFloat((transfer.commission * 100).toFixed(2)))
+                    small.text-warning If left empty, it will be set equal to the operator's default commission
+                div.mb-3
                     label.form-label(for="isPaid") Is Paid
                     input.form-check-input.ms-2#isPaid(type="checkbox" name="isPaid" checked=transfer.paid === 1)
                 div.mb-3
@@ -51,6 +55,7 @@ block content
                     select.form-select#operator(name="operator")
                         each operator in operators
                             option(value=operator.ID selected = operator.ID === transfer.service_operator)= operator.name
+                    input#operator-commission(type="hidden" name="operatorCommission")
                 div.mb-3
                     label.form-label(for="observations") Observations
                     textarea.form-control#observations(name="observations" rows=2)= transfer.observations
@@ -65,8 +70,18 @@ block scripts
         let adjusted_time = new Date(og_time.getTime() - og_time.getTimezoneOffset() * 60000)
         document.getElementById("datetime-input").value = adjusted_time.toISOString().slice(0, -1);
 
+        let operatorsArray = JSON.parse("#{JSON.stringify(operators)}".replaceAll('&quot;', '"'));
+
         document.getElementById("form").addEventListener("submit", function (event) {
-            let datetime = new Date(document.getElementById("datetime-input").value);
-            console.log(datetime.toISOString());
-            document.getElementById("datetime").value = datetime.toISOString()
+            try {
+                let datetime = new Date(document.getElementById("datetime-input").value);
+                console.log(datetime.toISOString());
+                document.getElementById("datetime").value = datetime.toISOString();
+            } catch (e) {
+                console.log("No valid date");
+            }
+
+            let operator = Number.parseInt(document.getElementById("operator").value);
+            console.log(operatorsArray.find(op => op.ID === operator));
+            document.getElementById("operator-commission").value = operatorsArray.find(op => op.ID === operator).commission;
         });

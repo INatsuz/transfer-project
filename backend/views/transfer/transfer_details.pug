@@ -34,6 +34,9 @@ block content
             th Price
             td= `${transfer.price}€`
         tr
+            th Commission (in %)
+            td= `${parseFloat((transfer.commission * 100).toFixed(2))}%`
+        tr
             th Paid
             if transfer.paid
                 td

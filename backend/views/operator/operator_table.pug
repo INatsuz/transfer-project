@@ -2,6 +2,7 @@ mixin operator_table_row(row)
     tr
         td.align-middle= row.ID
         td.align-middle= row.name
+        td.align-middle= `${parseFloat((row.commission * 100).toFixed(2))}%`
         td.text-nowrap.align-middle
             a.btn.btn-sm.btn-warning.me-1.ms-1(href=`/admin/operators/update/${row.ID}`)
                 i.bi.bi-pencil
@@ -16,6 +17,7 @@ mixin operator_table(data)
             tr
                 th ID
                 th Name
+                th Commission
                 th
         tbody
             each row in data

@@ -1,0 +1,51 @@
+extends ../layouts/layout
+
+block content
+    include commission_table
+
+    div.row.g-0.mt-2
+        div.col-12
+            form(method="GET" action="/admin/commissions")
+                div.row
+                    div.col-4
+                        label.form-label(for="start-date") Start Date
+                        input.form-control#start-date(type="date" name="startDate" value=startDate)
+                    div.col-4
+                        label.form-label(for="end-date") End Date
+                        input.form-control#end-date(type="date" name="endDate" value=endDate)
+                    div.col-4
+                        label.form-label(for="driver") Driver
+                        select#driver.form-select(name="driver")
+                            option(value='null') Select a driver
+                            each driver in drivers
+                                option(value=driver.ID selected=driver.ID === parseInt(currentDriver))= driver.name
+                div.row.g-0.mt-2.d-print-none
+                    div.col-12
+                        button.form-control.btn.btn-primary(type="submit") Search
+    if commissions
+        div.row.g-0.mt-1.d-print-none
+            div.col-12
+                form(method="GET" action="/admin/genCommissionCSV")
+                    input(type="hidden" name="startDate" value=startDate)
+                    input(type="hidden" name="endDate" value=endDate)
+                    input(type="hidden" name="driver" value=currentDriver)
+                    button.btn.btn-primary(type="submit") Export
+        div.row.g-0.mt-3
+            div.col-12
+                +commission_table(commissions)
+
+block scripts
+    script.
+        let datetimeInputs = document.querySelectorAll(".datetime");
+        let datetimeFields = document.querySelectorAll(".datetime-field");
+        console.log(datetimeInputs);
+        console.log(datetimeFields);
+
+        for (let i = 0; i < datetimeInputs.length; i++) {
+            let datetime = new Date(datetimeInputs[i].value);
+
+            let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
+            let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
+
+            datetimeFields[i].innerHTML = `${dateString} ${timeString}`;
+        }

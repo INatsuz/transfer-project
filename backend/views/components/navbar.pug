@@ -1,4 +1,4 @@
-nav.navbar.navbar-expand-lg.bg-light
+nav.navbar.navbar-expand-lg.bg-light.d-print-none
     div.container
         a.navbar-brand(href="/admin") Transfer Admin Panel
         button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
@@ -13,6 +13,8 @@ nav.navbar.navbar-expand-lg.bg-light
                     a.nav-link(href="/admin/appusers") Users
                 li.nav-item
                     a.nav-link(href="/admin/operators") Operators
+                li.nav-item
+                    a.nav-link(href="/admin/commissions") Commissions
             if userID === undefined || userID === null
                 a.nav-link(href="/admin/login") Login
             else
