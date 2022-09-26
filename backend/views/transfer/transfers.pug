@@ -53,8 +53,12 @@ block scripts
         for (let i = 0; i < datetimeInputs.length; i++) {
             let datetime = new Date(datetimeInputs[i].value);
 
+            let dateSpan = datetimeFields[i].querySelector(".date-span");
+            let timeSpan = datetimeFields[i].querySelector(".time-span");
+
             let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
             let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
 
-            datetimeFields[i].innerHTML = `${dateString} ${timeString}`;
+            dateSpan.innerHTML = `${dateString}`;
+            timeSpan.innerHTML = `${timeString}`;
         }

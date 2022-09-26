@@ -3,14 +3,17 @@ mixin transfer_table_row(row)
     - let timeString = String(row.transfer_time.getHours()).padStart(2, "0") + ":" + String(row.transfer_time.getMinutes()).padStart(2, "0");
 
     tr
-        td.align-middle= row.ID
         input.datetime(type="hidden" value=row.transfer_time)
-        td.fw-bold.align-middle.datetime-field= `${dateString} ${timeString}`
+        td.align-middle.datetime-field
+            span.date-span= `${dateString}`
+            | 
+            span.time-span.fw-bold= `${timeString}`
         td.align-middle= row.origin
         td.align-middle= row.destination
         td.align-middle= row.person_name
         td.align-middle= row.num_of_people
         td.align-middle= row.driver
+        td.align-middle= row.ID
 
         td.text-nowrap.align-middle
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/transfers/details/${row.ID}`)
@@ -29,13 +32,13 @@ mixin transfer_table(data)
     table.table.table-striped.table-hover
         thead
             tr
-                th ID
                 th Date/Time
                 th Origin
                 th Destination
                 th Person
                 th People
                 th Driver
+                th ID
                 th
         tbody
             each row in data
