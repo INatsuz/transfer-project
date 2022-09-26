@@ -3,7 +3,7 @@ extends ../layouts/layout
 block content
     div#exportModal.modal.fade(tabindex="-1" aria-labelledby="exportModal" aria-hidden="true")
         div.modal-dialog
-            form(method="post" action="/admin/genTransfer   CSV")
+            form(method="post" action="/admin/genTransferCSV")
                 div.modal-content
                     div.modal-header
                         h5#exportModalLabel.modal-title Export Transfers

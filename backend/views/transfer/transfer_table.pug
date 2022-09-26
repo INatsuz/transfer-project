@@ -6,7 +6,7 @@ mixin transfer_table_row(row)
         input.datetime(type="hidden" value=row.transfer_time)
         td.align-middle.datetime-field
             span.date-span= `${dateString}`
-            | 
+            |
             span.time-span.fw-bold= `${timeString}`
         td.align-middle= row.origin
         td.align-middle= row.destination
