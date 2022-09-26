@@ -2,7 +2,7 @@ const mysql = require("mysql");
 
 const pool = mysql.createPool({
 	connectionLimit: 10,
-	host: 'vraminhos.com',
+	host: process.env.DB_HOST,
 	user: 'inatsuz',
 	password: 'VRaminhos2509',
 	database: 'transfer_app',
