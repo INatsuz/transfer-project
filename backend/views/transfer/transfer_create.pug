@@ -42,16 +42,19 @@ block content
                 div.mb-3
                     label.form-label(for="driver") Driver
                     select.form-select#driver(name="driver")
-                       each driver in drivers
+                        option(value="null") No driver
+                        each driver in drivers
                             option(value=driver.ID)= driver.name
                 div.mb-3
                     label.form-label(for="vehicle") Vehicle
                     select.form-select#vehicle(name="vehicle")
+                        option(value="null") No vehicle
                         each vehicle in vehicles
                             option(value=vehicle.ID)= vehicle.name
                 div.mb-3
                     label.form-label(for="operator") Operator
                     select.form-select#operator(name="operator")
+                        option(value="null") No operator
                         each operator in operators
                             option(value=operator.ID)= operator.name
                     input#operator-commission(type="hidden" name="operatorCommission")
