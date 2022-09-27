@@ -228,9 +228,11 @@ router.post("/vehicles/create", mustHaveSession, function (req, res) {
 		return;
 	}
 
-	db.query("INSERT INTO VEHICLE(brand, license_plate, name, seat_number, status) VALUES (?, ?, ?, ?, ?)",
+	db.query("INSERT INTO vehicle(brand, license_plate, name, seat_number, status) VALUES (?, ?, ?, ?, ?)",
 		[req.body.brand, req.body.license_plate, req.body.name, req.body.seat_number, req.body.status]).then(() => {
 		res.redirect("/admin/vehicles");
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
