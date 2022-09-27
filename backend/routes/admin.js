@@ -57,7 +57,8 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, appuser.name AS driver
 					FROM transfer
-					LEFT JOIN appuser ON transfer.driver = appuser.ID`).then(({result}) => {
+					LEFT JOIN appuser ON transfer.driver = appuser.ID
+					ORDER BY transfer.transfer_time DESC`).then(({result}) => {
 		res.render("transfer/transfers", {
 			userID: req.session.userID,
 			username: req.session.username,
@@ -104,8 +105,8 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 					VALUES(?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[req.body.personName, req.body.origin, req.body.destination,
 			req.body.numberOfPeople, req.body.datetime, req.body.status,
-			req.body.flight, req.body.price, req.body.isPaid === "on", req.body.driver,
-			req.body.vehicle, req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission]).then(() => {
+			req.body.flight, req.body.price, req.body.isPaid === "on", req.body.driver === 'null' ? null : req.body.driver,
+			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission]).then(() => {
 		res.redirect("/admin/transfers");
 	}).catch(err => {
 		console.log(err);
