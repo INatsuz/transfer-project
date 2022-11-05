@@ -28,18 +28,18 @@ mixin transfer_table_row(row)
 
 mixin transfer_table(data)
     - let datetime;
-
-    table.table.table-striped.table-hover
-        thead
-            tr
-                th Date/Time
-                th Origin
-                th Destination
-                th Person
-                th People
-                th Driver
-                th ID
-                th
-        tbody
-            each row in data
-                +transfer_table_row(row)
+    div.table-responsive
+        table.table.table-striped.table-hover
+            thead
+                tr
+                    th Date/Time
+                    th Origin
+                    th Destination
+                    th Person
+                    th People
+                    th Driver
+                    th ID
+                    th
+            tbody
+                each row in data
+                    +transfer_table_row(row)

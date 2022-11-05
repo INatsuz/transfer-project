@@ -4,6 +4,7 @@ const {verifyLoginCredentials, mustHaveSession} = require("../utils/authenticati
 const db = require('../utils/db');
 const bcrypt = require("bcrypt");
 const {generateCSV} = require("../utils/csv-generator");
+const {sendPushNotification} = require('../utils/PushNotificationManager');
 
 const SALT_ROUNDS = 10;
 
@@ -54,10 +55,27 @@ router.get("/logout", mustHaveSession, function (req, res) {
 
 // Transfer routes
 router.get("/transfers", mustHaveSession, function (req, res) {
+	let filter = "";
+
+	switch (req.query.transferFilter) {
+		case "TODAY":
+			filter = "WHERE DATE(transfer.transfer_time) = CURDATE()";
+			break;
+		case "WEEK":
+			filter = "WHERE YEARWEEK(transfer.transfer_time, 1) = YEARWEEK(CURDATE(), 1)";
+			break;
+		case "MONTH":
+			filter = "WHERE MONTH(transfer.transfer_time) = MONTH(CURDATE())";
+			break
+		default:
+			filter = "";
+	}
+
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
+					${filter}
 					ORDER BY transfer.transfer_time DESC`).then(({result}) => {
 		res.render("transfer/transfers", {
 			userID: req.session.userID,
@@ -99,14 +117,16 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 
 router.post("/transfers/create", mustHaveSession, function (req, res) {
 	console.log(req.body.operatorCommission);
-	console.log(!!req.body.commission);
+	if (req.body.operator === 'null' && !req.body.commission) {
+		req.body.commission = 0;
+	}
 
 	db.query(`INSERT INTO transfer(person_name, origin, destination, num_of_people, transfer_time, status, flight, price, paid, driver, vehicle, service_operator, observations, commission)
 					VALUES(?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[req.body.personName, req.body.origin, req.body.destination,
 			req.body.numberOfPeople, req.body.datetime, req.body.status,
 			req.body.flight, req.body.price, req.body.isPaid === "on", req.body.driver === 'null' ? null : req.body.driver,
-			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission]).then(() => {
+			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, !!req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission]).then(() => {
 		res.redirect("/admin/transfers");
 	}).catch(err => {
 		console.log(err);
@@ -139,22 +159,27 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 		console.log(err);
 		res.redirect("/admin/transfers");
 	});
-
-
 });
 
 router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
-	console.log(req.body.commission);
-	console.log(req.body.operatorCommission);
-
-	db.query(`UPDATE transfer SET person_name = ?, origin = ?, destination = ?, num_of_people = ?, 
+	db.query(`SELECT driver from transfer WHERE ID = ?`, [req.params.id]).then(({result: transfer}) => {
+		db.query(`UPDATE transfer SET person_name = ?, origin = ?, destination = ?, num_of_people = ?, 
 					transfer_time = STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), status = ?, flight = ?, price = ?, paid = ?, driver = ?, vehicle = ?, 
 					service_operator = ?, observations = ?, commission = ?
 					WHERE ID = ?`,
-		[req.body.person_name, req.body.origin, req.body.destination, req.body.num_of_people,
-			req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.isPaid === "on",
-			req.body.driver, req.body.vehicle, req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission, req.params.id]).then(() => {
-		res.redirect("/admin/transfers");
+			[req.body.person_name, req.body.origin, req.body.destination, req.body.num_of_people,
+				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.isPaid === "on",
+				req.body.driver === 'null' ? null : req.body.driver, req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission, req.params.id]).then(() => {
+			res.redirect("/admin/transfers");
+
+			if (transfer[0].driver !== req.body.driver && req.body.driver !== "null") {
+				console.log("Will try to send notification")
+				db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
+					console.log(appuser);
+					sendPushNotification(appuser[0].notificationToken, "You have a new trip");
+				});
+			}
+		});
 	});
 });
 

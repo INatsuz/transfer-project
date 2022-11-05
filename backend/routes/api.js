@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {verifyToken, mustBeAuthenticated, mustBeAdmin} = require("../utils/authentication");
+const {mustBeAuthenticated, mustBeAdmin} = require("../utils/authentication");
 const db = require('../utils/db');
 
 // GET getVehicles
@@ -142,14 +142,16 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 		return;
 	}
 
-	db.query(`UPDATE transfer 
+	db.query(`SELECT driver FROM transfer`).then(({result: transfer, fields}) => {
+		db.query(`UPDATE transfer 
 				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, transfer_time = ?, driver = ?, vehicle = ?, service_operator = ?, observations = ?
 				WHERE ID = ?`,
-		[person_name, num_of_people, flight, origin, destination, price, time, driver, vehicle, operator, observations, ID]).then(() => {
-		res.status(200).json({res: "Transfer updated with success"});
-	}).catch(err => {
-		console.log(err);
-		res.status(406).json({err: "Something went wrong with the query"});
+			[person_name, num_of_people, flight, origin, destination, price, time, driver, vehicle, operator, observations, ID]).then(() => {
+			res.status(200).json({res: "Transfer updated with success"});
+		}).catch(err => {
+			console.log(err);
+			res.status(406).json({err: "Something went wrong with the query"});
+		});
 	});
 });
 

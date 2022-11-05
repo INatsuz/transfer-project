@@ -10,8 +10,14 @@ const SALT_ROUNDS = 10;
 router.post('/login', function (req, res, next) {
 	console.log(req.body.email);
 	console.log(req.body.password);
+	console.log(req.body);
 	verifyLoginAndGenerateTokens(req.body.email, req.body.password).then(({accessToken, refreshToken, payload}) => {
 		res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, user: payload});
+		db.query(`UPDATE appuser SET notificationToken = ? WHERE email = ?`, [req.body.notificationToken, req.body.email]).then(() => {
+			console.log("Updated notification token on login for " + req.body.email);
+		}).catch(err => {
+			console.log(err);
+		});
 	}).catch(err => {
 		console.log(err);
 		res.status(401).json({err: "Wrong credentials"});

@@ -33,13 +33,23 @@ block content
 
     include transfer_table
 
-    div.my-3
-        a.btn.btn-success(href="/admin/transfers/create")
-            i.bi.bi-plus-lg
-            |  Create
-        button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#exportModal")
-            i.bi.bi-file-earmark-arrow-down
-            |  Export
+    div.d-flex.flex-row.justify-content-between.my-3
+        div
+            a.btn.btn-success(href="/admin/transfers/create")
+                i.bi.bi-plus-lg
+                |  Create
+            button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#exportModal")
+                i.bi.bi-file-earmark-arrow-down
+                |  Export
+        div
+            a.btn.btn-primary(href="/admin/transfers")
+                | All
+            a.ms-2.btn.btn-primary(href="/admin/transfers?transferFilter=TODAY")
+                | Today
+            a.ms-2.btn.btn-primary(href="/admin/transfers?transferFilter=WEEK")
+                | This Week
+            a.ms-2.btn.btn-primary(href="/admin/transfers?transferFilter=MONTH")
+                | This Month
 
     +transfer_table(transfers)
 
