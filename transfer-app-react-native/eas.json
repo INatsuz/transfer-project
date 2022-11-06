@@ -13,6 +13,9 @@
     "production": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "vraminhos.com:3000"
       }
     }
   },

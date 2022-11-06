@@ -1,7 +1,7 @@
 import {Alert, StyleSheet, Text, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select"
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";

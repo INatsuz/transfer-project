@@ -17,7 +17,7 @@ import useEmailField from "../../hooks/useEmailField";
 import {useDispatch, useSelector} from "react-redux";
 import {loginAction} from "../../redux/actions/loginActions";
 import axios from 'axios';
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {deleteTokens, getTokens, saveTokens} from "../../utils/TokenManager";
 import {getWithAuth, IP} from "../../utils/Requester";
 
@@ -67,11 +67,12 @@ export default function Login(props) {
 
 			axios.post(`http://${IP}/users/login`, {
 				email: email,
-				password: password.current
+				password: password.current,
+				notificationToken: props.route.params.notificationToken
 			}).then(res => {
 				setIsLoggingIn(false);
 				if (res.data.accessToken && res.data.refreshToken) {
-					saveTokens(res.data).then(result => {
+					saveTokens(res.data).then(() => {
 						dispatch(loginAction(res.data.user));
 					});
 				}

@@ -9,7 +9,7 @@ import {
 	TextInput,
 	View
 } from "react-native";
-import {useState} from "react";
+import React, {useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import {Chevron} from "react-native-shapes";

@@ -1,5 +1,6 @@
 import {StyleSheet, View, Text, TouchableOpacity} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import React from 'react';
 
 function getStatusColor(status) {
 	switch (status) {

@@ -1,7 +1,7 @@
 import {StyleSheet, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import ProfileSection from "../../../components/ProfileSection/ProfileSection";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import {getWithAuth} from "../../../utils/Requester";
 

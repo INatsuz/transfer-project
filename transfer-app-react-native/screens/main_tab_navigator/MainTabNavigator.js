@@ -4,6 +4,7 @@ import {Platform, SafeAreaView, StatusBar, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import AssignmentsNavigator from "./assignments/AssignmentsNavigator";
 import HomeNavigator from "./home/HomeNavigator";
+import React from 'react';
 
 const Tab = createBottomTabNavigator();
 

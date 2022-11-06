@@ -1,6 +1,6 @@
 import {RefreshControl, ScrollView, StyleSheet, Text, View} from "react-native";
 import AssignmentListItem from "./AssignmentListItem";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
 
 export default function AssignmentList(props) {

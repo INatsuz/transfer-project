@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Login from "./screens/login/Login";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import MainTabNavigator from "./screens/main_tab_navigator/MainTabNavigator";
 import {Provider} from "react-redux";
 import store from "./redux/setupStore";
@@ -62,6 +62,7 @@ export default function App() {
 						name={"Login"}
 						component={Login}
 						options={{title: 'Login', headerShown: false}}
+						initialParams={{notificationToken: expoPushToken}}
 					/>
 					<Stack.Screen
 						name={"Main Tab Navigator"}

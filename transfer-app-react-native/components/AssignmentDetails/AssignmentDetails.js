@@ -13,11 +13,9 @@ import {
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Chevron} from "react-native-shapes";
-import {useEffect, useState} from "react";
-import axios from "axios";
-import {deleteWithAuth, getWithAuth, IP, putWithAuth} from "../../utils/Requester";
+import React, {useEffect, useState} from "react";
+import {deleteWithAuth, getWithAuth, putWithAuth} from "../../utils/Requester";
 import useOperators from "../../hooks/useOperators";
-import {getTokens} from "../../utils/TokenManager";
 
 export default function AssignmentDetails(props) {
 	let {assignment, isEditable} = props.route.params;

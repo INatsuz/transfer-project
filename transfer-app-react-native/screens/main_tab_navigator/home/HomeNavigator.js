@@ -4,7 +4,7 @@ import Home from "./Home";
 import {StyleSheet, Text, View} from "react-native";
 import {Menu, MenuItem} from "react-native-material-menu";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useState} from "react";
+import React, {useState} from "react";
 import {putWithAuth} from "../../../utils/Requester";
 
 const Stack = createNativeStackNavigator();
