@@ -1,74 +1,84 @@
 extends ../layouts/layout
 
 block content
-    div#exportModal.modal.fade(tabindex="-1" aria-labelledby="exportModal" aria-hidden="true")
-        div.modal-dialog
-            form(method="post" action="/admin/genTransferCSV")
-                div.modal-content
-                    div.modal-header
-                        h5#exportModalLabel.modal-title Export Transfers
-                        button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
-                    div.modal-body
-                        div.mb-3
-                            label.form-label(for="start-date") Start Date
-                            input.form-control#start-date(type="date" name="startDate")
-                        div.mb-3
-                            label.form-label(for="end-date") End Date
-                            input.form-control#end-date(type="date" name="endDate")
-                        div.mb-3
-                            label.form-label(for="driver") Driver
-                            select#driver.form-select(name="driver")
-                                option(value="null" selected) All drivers
-                                option(value=17) Ângelo Lopes
-                                option(value=18) Benjamim Ramos
-                        div.mb-3
-                            label.form-label(for="operator") Operator
-                            select#operator.form-select(name="operator")
-                                option(value="null" selected) All operators
-                                option(value=1) Conception
-                                option(value=2) Outdoor
-                    div.modal-footer
-                        button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close
-                        button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Export
+	div#exportModal.modal.fade(tabindex="-1" aria-labelledby="exportModal" aria-hidden="true")
+		div.modal-dialog
+			form(method="post" action="/admin/genTransferCSV")
+				div.modal-content
+					div.modal-header
+						h5#exportModalLabel.modal-title Export Transfers
+						button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+					div.modal-body
+						div.mb-3
+							label.form-label(for="start-date") Start Date
+							input.form-control#start-date(type="date" name="startDate")
+						div.mb-3
+							label.form-label(for="end-date") End Date
+							input.form-control#end-date(type="date" name="endDate")
+						div.mb-3
+							label.form-label(for="driver") Driver
+							select#driver.form-select(name="driver")
+								option(value="null" selected) All drivers
+								option(value=17) Ângelo Lopes
+								option(value=18) Benjamim Ramos
+						div.mb-3
+							label.form-label(for="operator") Operator
+							select#operator.form-select(name="operator")
+								option(value="null" selected) All operators
+								option(value=1) Conception
+								option(value=2) Outdoor
+					div.modal-footer
+						button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close
+						button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Export
 
-    include transfer_table
+	include transfer_table
 
-    div.d-flex.flex-row.justify-content-between.my-3
-        div
-            a.btn.btn-success(href="/admin/transfers/create")
-                i.bi.bi-plus-lg
-                |  Create
-            button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#exportModal")
-                i.bi.bi-file-earmark-arrow-down
-                |  Export
-        div
-            a.btn.btn-primary(href="/admin/transfers")
-                | All
-            a.ms-2.btn.btn-primary(href="/admin/transfers?transferFilter=TODAY")
-                | Today
-            a.ms-2.btn.btn-primary(href="/admin/transfers?transferFilter=WEEK")
-                | This Week
-            a.ms-2.btn.btn-primary(href="/admin/transfers?transferFilter=MONTH")
-                | This Month
+	div.d-flex.flex-row.justify-content-between.my-3
+		div.d-flex.align-items-end
+			a.btn.btn-success(href="/admin/transfers/create")
+				i.bi.bi-plus-lg
+				|  Create
+			button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#exportModal")
+				i.bi.bi-file-earmark-arrow-down
+				|  Export
+		div
+			form.row.g-1(method="GET")
+					div.col
+						label.form-label(for="start-date-input") Start Date
+						input.form-control#start-date-input(type="date" name="startDate")
+					div.col
+						label.form-label(for="end-date-input") End Date
+						input.form-control#end-date-input(type="date" name="endDate")
+					div.col.d-flex.align-items-end
+						button.btn.btn-primary(type="submit") →
+			div.row.g-0
+				a.col.btn.btn-primary.text-nowrap(href="/admin/transfers")
+					| All
+				a.col.ms-2.btn.btn-primary.text-nowrap(href="/admin/transfers?timePeriodFilter=TODAY")
+					| Today
+				a.col.ms-2.btn.btn-primary.text-nowrap(href="/admin/transfers?timePeriodFilter=WEEK")
+					| This Week
+				a.col.ms-2.btn.btn-primary.text-nowrap(href="/admin/transfers?timePeriodFilter=MONTH")
+					| This Month
 
-    +transfer_table(transfers)
+	+transfer_table(transfers)
 
 block scripts
-    script.
-        let datetimeInputs = document.querySelectorAll(".datetime");
-        let datetimeFields = document.querySelectorAll(".datetime-field");
-        console.log(datetimeInputs);
-        console.log(datetimeFields);
+	script.
+		let datetimeInputs = document.querySelectorAll(".datetime");
+		let datetimeFields = document.querySelectorAll(".datetime-field");
+		console.log(datetimeInputs);
+		console.log(datetimeFields);
 
-        for (let i = 0; i < datetimeInputs.length; i++) {
-            let datetime = new Date(datetimeInputs[i].value);
+		for (let i = 0; i < datetimeInputs.length; i++) {
+			let datetime = new Date(datetimeInputs[i].value);
 
-            let dateSpan = datetimeFields[i].querySelector(".date-span");
-            let timeSpan = datetimeFields[i].querySelector(".time-span");
+			let dateSpan = datetimeFields[i].querySelector(".date-span");
+			let timeSpan = datetimeFields[i].querySelector(".time-span");
 
-            let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
-            let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
+			let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
+			let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
 
-            dateSpan.innerHTML = `${dateString}`;
-            timeSpan.innerHTML = `${timeString}`;
-        }
+			dateSpan.innerHTML = `${dateString}`;
+			timeSpan.innerHTML = `${timeString}`;
+		}
