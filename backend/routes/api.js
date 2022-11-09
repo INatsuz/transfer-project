@@ -172,7 +172,6 @@ router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next
 	let {vehicle} = req.body;
 
 	db.query("UPDATE appuser SET activeVehicle = NULL WHERE activeVehicle = ?", [vehicle]).then(() => {
-		console.log("Cleared previous owner of car successfully");
 		db.query(`UPDATE appuser SET activeVehicle = ? WHERE ID = ?`, [vehicle, req.tokenPayload.ID]).then(() => {
 			res.status(200).json({res: "Active vehicle updated with success"});
 		}).catch(err => {
@@ -185,6 +184,8 @@ router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next
 	});
 });
 
+
+// TODO Add logic to send push notification
 // POST addTransfer
 router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
 	let {person_name, num_of_people, price, origin, destination, flight, datetime, operator, observations} = req.body;
@@ -200,6 +201,8 @@ router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
 			console.log(err);
 			res.status(406).json({err: "Something went wrong with the query"});
 		});
+
+
 	} else {
 		res.status(400).json({err: "Missing parameters"});
 	}

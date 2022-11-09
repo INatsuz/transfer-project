@@ -55,28 +55,49 @@ router.get("/logout", mustHaveSession, function (req, res) {
 
 // Transfer routes
 router.get("/transfers", mustHaveSession, function (req, res) {
-	let filter = "";
+	// Parsing and creating the SQL WHERE clause for time periods like "DAY", "WEEK" AND "MONTH"
+	let timePeriodFilter = "";
+	let queryVariables = [];
 
-	switch (req.query.transferFilter) {
-		case "TODAY":
-			filter = "WHERE DATE(transfer.transfer_time) = CURDATE()";
-			break;
-		case "WEEK":
-			filter = "WHERE YEARWEEK(transfer.transfer_time, 1) = YEARWEEK(CURDATE(), 1)";
-			break;
-		case "MONTH":
-			filter = "WHERE MONTH(transfer.transfer_time) = MONTH(CURDATE())";
-			break
-		default:
-			filter = "";
+	if (req.query.timePeriodFilter) {
+		switch (req.query.timePeriodFilter) {
+			case "TODAY":
+				timePeriodFilter = "WHERE DATE(transfer.transfer_time) = CURDATE()";
+				break;
+			case "WEEK":
+				timePeriodFilter = "WHERE YEARWEEK(transfer.transfer_time, 1) = YEARWEEK(CURDATE(), 1)";
+				break;
+			case "MONTH":
+				timePeriodFilter = "WHERE MONTH(transfer.transfer_time) = MONTH(CURDATE())";
+				break;
+		}
+	} else {
+		// Parsing and creating the SQL WHERE clause for start and end dates
+		let clauses = [];
+		let clauseVariables = [];
+
+		if (req.query.startDate) {
+			clauses.push("transfer.transfer_time >= ?");
+			clauseVariables.push(req.query.startDate);
+		}
+
+		if (req.query.endDate) {
+			clauses.push("transfer.transfer_time <= ?");
+			clauseVariables.push(req.query.endDate);
+		}
+
+		if (clauses.length > 0) {
+			timePeriodFilter = "WHERE " + clauses.join(" AND ");
+			queryVariables.push(...clauseVariables);
+		}
 	}
 
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
-					${filter}
-					ORDER BY transfer.transfer_time DESC`).then(({result}) => {
+					${timePeriodFilter}
+					ORDER BY transfer.transfer_time DESC`, queryVariables).then(({result}) => {
 		res.render("transfer/transfers", {
 			userID: req.session.userID,
 			username: req.session.username,
@@ -116,7 +137,6 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 });
 
 router.post("/transfers/create", mustHaveSession, function (req, res) {
-	console.log(req.body.operatorCommission);
 	if (req.body.operator === 'null' && !req.body.commission) {
 		req.body.commission = 0;
 	}
@@ -128,6 +148,12 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 			req.body.flight, req.body.price, req.body.isPaid === "on", req.body.driver === 'null' ? null : req.body.driver,
 			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, !!req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission]).then(() => {
 		res.redirect("/admin/transfers");
+
+		if (req.body.driver !== "null") {
+			db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
+				sendPushNotification(appuser[0].notificationToken, "You have a new trip");
+			});
+		}
 	}).catch(err => {
 		console.log(err);
 		res.json(err);
@@ -172,10 +198,8 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 				req.body.driver === 'null' ? null : req.body.driver, req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission, req.params.id]).then(() => {
 			res.redirect("/admin/transfers");
 
-			if (transfer[0].driver !== req.body.driver && req.body.driver !== "null") {
-				console.log("Will try to send notification")
+			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== "null") {
 				db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
-					console.log(appuser);
 					sendPushNotification(appuser[0].notificationToken, "You have a new trip");
 				});
 			}
