@@ -42,23 +42,42 @@ block content
 				i.bi.bi-file-earmark-arrow-down
 				|  Export
 		div
-			form.row.g-1(method="GET")
-					div.col
-						label.form-label(for="start-date-input") Start Date
-						input.form-control#start-date-input(type="date" name="startDate")
-					div.col
-						label.form-label(for="end-date-input") End Date
-						input.form-control#end-date-input(type="date" name="endDate")
-					div.col.d-flex.align-items-end
-						button.btn.btn-primary(type="submit") →
+			form.row.g-1#date-filter-form(method="GET")
+				div.col
+					label.form-label(for="start-date-filter-input") Start Date
+					input.form-control#start-date-filter-input(type="date")
+					input#start-date-filter(type="hidden" name="startDate")
+				div.col
+					label.form-label(for="end-date-filter-input") End Date
+					input.form-control#end-date-filter-input(type="date")
+					input#end-date-filter(type="hidden" name="endDate")
+				div.col.d-flex.align-items-end
+					button.btn.btn-primary(type="submit")
+						i.bi.bi-search
+						|  Search
 			div.row.g-0
+				- let today = new Date();
+				- today.setHours(0, 0, 0, 0);
+
+				- let tomorrow = new Date(today.getTime());
+				- tomorrow.setDate(tomorrow.getDate() + 1);
+
+				- let firstDayOfWeek = new Date(today.getTime());
+				- firstDayOfWeek.setDate(firstDayOfWeek.getDate() - firstDayOfWeek.getDay());
+				- let lastDayOfWeek = new Date(firstDayOfWeek.getTime());
+				- lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 7);
+
+				- let firstDayOfMonth = new Date(today.getTime());
+				- firstDayOfMonth.setDate(1);
+				- let lastDayOfMonth = new Date(firstDayOfMonth.getTime());
+				- lastDayOfMonth.setMonth(lastDayOfMonth.getMonth() + 1);
 				a.col.btn.btn-primary.text-nowrap(href="/admin/transfers")
 					| All
-				a.col.ms-2.btn.btn-primary.text-nowrap(href="/admin/transfers?timePeriodFilter=TODAY")
+				a.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers?startDate=${today.toISOString()}&endDate=${tomorrow.toISOString()}`)
 					| Today
-				a.col.ms-2.btn.btn-primary.text-nowrap(href="/admin/transfers?timePeriodFilter=WEEK")
+				a.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers?startDate=${firstDayOfWeek.toISOString()}&endDate=${lastDayOfWeek.toISOString()}`)
 					| This Week
-				a.col.ms-2.btn.btn-primary.text-nowrap(href="/admin/transfers?timePeriodFilter=MONTH")
+				a.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers?startDate=${firstDayOfMonth.toISOString()}&endDate=${lastDayOfMonth.toISOString()}`)
 					| This Month
 
 	+transfer_table(transfers)
@@ -82,3 +101,23 @@ block scripts
 			dateSpan.innerHTML = `${dateString}`;
 			timeSpan.innerHTML = `${timeString}`;
 		}
+
+		document.getElementById("date-filter-form").addEventListener("submit", function (event) {
+			event.preventDefault();
+
+			let startDate = new Date(document.getElementById("start-date-filter-input").value);
+			let endDate = new Date(document.getElementById("end-date-filter-input").value);
+			startDate.setHours(0, 0, 0, 0);
+			endDate.setHours(0, 0, 0, 0);
+
+			console.log(endDate);
+
+			if (!isNaN(startDate)) {
+				document.getElementById("start-date-filter").value = startDate.toISOString();
+			}
+			if (!isNaN(endDate)) {
+				document.getElementById("end-date-filter").value = endDate.toISOString();
+			}
+
+			event.target.submit();
+		});

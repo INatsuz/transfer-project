@@ -124,7 +124,9 @@ FROM transfer;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" object-ref="schemas/transfer_app/tables/transfer" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa" />
