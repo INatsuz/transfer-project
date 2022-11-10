@@ -70,7 +70,6 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 
 	if (req.query.endDate) {
 		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
-		console.log(req.query.endDate);
 		clauseVariables.push(req.query.endDate);
 	}
 
@@ -78,9 +77,6 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 		timePeriodFilter = "WHERE " + clauses.join(" AND ");
 		queryVariables.push(...clauseVariables);
 	}
-
-	console.log(clauses);
-	console.log(clauseVariables);
 
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, appuser.name AS driver

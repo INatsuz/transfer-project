@@ -56,38 +56,45 @@ block content
 						i.bi.bi-search
 						|  Search
 			div.row.g-0
-				- let today = new Date();
-				- today.setHours(0, 0, 0, 0);
-
-				- let tomorrow = new Date(today.getTime());
-				- tomorrow.setDate(tomorrow.getDate() + 1);
-
-				- let firstDayOfWeek = new Date(today.getTime());
-				- firstDayOfWeek.setDate(firstDayOfWeek.getDate() - firstDayOfWeek.getDay());
-				- let lastDayOfWeek = new Date(firstDayOfWeek.getTime());
-				- lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 7);
-
-				- let firstDayOfMonth = new Date(today.getTime());
-				- firstDayOfMonth.setDate(1);
-				- let lastDayOfMonth = new Date(firstDayOfMonth.getTime());
-				- lastDayOfMonth.setMonth(lastDayOfMonth.getMonth() + 1);
 				a.col.btn.btn-primary.text-nowrap(href="/admin/transfers")
 					| All
-				a.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers?startDate=${today.toISOString()}&endDate=${tomorrow.toISOString()}`)
+				a#today-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
 					| Today
-				a.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers?startDate=${firstDayOfWeek.toISOString()}&endDate=${lastDayOfWeek.toISOString()}`)
+				a#week-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
 					| This Week
-				a.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers?startDate=${firstDayOfMonth.toISOString()}&endDate=${lastDayOfMonth.toISOString()}`)
+				a#month-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
 					| This Month
 
 	+transfer_table(transfers)
 
 block scripts
 	script.
+		//Today button dates and setting of href attribute
+		let today = new Date();
+		today.setHours(0, 0, 0, 0);
+		let tomorrow = new Date(today.getTime());
+		tomorrow.setDate(tomorrow.getDate() + 1);
+
+		document.getElementById("today-button").setAttribute("href", `/admin/transfers?startDate=${today.toISOString()}&endDate=${tomorrow.toISOString()}`);
+
+		// Week button dates and setting of href attribute
+		let firstDayOfWeek = new Date(today.getTime());
+		firstDayOfWeek.setDate(firstDayOfWeek.getDate() - firstDayOfWeek.getDay());
+		let lastDayOfWeek = new Date(firstDayOfWeek.getTime());
+		lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 7);
+
+		document.getElementById("week-button").setAttribute("href", `/admin/transfers?startDate=${firstDayOfWeek.toISOString()}&endDate=${lastDayOfWeek.toISOString()}`);
+
+		// Month button dates and setting of href attribute
+		let firstDayOfMonth = new Date(today.getTime());
+		firstDayOfMonth.setDate(1);
+		let lastDayOfMonth = new Date(firstDayOfMonth.getTime());
+		lastDayOfMonth.setMonth(lastDayOfMonth.getMonth() + 1);
+
+		document.getElementById("month-button").setAttribute("href", `/admin/transfers?startDate=${firstDayOfMonth.toISOString()}&endDate=${lastDayOfMonth.toISOString()}`);
+
 		let datetimeInputs = document.querySelectorAll(".datetime");
 		let datetimeFields = document.querySelectorAll(".datetime-field");
-		console.log(datetimeInputs);
-		console.log(datetimeFields);
 
 		for (let i = 0; i < datetimeInputs.length; i++) {
 			let datetime = new Date(datetimeInputs[i].value);
