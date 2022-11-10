@@ -59,45 +59,35 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 	let timePeriodFilter = "";
 	let queryVariables = [];
 
-	if (req.query.timePeriodFilter) {
-		switch (req.query.timePeriodFilter) {
-			case "TODAY":
-				timePeriodFilter = "WHERE DATE(transfer.transfer_time) = CURDATE()";
-				break;
-			case "WEEK":
-				timePeriodFilter = "WHERE YEARWEEK(transfer.transfer_time, 1) = YEARWEEK(CURDATE(), 1)";
-				break;
-			case "MONTH":
-				timePeriodFilter = "WHERE MONTH(transfer.transfer_time) = MONTH(CURDATE())";
-				break;
-		}
-	} else {
-		// Parsing and creating the SQL WHERE clause for start and end dates
-		let clauses = [];
-		let clauseVariables = [];
+	// Parsing and creating the SQL WHERE clause for start and end dates
+	let clauses = [];
+	let clauseVariables = [];
 
-		if (req.query.startDate) {
-			clauses.push("transfer.transfer_time >= ?");
-			clauseVariables.push(req.query.startDate);
-		}
-
-		if (req.query.endDate) {
-			clauses.push("transfer.transfer_time <= ?");
-			clauseVariables.push(req.query.endDate);
-		}
-
-		if (clauses.length > 0) {
-			timePeriodFilter = "WHERE " + clauses.join(" AND ");
-			queryVariables.push(...clauseVariables);
-		}
+	if (req.query.startDate) {
+		clauses.push("transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		clauseVariables.push(req.query.startDate);
 	}
+
+	if (req.query.endDate) {
+		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		console.log(req.query.endDate);
+		clauseVariables.push(req.query.endDate);
+	}
+
+	if (clauses.length > 0) {
+		timePeriodFilter = "WHERE " + clauses.join(" AND ");
+		queryVariables.push(...clauseVariables);
+	}
+
+	console.log(clauses);
+	console.log(clauseVariables);
 
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
 					${timePeriodFilter}
-					ORDER BY transfer.transfer_time DESC`, queryVariables).then(({result}) => {
+					ORDER BY transfer.transfer_time ${req.query.startDate || req.query.timePeriodFilter ? "ASC" : "DESC"}`, queryVariables).then(({result}) => {
 		res.render("transfer/transfers", {
 			userID: req.session.userID,
 			username: req.session.username,
