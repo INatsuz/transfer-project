@@ -116,6 +116,7 @@ block scripts
 			let endDate = new Date(document.getElementById("end-date-filter-input").value);
 			startDate.setHours(0, 0, 0, 0);
 			endDate.setHours(0, 0, 0, 0);
+			endDate.setDate(endDate.getDate() + 1);
 
 			console.log(endDate);
 
