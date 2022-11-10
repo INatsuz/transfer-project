@@ -1,23 +1,29 @@
 nav.navbar.navbar-expand-lg.bg-light.d-print-none
-    div.container
-        a.navbar-brand(href="/admin") Transfer Admin Panel
-        button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
-            span.navbar-toggler-icon
-        div.collapse.navbar-collapse.justify-content-between#navbarNav
-            ul.navbar-nav
-                li.nav-item
-                    a.nav-link(href="/admin/transfers") Transfers
-                li.nav-item
-                    a.nav-link(href="/admin/vehicles") Vehicles
-                li.nav-item
-                    a.nav-link(href="/admin/appusers") Users
-                li.nav-item
-                    a.nav-link(href="/admin/operators") Operators
-                li.nav-item
-                    a.nav-link(href="/admin/commissions") Commissions
-            if userID === undefined || userID === null
-                a.nav-link(href="/admin/login") Login
-            else
-                div.d-flex
-                    a.nav-link.me-4(href="#")= username
-                    a.nav-link(href="/admin/logout") Logout
+	div.container
+		a.navbar-brand(href="/admin") Transfer Admin Panel
+		button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
+			span.navbar-toggler-icon
+		div.collapse.navbar-collapse.justify-content-between#navbarNav
+			ul.navbar-nav
+				li.nav-item
+					- let navToday = new Date();
+					- navToday.setHours(0, 0, 0, 0);
+
+					- let navTomorrow = new Date(navToday.getTime());
+					- navTomorrow.setDate(navTomorrow.getDate() + 1);
+
+					a.nav-link(href=`/admin/transfers?startDate=${navToday.toISOString()}&endDate=${navTomorrow.toISOString()}`) Transfers
+				li.nav-item
+					a.nav-link(href="/admin/vehicles") Vehicles
+				li.nav-item
+					a.nav-link(href="/admin/appusers") Users
+				li.nav-item
+					a.nav-link(href="/admin/operators") Operators
+				li.nav-item
+					a.nav-link(href="/admin/commissions") Commissions
+			if userID === undefined || userID === null
+				a.nav-link(href="/admin/login") Login
+			else
+				div.d-flex
+					a.nav-link.me-4(href="#")= username
+					a.nav-link(href="/admin/logout") Logout
