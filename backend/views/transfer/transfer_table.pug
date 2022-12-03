@@ -11,6 +11,15 @@ mixin transfer_table_row(row)
         td.align-middle= row.origin
         td.align-middle= row.destination
         td.align-middle= row.person_name
+        if row.status === "PENDING"
+            td.align-middle
+                span.badge.text-bg-warning PENDING
+        else if row.status === "IN PROGRESS"
+            td.align-middle
+                span.badge.text-bg-success IN PROGRESS
+        else if row.status === "FINISHED"
+            td.align-middle
+                span.badge.text-bg-secondary FINISHED
         td.align-middle= row.num_of_people
         td.align-middle= row.driver
         td.align-middle= row.ID
@@ -36,6 +45,7 @@ mixin transfer_table(data)
                     th Origin
                     th Destination
                     th Person
+                    th Status
                     th People
                     th Driver
                     th ID

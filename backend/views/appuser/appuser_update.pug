@@ -21,6 +21,9 @@ block content
                     select.form-select#user-type(name="userType")
                         option(value="1" selected=appuser.userType === 1) Admin
                         option(value="2" selected=appuser.userType === 2) Driver
+                div.mb-3
+                    label.form-label(for="commission") Commission (in %)
+                    input.form-control#commission(type="number" name="commission" step=0.01 value=(appuser.commission * 100).toFixed(2))
 
                 button.btn.btn-success(type="submit")
                     i.bi.bi-pencil

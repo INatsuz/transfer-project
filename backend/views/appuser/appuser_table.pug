@@ -8,6 +8,7 @@ mixin appuser_table_row(row)
         td.align-middle= dateString
         td.align-middle= row.vehicle
         td.align-middle= row.userType
+        td.align-middle= `${parseFloat((row.commission * 100).toFixed(2))}%`
         td.text-nowrap.align-middle
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/appusers/details/${row.ID}`)
                 i.bi.bi-list
@@ -29,6 +30,7 @@ mixin appuser_table(data)
                 th Birthday
                 th Active Vehicle
                 th Type
+                th Commission
                 th
         tbody
             each row in data

@@ -83,7 +83,7 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 	console.log(clauseVariables);
 
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
-					transfer.person_name, transfer.num_of_people, appuser.name AS driver
+					transfer.person_name, transfer.num_of_people, transfer.status, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
 					${timePeriodFilter}
@@ -100,7 +100,7 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 });
 
 router.get("/transfers/create", mustHaveSession, function (req, res) {
-	let driverPromise = db.query("SELECT ID, name, activeVehicle FROM appuser");
+	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser");
 	let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
 	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
 
@@ -127,16 +127,13 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 });
 
 router.post("/transfers/create", mustHaveSession, function (req, res) {
-	if (req.body.operator === 'null' && !req.body.commission) {
-		req.body.commission = 0;
-	}
-
-	db.query(`INSERT INTO transfer(person_name, origin, destination, num_of_people, transfer_time, status, flight, price, paid, driver, vehicle, service_operator, observations, commission)
-					VALUES(?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	console.log(req.body.driverCommission)
+	db.query(`INSERT INTO transfer(person_name, origin, destination, num_of_people, transfer_time, status, flight, price, paid, driver, vehicle, service_operator, observations, operatorCommission, driverCommission)
+					VALUES(?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[req.body.personName, req.body.origin, req.body.destination,
 			req.body.numberOfPeople, req.body.datetime, req.body.status,
 			req.body.flight, req.body.price, req.body.isPaid === "on", req.body.driver === 'null' ? null : req.body.driver,
-			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, !!req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission]).then(() => {
+			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.operatorCommission, req.body.driverCommission]).then(() => {
 		res.redirect("/admin/transfers");
 
 		if (req.body.driver !== "null") {
@@ -151,7 +148,7 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 });
 
 router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
-	let driverPromise = db.query("SELECT ID, name, activeVehicle FROM appuser");
+	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser");
 	let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
 	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
 
@@ -178,14 +175,15 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 });
 
 router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
+	console.log(req.body.driverCommission)
 	db.query(`SELECT driver from transfer WHERE ID = ?`, [req.params.id]).then(({result: transfer}) => {
 		db.query(`UPDATE transfer SET person_name = ?, origin = ?, destination = ?, num_of_people = ?, 
 					transfer_time = STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), status = ?, flight = ?, price = ?, paid = ?, driver = ?, vehicle = ?, 
-					service_operator = ?, observations = ?, commission = ?
+					service_operator = ?, observations = ?, operatorCommission = ?, driverCommission = ?
 					WHERE ID = ?`,
 			[req.body.person_name, req.body.origin, req.body.destination, req.body.num_of_people,
 				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.isPaid === "on",
-				req.body.driver === 'null' ? null : req.body.driver, req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.commission ? (req.body.commission / 100).toFixed(2) : req.body.operatorCommission, req.params.id]).then(() => {
+				req.body.driver === 'null' ? null : req.body.driver, req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.operatorCommission, req.body.driverCommission, req.params.id]).then(() => {
 			res.redirect("/admin/transfers");
 
 			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== "null") {
@@ -200,7 +198,7 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 router.get("/transfers/details/:id", mustHaveSession, function (req, res) {
 	db.query(`SELECT 
 					transfer.ID, transfer.person_name, transfer.num_of_people, transfer.origin, transfer.destination,
-				 	transfer.transfer_time, transfer.status, transfer.flight, transfer.price, transfer.commission, transfer.paid,
+				 	transfer.transfer_time, transfer.status, transfer.flight, transfer.price, transfer.operatorCommission, transfer.driverCommission, transfer.paid,
 				 	transfer.observations, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicle,
 				 	appuser.name as driver, serviceoperator.name as service_operator
 					FROM transfer
@@ -318,7 +316,7 @@ router.post("/vehicles/delete", mustHaveSession, function (req, res) {
 // Appuser routes
 router.get("/appusers", mustHaveSession, function (req, res) {
 	db.query(`SELECT 
-					appuser.ID, appuser.name, appuser.email, appuser.birthday, 
+					appuser.ID, appuser.name, appuser.email, appuser.birthday, appuser.commission, 
 					CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicle,
 					usertype.user_type as userType
 					FROM appuser 
@@ -343,7 +341,7 @@ router.get("/appusers/create", mustHaveSession, function (req, res) {
 });
 
 router.post("/appusers/create", mustHaveSession, function (req, res) {
-	if (!req.body.email || !req.body.name || !req.body.birthday || !req.body.userType || !req.body.password || !req.body.confirmPassword) {
+	if (!req.body.email || !req.body.name || !req.body.birthday || !req.body.userType || !req.body.password || !req.body.confirmPassword || !req.body.commission) {
 		res.redirect("/admin");
 		return;
 	}
@@ -354,8 +352,8 @@ router.post("/appusers/create", mustHaveSession, function (req, res) {
 	}
 
 	bcrypt.hash(req.body.password, SALT_ROUNDS, function (err, hash) {
-		db.query(`INSERT INTO appuser(email, password, name, birthday, userType) 
-					VALUES (?, ?, ?, ?, ?)`, [req.body.email, hash, req.body.name, req.body.birthday, req.body.userType]).then(() => {
+		db.query(`INSERT INTO appuser(email, password, name, birthday, userType, commission) 
+					VALUES (?, ?, ?, ?, ?)`, [req.body.email, hash, req.body.name, req.body.birthday, req.body.userType, req.body.commission / 100]).then(() => {
 			res.redirect("/admin/appusers");
 		}).catch(err => {
 			console.log(err);
@@ -365,7 +363,7 @@ router.post("/appusers/create", mustHaveSession, function (req, res) {
 });
 
 router.get("/appusers/update/:id", mustHaveSession, function (req, res) {
-	db.query("SELECT email, name, birthday, userType FROM appuser WHERE ID = ?", [req.params.id]).then(({result}) => {
+	db.query("SELECT email, name, birthday, userType, commission FROM appuser WHERE ID = ?", [req.params.id]).then(({result}) => {
 		res.render("appuser/appuser_update", {
 			ID: req.params.id,
 			userID: req.session.userID,
@@ -378,7 +376,7 @@ router.get("/appusers/update/:id", mustHaveSession, function (req, res) {
 });
 
 router.post("/appusers/update/:id", mustHaveSession, function (req, res) {
-	db.query("UPDATE appuser SET email = ?, name = ?, birthday = ?, userType = ? WHERE ID = ?", [req.body.email, req.body.name, req.body.birthday, req.body.userType, req.params.id]).then(() => {
+	db.query("UPDATE appuser SET email = ?, name = ?, birthday = ?, userType = ?, commission = ? WHERE ID = ?", [req.body.email, req.body.name, req.body.birthday, req.body.userType, req.body.commission / 100, req.params.id]).then(() => {
 		res.redirect("/admin/appusers");
 	}).catch(err => {
 		console.log(err);
