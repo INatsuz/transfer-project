@@ -6,13 +6,7 @@ nav.navbar.navbar-expand-lg.bg-light.d-print-none
 		div.collapse.navbar-collapse.justify-content-between#navbarNav
 			ul.navbar-nav
 				li.nav-item
-					- let navToday = new Date();
-					- navToday.setHours(0, 0, 0, 0);
-
-					- let navTomorrow = new Date(navToday.getTime());
-					- navTomorrow.setDate(navTomorrow.getDate() + 1);
-
-					a.nav-link(href=`/admin/transfers?startDate=${navToday.toISOString()}&endDate=${navTomorrow.toISOString()}`) Transfers
+					a#transfers-nav-link.nav-link(href=`/admin/transfers`) Transfers
 				li.nav-item
 					a.nav-link(href="/admin/vehicles") Vehicles
 				li.nav-item
@@ -27,3 +21,12 @@ nav.navbar.navbar-expand-lg.bg-light.d-print-none
 				div.d-flex
 					a.nav-link.me-4(href="#")= username
 					a.nav-link(href="/admin/logout") Logout
+
+		script.
+			let navToday = new Date();
+			navToday.setHours(0, 0, 0, 0);
+
+			let navTomorrow = new Date(navToday.getTime());
+			navTomorrow.setDate(navTomorrow.getDate() + 1);
+
+			document.getElementById("transfers-nav-link").setAttribute("href", `/admin/transfers?startDate=${navToday.toISOString()}&endDate=${navTomorrow.toISOString()}`)
