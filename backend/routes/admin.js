@@ -171,15 +171,18 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 });
 
 router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
-	console.log(req.body.driverCommission)
+	console.log(req.body.operator);
 	db.query(`SELECT driver from transfer WHERE ID = ?`, [req.params.id]).then(({result: transfer}) => {
 		db.query(`UPDATE transfer SET person_name = ?, origin = ?, destination = ?, num_of_people = ?, 
-					transfer_time = STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), status = ?, flight = ?, price = ?, paid = ?, driver = ?, vehicle = ?, 
-					service_operator = ?, observations = ?, operatorCommission = ?, driverCommission = ?
+					transfer_time = STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), status = ?, flight = ?, price = ?, paid = ?, vehicle = ?, 
+					operatorCommission = IF(service_operator = ?, operatorCommission, ?), service_operator = ?, observations = ?,
+				 	driverCommission = IF(driver = ?, driverCommission, ?), driver = ?
 					WHERE ID = ?`,
 			[req.body.person_name, req.body.origin, req.body.destination, req.body.num_of_people,
 				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.isPaid === "on",
-				req.body.driver === 'null' ? null : req.body.driver, req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.operatorCommission, req.body.driverCommission, req.params.id]).then(() => {
+				req.body.vehicle === 'null' ? null : req.body.vehicle,
+				req.body.operator, req.body.operatorCommission, req.body.operator === 'null' ? null : req.body.operator, req.body.observations,
+				req.body.driver, req.body.driverCommission, req.body.driver === 'null' ? null : req.body.driver, req.params.id]).then(() => {
 			res.redirect("/admin/transfers");
 
 			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== "null") {
@@ -508,8 +511,10 @@ router.get("/commissions", mustHaveSession, function (req, res) {
 						transfer.destination,
 						transfer.transfer_time,
 						transfer.price,
-						transfer.commission,
-						transfer.commission * transfer.price AS commissionValue
+						transfer.operatorCommission,
+						transfer.operatorCommission * transfer.price AS operatorCommissionValue,
+						transfer.driverCommission,
+						transfer.driverCommission * (transfer.price - transfer.operatorCommission * transfer.price) AS driverCommissionValue
 						FROM transfer
 						INNER JOIN appuser ON transfer.driver = appuser.ID
 						WHERE transfer_time BETWEEN ? AND ?
@@ -590,17 +595,14 @@ router.get("/genCommissionCSV", mustHaveSession, function (req, res, next) {
 				appuser.name AS Driver,
 				transfer.origin AS Origin,
 				transfer.destination AS Destination,
-				transfer.transfer_time AS "Transfer Time",
+				DATE_FORMAT(transfer.transfer_time, '%d/%m/%Y %T') AS "Transfer Time",
 				transfer.price AS Price,
-				ROUND(transfer.commission, 2) AS "Commission %",
-				ROUND(transfer.commission * transfer.price, 2) AS "Commission €"
+				ROUND(transfer.operatorCommission * 100, 2) AS "Operator Commission %",
+				ROUND(transfer.operatorCommission * transfer.price, 2) AS "Operator Commission €",
+				ROUND(transfer.driverCommission * 100, 2) AS "Driver Commission %",
+				ROUND(transfer.driverCommission * (transfer.price - transfer.operatorCommission * transfer.price), 2) AS "Driver Commission €"
 				FROM transfer
 				INNER JOIN appuser ON transfer.driver = appuser.ID
-				WHERE transfer_time BETWEEN ? AND ?
-				AND transfer.driver = ?
-				UNION
-				SELECT '', '', '', '', '', '', '', ROUND(SUM(transfer.commission * transfer.price), 2)
-				FROM transfer
 				WHERE transfer_time BETWEEN ? AND ?
 				AND transfer.driver = ?`,
 		[req.query.startDate, req.query.endDate, req.query.driver, req.query.startDate, req.query.endDate, req.query.driver]).then(({

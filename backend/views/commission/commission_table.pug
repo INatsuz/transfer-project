@@ -9,9 +9,11 @@ mixin commission_table_row(row)
         td.align-middle= row.destination
         input.datetime(type="hidden" value=row.transfer_time)
         td.align-middle.datetime-field= `${dateString} ${timeString}`
-        td.align-middle= row.price
-        td.align-middle= `${parseFloat((row.commission * 100).toFixed(2))}%`
-        td.align-middle= `${parseFloat((row.commissionValue).toFixed(2))}€`
+        td.align-middle= `${row.price}€`
+        td.align-middle= `${parseFloat((row.operatorCommission * 100).toFixed(2))}%`
+        td.align-middle= `${parseFloat((row.operatorCommissionValue).toFixed(2))}€`
+        td.align-middle= `${parseFloat((row.driverCommission * 100).toFixed(2))}%`
+        td.align-middle= `${parseFloat((row.driverCommissionValue).toFixed(2))}€`
 
 mixin commission_table(data)
     table.table.table-striped.table-hover
@@ -23,8 +25,10 @@ mixin commission_table(data)
                 th Destination
                 th Date/Time
                 th Price
-                th.text-nowrap Commission (in %)
-                th.text-nowrap Commission (in €)
+                th.text-nowrap Operator Commission (in %)
+                th.text-nowrap Operator Commission (in €)
+                th.text-nowrap Driver Commission (in %)
+                th.text-nowrap Driver Commission (in €)
         tbody
             each row in data
                 +commission_table_row(row)
@@ -36,4 +40,6 @@ mixin commission_table(data)
                 td
                 td
                 td
-                td= `${parseFloat((commissions.reduce((previousValue, currentValue) => previousValue + currentValue.commissionValue, 0)).toFixed(2))}€`
+                td= `${parseFloat((commissions.reduce((previousValue, currentValue) => previousValue + currentValue.operatorCommissionValue, 0)).toFixed(2))}€`
+                td
+                td= `${parseFloat((commissions.reduce((previousValue, currentValue) => previousValue + currentValue.driverCommissionValue, 0)).toFixed(2))}€`
