@@ -163,6 +163,9 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 				operators: operatorRes.result,
 				transfer: result[0]
 			});
+		}).catch(err => {
+			console.log(err);
+			res.json(err);
 		});
 	}).catch(err => {
 		console.log(err);
@@ -190,8 +193,8 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 					sendPushNotification(appuser[0].notificationToken, "You have a new trip");
 				});
 			}
-		});
-	});
+		}).catch(err => console.log(err));
+	}).catch(err => console.log(err));
 });
 
 router.get("/transfers/details/:id", mustHaveSession, function (req, res) {
@@ -281,12 +284,16 @@ router.get("/vehicles/update/:id", mustHaveSession, function (req, res) {
 			username: req.session.username,
 			vehicle: result[0]
 		});
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
 router.post("/vehicles/update/:id", mustHaveSession, function (req, res) {
 	db.query("UPDATE vehicle SET brand = ?, license_plate = ?, name = ?, seat_number = ?, status = ? WHERE ID = ?", [req.body.brand, req.body.license_plate, req.body.name, req.body.seat_number, req.body.status, req.params.id]).then(({result}) => {
 		res.redirect("/admin/vehicles")
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -457,6 +464,8 @@ router.post("/operators/create", mustHaveSession, function (req, res) {
 
 	db.query("INSERT INTO serviceoperator(name, commission) VALUES (?, ?)", [req.body.name, req.body.commission / 100]).then(() => {
 		res.redirect("/admin/operators");
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -474,6 +483,8 @@ router.get("/operators/update/:id", mustHaveSession, function (req, res) {
 router.post("/operators/update/:id", mustHaveSession, function (req, res) {
 	db.query("UPDATE serviceoperator SET name = ?, commission = ? WHERE ID = ?", [req.body.name, req.body.commission / 100, req.params.id]).then(() => {
 		res.redirect("/admin/operators");
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
