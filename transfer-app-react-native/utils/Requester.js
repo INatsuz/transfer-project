@@ -6,6 +6,7 @@ import {deleteTokens, getTokens, saveTokens} from "./TokenManager";
 import {API_URL} from '@env';
 
 export const IP = process.env.API_URL ?? API_URL;
+console.log(process.env.API_URL);
 console.log(IP);
 
 export async function refreshTokens(refreshToken) {
