@@ -5,6 +5,6 @@ WORKDIR /usr/app/backend
 COPY . .
 RUN npm install
 
-EXPOSE 3000
+EXPOSE 443 80
 
 CMD ["npm", "run", "start"]

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-let app = require('../app');
+let {app} = require('../app');
+let {http_app} = require('../app');
 let debug = require('debug')('backend:server');
 let https = require('https');
 let http = require('http');
@@ -12,12 +13,15 @@ const cert = fs.readFileSync("./ssl/fullchain.pem");
  * Get port from environment and store in Express.
  */
 
-let port = normalizePort(process.env.PORT || '443');
-app.set('port', port);
+let https_port = normalizePort(process.env.PORT || '443');
+let http_port = 80;
+
+app.set('port', https_port);
 
 /**
  * Create HTTP server.
  */
+
 
 let server = https.createServer({key: key, cert: cert}, app);
 // let server = http.createServer(app);
@@ -26,7 +30,8 @@ let server = https.createServer({key: key, cert: cert}, app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(https_port);
+http_app.listen(http_port);
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -59,9 +64,9 @@ function onError(error) {
 		throw error;
 	}
 
-	let bind = typeof port === 'string'
-		? 'Pipe ' + port
-		: 'Port ' + port;
+	let bind = typeof https_port === 'string'
+		? 'Pipe ' + https_port
+		: 'Port ' + https_port;
 
 	// handle specific listen errors with friendly messages
 	switch (error.code) {

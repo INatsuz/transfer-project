@@ -9,6 +9,11 @@ const usersRouter = require('./routes/users');
 const apiRouter = require('./routes/api');
 const adminRouter = require('./routes/admin');
 
+const http_app = express();
+http_app.get('*', function (req, res) {
+	res.redirect('https://' + req.headers.host + req.url);
+});
+
 const app = express();
 
 let sessionConfig = {
@@ -49,4 +54,7 @@ app.use(function (req, res, next) {
 // 	res.render('error');
 // });
 
-module.exports = app;
+module.exports = {
+	app: app,
+	http_app: http_app
+};
