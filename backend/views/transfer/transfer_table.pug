@@ -20,6 +20,12 @@ mixin transfer_table_row(row)
         else if row.status === "FINISHED"
             td.align-middle
                 span.badge.text-bg-secondary FINISHED
+        if row.seen
+            td.align-middle
+                span.badge.text-bg-success Yes
+        else
+            td.align-middle
+                span.badge.text-bg-danger No
         td.align-middle= row.num_of_people
         td.align-middle= row.driver
         td.align-middle= row.ID
@@ -36,7 +42,6 @@ mixin transfer_table_row(row)
                 |  Delete
 
 mixin transfer_table(data)
-    - let datetime;
     div.table-responsive
         table.table.table-striped.table-hover
             thead
@@ -46,6 +51,7 @@ mixin transfer_table(data)
                     th Destination
                     th Person
                     th Status
+                    th Seen
                     th People
                     th Driver
                     th ID

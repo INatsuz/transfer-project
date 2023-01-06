@@ -5,6 +5,7 @@ mixin commission_table_row(row)
     tr
         td.align-middle= row.ID
         td.align-middle= row.driverName
+        td.align-middle= row.operatorName
         td.align-middle= row.origin
         td.align-middle= row.destination
         input.datetime(type="hidden" value=row.transfer_time)
@@ -21,6 +22,7 @@ mixin commission_table(data)
             tr
                 th ID
                 th Driver
+                th Operator
                 th Origin
                 th Destination
                 th Date/Time
@@ -33,6 +35,7 @@ mixin commission_table(data)
             each row in data
                 +commission_table_row(row)
             tr
+                td
                 td
                 td
                 td

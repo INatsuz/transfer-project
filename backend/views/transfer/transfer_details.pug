@@ -57,6 +57,14 @@ block content
             th Operator
             td= transfer.service_operator
         tr
+            th Seen
+            if transfer.seen
+                td
+                    span.badge.text-bg-success Yes
+            else
+                td
+                    span.badge.text-bg-danger No
+        tr
             th Observations
             td= transfer.observations
 
