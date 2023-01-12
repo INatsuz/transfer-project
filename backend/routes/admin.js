@@ -175,6 +175,10 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 
 router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 	console.log(req.body.operator);
+	if (req.body.operator === "null") req.body.operator = null;
+	if (req.body.driver === "null") req.body.driver = null;
+	if (req.body.vehicle === "null") req.body.vehicle = null;
+
 	db.query(`SELECT driver from transfer WHERE ID = ?`, [req.params.id]).then(({result: transfer}) => {
 		db.query(`UPDATE transfer SET person_name = ?, origin = ?, destination = ?, num_of_people = ?, 
 					transfer_time = STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), status = ?, flight = ?, price = ?, paid = ?, vehicle = ?, 
@@ -183,9 +187,9 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 					WHERE ID = ?`,
 			[req.body.person_name, req.body.origin, req.body.destination, req.body.num_of_people,
 				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.isPaid === "on",
-				req.body.vehicle === 'null' ? null : req.body.vehicle,
-				req.body.operator, req.body.operatorCommission, req.body.operator === 'null' ? null : req.body.operator, req.body.observations,
-				req.body.driver, req.body.driverCommission, req.body.driver === 'null' ? null : req.body.driver, req.body.driver === 'null' ? null : req.body.driver, req.params.id]).then(() => {
+				req.body.vehicle,
+				req.body.operator, req.body.operatorCommission, req.body.operator, req.body.observations,
+				req.body.driver, req.body.driverCommission, req.body.driver, req.body.driver, req.params.id]).then(() => {
 			res.redirect("/admin/transfers");
 
 			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== "null") {

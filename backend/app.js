@@ -10,7 +10,8 @@ const apiRouter = require('./routes/api');
 const adminRouter = require('./routes/admin');
 
 const http_app = express();
-http_app.get('*', function (req, res) {
+http_app.use(function (req, res) {
+	console.log("Redirecting to https " + "https://" + req.headers.host + req.url)
 	res.redirect('https://' + req.headers.host + req.url);
 });
 

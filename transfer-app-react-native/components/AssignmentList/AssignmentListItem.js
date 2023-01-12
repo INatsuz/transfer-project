@@ -26,7 +26,7 @@ export default function AssignmentListItem(props) {
 	);
 
 	return (
-		<TouchableOpacity onPress={() => props.onItemPress(props.data)}>
+		<TouchableOpacity delayPressIn={20} onPress={() => props.onItemPress(props.data)}>
 			<View style={[styles.listItemContainer, variableStyles.statusBorderColor]}>
 				<View style={styles.listSection}>
 					<Text numberOfLines={2} style={styles.textStyle}>{props.data.origin}</Text>

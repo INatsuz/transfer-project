@@ -65,7 +65,7 @@ export default function Login(props) {
 			setIsLoggingIn(true);
 			ToastAndroid.show("Logging in...", ToastAndroid.SHORT);
 
-			axios.post(`http://${IP}/users/login`, {
+			axios.post(`https://${IP}/users/login`, {
 				email: email,
 				password: password.current,
 				notificationToken: props.route.params.notificationToken

@@ -12,7 +12,7 @@ console.log(IP);
 export async function refreshTokens(refreshToken) {
 	console.log("Refreshing token (Requester util)");
 	return new Promise(function (resolve, reject) {
-		axios.get(`http://${IP}/users/renew?refreshToken=${refreshToken}`, {timeout: 5000}).then(res => {
+		axios.get(`https://${IP}/users/renew?refreshToken=${refreshToken}`, {timeout: 5000}).then(res => {
 			saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken}).then(() => {
 				resolve({newAccessToken: res.data.accessToken, newRefreshToken: res.data.refreshToken});
 			}).catch(err => {
@@ -39,7 +39,7 @@ export async function logOff() {
 export function getWithAuth(endpoint) {
 	return new Promise(function (resolve, reject) {
 		getTokens().then(({accessToken, refreshToken}) => {
-			axios.get(`http://${IP}/${endpoint}`, {
+			axios.get(`https://${IP}/${endpoint}`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				},
@@ -51,7 +51,7 @@ export function getWithAuth(endpoint) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken}) => {
-						axios.get(`http://${IP}/${endpoint}`, {
+						axios.get(`https://${IP}/${endpoint}`, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							},
@@ -76,7 +76,7 @@ export function getWithAuth(endpoint) {
 export function postWithAuth(endpoint, data) {
 	return new Promise(function (resolve, reject) {
 		getTokens().then(({accessToken, refreshToken}) => {
-			axios.post(`http://${IP}/${endpoint}`, data, {
+			axios.post(`https://${IP}/${endpoint}`, data, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				},
@@ -88,7 +88,7 @@ export function postWithAuth(endpoint, data) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken}) => {
-						axios.post(`http://${IP}/${endpoint}`, data, {
+						axios.post(`https://${IP}/${endpoint}`, data, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							},
@@ -113,7 +113,7 @@ export function postWithAuth(endpoint, data) {
 export function putWithAuth(endpoint, data) {
 	return new Promise(function (resolve, reject) {
 		getTokens().then(({accessToken, refreshToken}) => {
-			axios.put(`http://${IP}/${endpoint}`, data, {
+			axios.put(`https://${IP}/${endpoint}`, data, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				},
@@ -125,7 +125,7 @@ export function putWithAuth(endpoint, data) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
-						axios.put(`http://${IP}/${endpoint}`, data, {
+						axios.put(`https://${IP}/${endpoint}`, data, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							},
@@ -150,7 +150,7 @@ export function putWithAuth(endpoint, data) {
 export function deleteWithAuth(endpoint) {
 	return new Promise(function (resolve, reject) {
 		getTokens().then(({accessToken, refreshToken}) => {
-			axios.delete(`http://${IP}/${endpoint}`, {
+			axios.delete(`https://${IP}/${endpoint}`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				},
@@ -162,7 +162,7 @@ export function deleteWithAuth(endpoint) {
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
-						axios.delete(`http://${IP}/${endpoint}`, {
+						axios.delete(`https://${IP}/${endpoint}`, {
 							headers: {
 								Authorization: `Bearer ${newAccessToken}`
 							},

@@ -4,10 +4,9 @@ let {app} = require('../app');
 let {http_app} = require('../app');
 let debug = require('debug')('backend:server');
 let https = require('https');
-let http = require('http');
 const fs = require('fs');
-const key = fs.readFileSync("./ssl/privkey.pem");
-const cert = fs.readFileSync("./ssl/fullchain.pem");
+const key = fs.readFileSync("./ssl/key.pem");
+const cert = fs.readFileSync("./ssl/cert.pem");
 
 /**
  * Get port from environment and store in Express.
