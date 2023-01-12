@@ -192,7 +192,7 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 				req.body.driver, req.body.driverCommission, req.body.driver, req.body.driver, req.params.id]).then(() => {
 			res.redirect("/admin/transfers");
 
-			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== "null") {
+			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== null) {
 				db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
 					sendPushNotification(appuser[0].notificationToken, "You have a new trip");
 				});
