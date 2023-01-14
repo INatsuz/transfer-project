@@ -58,7 +58,7 @@ export default function AssignmentsNavigator(props) {
 					return (
 						<View>
 							<Menu
-								style={{padding: 0}}
+								style={{padding: 0, backgroundColor: "#222222"}}
 								visible={isMenuVisible}
 								anchor={
 									<Text onPress={() => setIsMenuVisible(true)}>
@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
 	},
 
 	menuText: {
+		color: "white",
 		fontSize: 15,
 		fontWeight: "500"
 	}
