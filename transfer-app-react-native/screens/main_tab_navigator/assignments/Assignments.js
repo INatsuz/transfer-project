@@ -10,7 +10,7 @@ export default function Assignments(props) {
 	const fetchAllAssignments = function () {
 		return new Promise(function (resolve, reject) {
 			getWithAuth("api/getAllTransfers").then(res => {
-				setAssignments(res.data.transfers.slice(0, 10));
+				setAssignments(res.data.transfers);
 				resolve()
 			}).catch(err => {
 				console.log("Could not get transfers");
