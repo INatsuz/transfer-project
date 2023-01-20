@@ -27,6 +27,7 @@ export default function Login(props) {
 	const {email, setEmail, isValidStyling} = useEmailField();
 	const password = useRef("");
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
+	const notificationToken = useSelector(state => state.notification.token);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -68,7 +69,7 @@ export default function Login(props) {
 			axios.post(`https://${IP}/users/login`, {
 				email: email,
 				password: password.current,
-				notificationToken: props.route.params.notificationToken
+				notificationToken: notificationToken
 			}).then(res => {
 				setIsLoggingIn(false);
 				if (res.data.accessToken && res.data.refreshToken) {

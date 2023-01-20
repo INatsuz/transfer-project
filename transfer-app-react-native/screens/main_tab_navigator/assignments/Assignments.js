@@ -10,7 +10,7 @@ export default function Assignments(props) {
 	const fetchAllAssignments = function () {
 		return new Promise(function (resolve, reject) {
 			getWithAuth("api/getAllTransfers").then(res => {
-				setAssignments(res.data.transfers);
+				setAssignments(res.data.transfers.slice(0, 10));
 				resolve()
 			}).catch(err => {
 				console.log("Could not get transfers");
@@ -30,7 +30,7 @@ export default function Assignments(props) {
 				<Ionicons name="add" size={22} color={"#222222"}/>
 			</TouchableOpacity>
 			<View style={styles.section}>
-				<AssignmentList title={"All Assignments"} assignments={assignments} fetchAssignments={fetchAllAssignments} onItemPress={navigateToDetails}/>
+				<AssignmentList title={"All Assignments"} assignments={assignments} fetchAssignments={fetchAllAssignments} onItemPress={navigateToDetails} roundedTop={true}/>
 			</View>
 		</View>
 	);
