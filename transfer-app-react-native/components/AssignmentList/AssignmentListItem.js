@@ -1,5 +1,4 @@
-import {StyleSheet, View, Text, TouchableOpacity} from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React from 'react';
 
 function getStatusColor(status) {
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		borderRadius: 10,
 		borderRightWidth: 4,
-		marginVertical: 5,
+		marginVertical: 2,
 		marginHorizontal: 10,
 		paddingVertical: 10,
 		paddingHorizontal: 10,

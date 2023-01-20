@@ -1,18 +1,16 @@
 import {StatusBar} from 'expo-status-bar';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import {Platform, StyleSheet} from 'react-native';
-import {
-	NavigationContainer, DefaultTheme, DarkTheme
-} from '@react-navigation/native';
+import {Platform, StyleSheet, useColorScheme} from 'react-native';
+import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Login from "./screens/login/Login";
 import React, {useEffect, useRef, useState} from "react";
 import MainTabNavigator from "./screens/main_tab_navigator/MainTabNavigator";
 import {Provider} from "react-redux";
 import store from "./redux/setupStore";
-import {useColorScheme} from 'react-native';
 import {navigationRef} from './utils/RootNavigation';
+import {saveNotificationAction} from "./redux/actions/notificationActions";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,7 +23,6 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
-	const [expoPushToken, setExpoPushToken] = useState("");
 	const [notification, setNotification] = useState(false);
 	const notificationListener = useRef();
 	const responseListener = useRef();
@@ -34,7 +31,7 @@ export default function App() {
 
 	useEffect(() => {
 		registerForPushNotificationsAsync().then(token => {
-			setExpoPushToken(token);
+			store.dispatch(saveNotificationAction(token));
 		});
 
 		// This listener is fired whenever a notification is received while the app is foregrounded
@@ -62,7 +59,6 @@ export default function App() {
 						name={"Login"}
 						component={Login}
 						options={{title: 'Login', headerShown: false}}
-						initialParams={{notificationToken: expoPushToken}}
 					/>
 					<Stack.Screen
 						name={"Main Tab Navigator"}
