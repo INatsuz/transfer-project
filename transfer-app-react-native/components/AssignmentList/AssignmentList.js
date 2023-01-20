@@ -1,4 +1,4 @@
-import {RefreshControl, ScrollView, StyleSheet, Text, View} from "react-native";
+import {FlatList, StyleSheet, Text, View} from "react-native";
 import AssignmentListItem from "./AssignmentListItem";
 import React, {useEffect, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
@@ -22,21 +22,17 @@ export default function AssignmentList(props) {
 	return (
 		<View style={props.roundedTop ? [styles.container, styles.roundedTop] : styles.container}>
 			<Text style={styles.title}>{!props.title ? "Your Active Assignments:" : props.title}</Text>
-			<ScrollView refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={() => {
+			<FlatList
+				data={props.assignments}
+				renderItem={({item}) => <AssignmentListItem key={item.id} data={item} onItemPress={props.onItemPress}/>}
+				refreshing={refreshing}
+				onRefresh={() => {
 					setRefreshing(true);
 					props.fetchAssignments().then(() => {
 						setRefreshing(false);
 					});
-				}}/>
-			}>
-
-				{props.assignments.length > 0 && props.assignments.map(line => {
-					return (
-						<AssignmentListItem data={line} key={line.ID} onItemPress={props.onItemPress}/>
-					)
-				})}
-			</ScrollView>
+				}}
+			/>
 		</View>
 	);
 };
