@@ -8,8 +8,8 @@ export default function AssignmentList(props) {
 	const isFocused = useIsFocused();
 
 	useEffect(function () {
-		setRefreshing(true);
 		if (isFocused) {
+			setRefreshing(true);
 			props.fetchAssignments().then(() => {
 				setRefreshing(false);
 			}).catch(err => {
@@ -20,7 +20,7 @@ export default function AssignmentList(props) {
 
 
 	return (
-		<View style={styles.container}>
+		<View style={props.roundedTop ? [styles.container, styles.roundedTop] : styles.container}>
 			<Text style={styles.title}>{!props.title ? "Your Active Assignments:" : props.title}</Text>
 			<ScrollView refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={() => {
@@ -44,16 +44,24 @@ export default function AssignmentList(props) {
 const styles = StyleSheet.create({
 	container: {
 		height: "100%",
-		borderTopLeftRadius: 10,
-		borderTopRightRadius: 10,
 		borderColor: "#AB81CD",
-		borderWidth: 2,
+		borderLeftWidth: 2,
+		borderBottomWidth: 2,
+		borderRightWidth: 2,
 		borderStyle: "solid",
 		paddingBottom: 2
 	},
 
+	roundedTop: {
+		borderTopWidth: 2,
+		borderTopLeftRadius: 10,
+		borderTopRightRadius: 10,
+	},
+
 	title: {
-		padding: 10,
+		paddingHorizontal: 15,
+		paddingTop: 7,
+		paddingBottom: 5,
 		color: "#fff",
 		fontSize: 20,
 		fontWeight: "bold"

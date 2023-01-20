@@ -14,7 +14,6 @@ router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
 					LEFT JOIN vehicle
 					ON transfer.vehicle = vehicle.ID
 					`).then(({result: transfers}) => {
-		console.log(transfers);
 		res.status(200).json({transfers: transfers});
 	}).catch(err => {
 		console.log(err);

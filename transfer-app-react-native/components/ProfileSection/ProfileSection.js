@@ -125,13 +125,15 @@ export default function ProfileSection(props) {
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 10,
+		padding: 5,
 		backgroundColor: "#181818",
 		borderRadius: 10,
+		borderBottomStartRadius: 0,
+		borderBottomEndRadius: 0,
 		borderColor: "#AB81CD",
 		borderWidth: 2,
+		borderBottomWidth: 0,
 		borderStyle: "solid",
-		marginBottom: 10
 	},
 
 	nameSection: {
@@ -141,8 +143,8 @@ const styles = StyleSheet.create({
 
 	area: {
 		backgroundColor: "#222222",
-		marginVertical: 5,
-		padding: 10,
+		marginVertical: 2,
+		padding: 5,
 		borderRadius: 10
 	},
 
