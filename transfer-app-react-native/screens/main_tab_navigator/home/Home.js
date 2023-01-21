@@ -32,7 +32,6 @@ export default function Home(props) {
 		return new Promise(function (resolve, reject) {
 			getWithAuth("api/getAssignedTransfers").then(res => {
 				setAssignments(res.data.transfers);
-				console.log(res.data.transfers[0]);
 				resolve();
 			}).catch(err => {
 				console.log("Could not get assigned transfers");

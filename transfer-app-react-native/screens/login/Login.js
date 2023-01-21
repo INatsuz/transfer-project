@@ -98,12 +98,8 @@ export default function Login(props) {
 					<View style={styles.content_container}>
 						<Banner/>
 						<View style={styles.inputs_container}>
-							<TextInput keyboardType={"email-address"} caretHidden={false} style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" onEndEditing={e => {
-								setEmail(e.nativeEvent.text);
-							}}/>
-							<TextInput secureTextEntry={true} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" onEndEditing={e => {
-								password.current = e.nativeEvent.text;
-							}}/>
+							<TextInput keyboardType={"email-address"} caretHidden={false} style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" onChangeText={setEmail}/>
+							<TextInput secureTextEntry={true} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" onChangeText={text => password.current = text}/>
 							<View style={{width: "100%"}}>
 								<Button title={"Login"} onPress={handleLoginClick}/>
 							</View>
