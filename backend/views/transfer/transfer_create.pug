@@ -41,7 +41,7 @@ block content
                         option(value="null") No driver
                         each driver in drivers
                             option(value=driver.ID)= driver.name
-                    input#driver-commission(type="hidden" name="driverCommission")
+                    input#driver-commission(type="hidden" name="driverCommission" value="0")
                 div.mb-3
                     label.form-label(for="vehicle") Vehicle
                     select.form-select#vehicle(name="vehicle")
@@ -54,7 +54,7 @@ block content
                         option(value="null") No operator
                         each operator in operators
                             option(value=operator.ID)= operator.name
-                    input#operator-commission(type="hidden" name="operatorCommission")
+                    input#operator-commission(type="hidden" name="operatorCommission" value="0")
                 div.mb-3
                     label.form-label(for="observations") Observations
                     textarea.form-control#observations(name="observations" rows=2)
