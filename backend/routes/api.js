@@ -13,6 +13,7 @@ router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
 					ON transfer.service_operator = serviceoperator.ID
 					LEFT JOIN vehicle
 					ON transfer.vehicle = vehicle.ID
+					ORDER BY ID DESC
 					`).then(({result: transfers}) => {
 		res.status(200).json({transfers: transfers});
 	}).catch(err => {
@@ -44,7 +45,7 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 
 // GET getDrivers
 router.get("/getDrivers", mustBeAdmin, function (req, res, next) {
-	db.query(`SELECT appuser.ID, appuser.name, appuser.activeVehicle, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName 
+	db.query(`SELECT appuser.ID, appuser.name, appuser.activeVehicle, appuser.commission, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName 
 			FROM appuser 
 			LEFT JOIN vehicle 
 			ON vehicle.ID = appuser.activeVehicle`, []).then(({result: drivers}) => {
@@ -57,7 +58,7 @@ router.get("/getDrivers", mustBeAdmin, function (req, res, next) {
 
 // GET getOperators
 router.get("/getOperators", mustBeAdmin, function (req, res, next) {
-	db.query(`SELECT ID, name FROM serviceoperator`, []).then(({result: operators}) => {
+	db.query(`SELECT ID, name, commission FROM serviceoperator`, []).then(({result: operators}) => {
 		res.status(200).json({operators: operators});
 	}).catch(err => {
 		console.log(err);
@@ -72,8 +73,7 @@ router.get("/getVehicles", mustBeAuthenticated, function (req, res, next) {
 				LEFT JOIN appuser 
 				ON appuser.activeVehicle = vehicle.ID 
 				AND appuser.ID = ? 
-				ORDER BY userID DESC;`, [req.tokenPayload.ID]).then(({result: vehicles, fields}) => {
-		console.log(vehicles);
+				ORDER BY userID DESC;`, [req.tokenPayload.ID]).then(({result: vehicles}) => {
 		res.status(200).json({vehicles: vehicles});
 	}).catch(err => {
 		console.log(err);
@@ -82,7 +82,7 @@ router.get("/getVehicles", mustBeAuthenticated, function (req, res, next) {
 });
 
 // PUT updateTransfer
-router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
+router.put("/updateTransfer", mustBeAuthenticated, function (req, res, next) {
 	let {
 		ID,
 		person_name,
@@ -91,40 +91,45 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 		origin,
 		destination,
 		price,
+		paid,
 		time,
 		driver,
+		driverCommission,
 		vehicle,
 		operator,
+		operatorCommission,
 		observations
 	} = req.body;
 	person_name = person_name.trim();
 	origin = origin.trim();
 	destination = destination.trim();
-	num_of_people = parseInt(num_of_people);
+	num_of_people = num_of_people.trim();
 	flight = flight.toUpperCase();
+	observations = observations.trim()
+
+	console.log(driverCommission);
+	console.log(operatorCommission);
 
 	if (!Number.isInteger(ID) || ID <= 0) {
 		res.status(400).json({err: "ID validation error"});
 		return;
 	}
+
 	if (!person_name || person_name.length <= 0 || person_name.length > 128 || typeof (person_name) !== "string") {
 		res.status(400).json({err: "Person name validation error"});
 		return;
 	}
-	if (isNaN(num_of_people) || num_of_people <= 0 || num_of_people >= 100) {
-		console.log("Number of people validation error");
-		console.log("Number of people: " + num_of_people);
-		res.status(400).json({err: "Number of people validation error"});
-		return;
-	}
+
 	if (!origin || origin.length <= 0 || origin.length > 128 || typeof (origin) !== "string") {
 		res.status(400).json({err: "Origin validation error"});
 		return;
 	}
+
 	if (!destination || destination.length <= 0 || destination.length > 128 || typeof (destination) !== "string") {
 		res.status(400).json({err: "Destination validation error"});
 		return;
 	}
+
 	if (!time || !Date.parse(time)) {
 		console.log(Date.parse(time) < new Date());
 		console.log(!time);
@@ -132,25 +137,25 @@ router.put("/updateTransfer", mustBeAdmin, function (req, res, next) {
 		res.status(400).json({err: "Time validation error"});
 		return;
 	}
+
 	if (driver !== null && !Number.isInteger(driver) && driver <= 0) {
 		res.status(400).json({err: "Driver validation error"});
 		return;
 	}
+
 	if (vehicle !== null && !Number.isInteger(vehicle) && vehicle <= 0) {
 		res.status(400).json({err: "Vehicle validation error"});
 		return;
 	}
 
-	db.query(`SELECT driver FROM transfer`).then(({result: transfer, fields}) => {
-		db.query(`UPDATE transfer 
-				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, transfer_time = ?, driver = ?, vehicle = ?, service_operator = ?, observations = ?
+	db.query(`UPDATE transfer 
+				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, paid = ?, transfer_time = ?, driverCommission = IF(driver = ?, driverCommission, ?), operatorCommission = IF(service_operator = ?, operatorCommission, ?), driver = ?, vehicle = ?, service_operator = ?, observations = ?
 				WHERE ID = ?`,
-			[person_name, num_of_people, flight, origin, destination, price, time, driver, vehicle, operator, observations, ID]).then(() => {
-			res.status(200).json({res: "Transfer updated with success"});
-		}).catch(err => {
-			console.log(err);
-			res.status(406).json({err: "Something went wrong with the query"});
-		});
+		[person_name, num_of_people, flight, origin, destination, price, paid, time, driver, driverCommission, operator, operatorCommission, driver, vehicle, operator, observations, ID]).then(() => {
+		res.status(200).json({res: "Transfer updated with success"});
+	}).catch(err => {
+		console.log(err);
+		res.status(406).json({err: "Something went wrong with the query"});
 	});
 });
 
@@ -187,13 +192,29 @@ router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next
 // TODO Add logic to send push notification
 // POST addTransfer
 router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
-	let {person_name, num_of_people, price, origin, destination, flight, datetime, operator, observations} = req.body;
+	let {
+		person_name,
+		num_of_people,
+		price,
+		paid,
+		origin,
+		destination,
+		flight,
+		datetime,
+		status,
+		driver,
+		driverCommission,
+		vehicle,
+		operator,
+		operatorCommission,
+		observations
+	} = req.body;
 
-	if (person_name && num_of_people && origin && destination && datetime) {
+	if (person_name && num_of_people && price && paid && origin && destination && flight && datetime && status && observations) {
 		db.query(`INSERT INTO 
-						transfer(person_name, num_of_people, price, origin, destination, flight, transfer_time, service_operator, observations, status, paid) 
-						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			[person_name, num_of_people, price, origin, destination, flight, datetime, operator, observations, 'PENDING', true]
+						transfer(person_name, num_of_people, price, paid, origin, destination, flight, transfer_time, status, driver, vehicle, service_operator, observations, driverCommission, operatorCommission) 
+						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			[person_name, num_of_people, price, paid, origin, destination, flight, datetime, status, driver ?? null, vehicle ?? null, operator ?? null, observations, driverCommission, operatorCommission]
 		).then(({result, fields}) => {
 			res.status(200).json({res: "Transfer added successfully"});
 		}).catch(err => {
@@ -209,7 +230,7 @@ router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
 
 
 // DELETE removeTransfer/:ID
-router.delete("/removeTransfer/:ID", mustBeAdmin, function (req, res, next) {
+router.delete("/removeTransfer/:ID", mustBeAuthenticated, function (req, res, next) {
 	let ID = req.params.ID;
 
 	if (ID) {

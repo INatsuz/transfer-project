@@ -16,10 +16,13 @@ import {Chevron} from "react-native-shapes";
 import React, {useEffect, useState} from "react";
 import {deleteWithAuth, getWithAuth, putWithAuth} from "../../utils/Requester";
 import useOperators from "../../hooks/useOperators";
+import useVehicles from "../../hooks/useVehicles";
+import useDrivers from "../../hooks/useDrivers";
 
 export default function AssignmentDetails(props) {
-	let {assignment, isEditable} = props.route.params;
+	let {assignment, isAdmin} = props.route.params;
 
+	console.log(assignment);
 	const [pickingDate, setPickingDate] = useState(false);
 	const [pickingTime, setPickingTime] = useState(false);
 	const [personName, setPersonName] = useState(assignment.person_name);
@@ -27,51 +30,22 @@ export default function AssignmentDetails(props) {
 	const [origin, setOrigin] = useState(assignment.origin);
 	const [destination, setDestination] = useState(assignment.destination);
 	const [price, setPrice] = useState(assignment.price);
+	const [paid, setPaid] = useState(assignment.paid);
 	const [date, setDate] = useState(new Date(assignment.transfer_time));
 	const [time, setTime] = useState(new Date(assignment.transfer_time));
 	const [flight, setFlight] = useState(assignment.flight);
 	const [driver, setDriver] = useState(assignment.driver);
-	const [driverName] = useState(assignment.driverName);
 	const [activeVehicle, setActiveVehicle] = useState(assignment.vehicle);
 	const [operator, setOperator] = useState(assignment.service_operator);
 	const [observations, setObservations] = useState(assignment.observations);
 
-	const [drivers, setDrivers] = useState(driver ? [{ID: assignment.driver, name: assignment.driverName}] : []);
-	const [vehicles, setVehicles] = useState(activeVehicle ? [{ID: assignment.vehicle, displayName: assignment.vehicleName}] : []);
+	const [drivers] = useDrivers(driver, assignment.driverName);
+	const [vehicles] = useVehicles(activeVehicle, assignment.vehicleName);
 	const [operators] = useOperators(operator, assignment.operatorName);
 
 	let datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
 	let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
 	let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
-
-	async function fetchDrivers() {
-		getWithAuth("api/getDrivers").then(res => {
-			setDrivers(res.data.drivers);
-		}).catch(err => {
-			console.log(err.response);
-		});
-	}
-
-	function updateVehicleByDriver(newDriver) {
-		let cur_driver = drivers.find(el => el.ID === newDriver);
-		if (cur_driver) setActiveVehicle(cur_driver.activeVehicle);
-	}
-
-	async function fetchVehicles() {
-		getWithAuth("api/getVehicles").then(res => {
-			setVehicles(res.data.vehicles);
-		}).catch(err => {
-			console.log(err);
-		});
-	}
-
-	useEffect(() => {
-		if (isEditable) {
-			fetchVehicles();
-			fetchDrivers();
-		}
-	}, []);
-
 
 	function onSavePress() {
 		putWithAuth("api/updateTransfer", {
@@ -82,13 +56,16 @@ export default function AssignmentDetails(props) {
 			origin: origin,
 			destination: destination,
 			price: price,
+			paid: paid,
 			time: `${datetime.getUTCFullYear()}-${datetime.getUTCMonth() + 1}-${datetime.getUTCDate()} ${datetime.getUTCHours()}:${datetime.getUTCMinutes()}:00`,
 			driver: driver,
+			driverCommission: drivers.find(value => value.ID === driver) ? drivers.find(value => value.ID === driver).commission : 0,
 			vehicle: activeVehicle,
 			operator: operator,
+			operatorCommission: operators.find(value => value.ID === operator) ? operators.find(value => value.ID === operator).commission : 0,
 			observations: observations
 		}).then(() => {
-			props.navigation.navigate("Assignments");
+			props.navigation.goBack();
 		}).catch(err => {
 			console.log(err.response.data);
 		});
@@ -103,7 +80,7 @@ export default function AssignmentDetails(props) {
 					text: "Yes",
 					onPress: async () => {
 						deleteWithAuth(`api/removeTransfer/${assignment.ID}`).then(res => {
-							props.navigation.navigate("Assignments");
+							props.navigation.goBack("Assignments");
 						}).catch(err => {
 							console.log(err);
 						});
@@ -133,158 +110,127 @@ export default function AssignmentDetails(props) {
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Person: </Text>
-						{isEditable ?
-							<TextInput value={personName} style={[styles.text, styles.input]} onChangeText={(value) => setPersonName(value)}/> :
-							<Text style={styles.text}>{personName}</Text>}
+						<TextInput value={personName} style={[styles.text, styles.input]} onChangeText={(value) => setPersonName(value)}/>
 					</View>
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Number of People: </Text>
-						{isEditable ?
-							<TextInput keyboardType={"number-pad"} value={numberOfPeople.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/> :
-							<Text style={styles.text}>{numberOfPeople.toString()}</Text>}
+						<TextInput value={numberOfPeople.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
 					</View>
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Flight: </Text>
-						{
-							isEditable ?
-								<TextInput value={flight ? flight.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setFlight(value)}/>
-								:
-								<Text style={styles.text}>{flight ? flight.toString() : "No flight"}</Text>
-						}
+						<TextInput value={flight ? flight.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setFlight(value)}/>
 					</View>
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Origin: </Text>
-						{isEditable ?
-							<TextInput value={origin} style={[styles.text, styles.input]} onChangeText={(value) => setOrigin(value)}/> :
-							<Text style={styles.text}>{origin}</Text>}
+						<TextInput value={origin} style={[styles.text, styles.input]} onChangeText={(value) => setOrigin(value)}/>
 					</View>
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Destination: </Text>
-						{isEditable ?
-							<TextInput value={destination} style={[styles.text, styles.input]} onChangeText={(value) => setDestination(value)}/> :
-							<Text style={styles.text}>{destination}</Text>}
+						<TextInput value={destination} style={[styles.text, styles.input]} onChangeText={(value) => setDestination(value)}/>
 					</View>
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Price: </Text>
-						{isEditable ?
-							<TextInput value={price.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setPrice(value)}/> :
-							<Text style={styles.text}>{price.toString()}</Text>}
+						<TextInput keyboardType={"number-pad"} value={price.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setPrice(value)}/>
+					</View>
+
+					{/* Paid field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Paid: </Text>
+						<TextInput keyboardType={"number-pad"} value={paid.toString()} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
 					</View>
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Time: </Text>
-						{
-							isEditable ?
-								<Pressable onPress={() => setPickingDate(true)}>
-									<TextInput editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
-								</Pressable>
-								:
-								<Text style={styles.text}>{dateString} - {timeString}</Text>
-						}
+						<Pressable onPress={() => setPickingDate(true)}>
+							<TextInput editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
+						</Pressable>
 					</View>
 
+					{/* Drivers field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Driver: </Text>
-						{
-							isEditable ?
-								<RNPickerSelect value={driver} items={drivers.map(item => {
-									return {key: item.ID, label: item.name, value: item.ID};
-								})} onValueChange={(value) => {
-									if (value !== driver) {
-										setDriver(value);
-										updateVehicleByDriver(value);
-									}
-								}} style={{
-									iconContainer: {justifyContent: "center", padding: 15},
-									inputAndroidContainer: {...styles.input, justifyContent: "center"},
-									inputAndroid: styles.pickerSelect
-								}} Icon={() => {
-									return (<Chevron size={1.5} color="gray"/>);
-								}} useNativeAndroidPickerStyle={false}/>
-								:
-								<Text style={styles.text}>{driverName}</Text>
-						}
+						<RNPickerSelect disabled={!isAdmin} value={driver} items={drivers.map(item => {
+							return {key: item.ID, label: item.name, value: item.ID};
+						})} onValueChange={(value) => {
+							if (value !== driver) {
+								setDriver(value);
+								let userVehicle = vehicles.find(vehicle => vehicle.userID === value);
+
+								if (userVehicle) {
+									setActiveVehicle(userVehicle.ID);
+								} else {
+									setActiveVehicle(null);
+								}
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {
+								...styles.input, ...styles.disabledPicker,
+								justifyContent: "center"
+							},
+							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)}
+						}} Icon={() => {
+							return isAdmin ? (<Chevron size={1.5} color="gray"/>) : null;
+						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
+					{/* Vehicles field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Vehicle: </Text>
-						{
-							isEditable ?
-								<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
-									return {key: item.ID, label: item.displayName, value: item.ID};
-								})} onValueChange={(value, index) => {
-									if (value !== activeVehicle) {
-										setActiveVehicle(value);
-									}
-								}} style={{
-									iconContainer: {justifyContent: "center", padding: 15},
-									inputAndroidContainer: {...styles.input, justifyContent: "center"},
-									inputAndroid: styles.pickerSelect
-								}} Icon={() => {
-									return (<Chevron size={1.5} color="gray"/>);
-								}} useNativeAndroidPickerStyle={false}/>
-
-								:
-
-								<Text style={styles.text}>{assignment.vehicleName ? assignment.vehicleName : "No vehicle chosen"}</Text>
-						}
+						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+							return {key: item.ID, label: item.displayName, value: item.ID};
+						})} onValueChange={(value, index) => {
+							if (value !== activeVehicle) {
+								setActiveVehicle(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
 					{/* Operators field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Operator: </Text>
-						{
-							isEditable ?
-								<RNPickerSelect value={operator} items={operators.map(item => {
-									return {key: item.ID, label: item.name, value: item.ID};
-								})} onValueChange={(value) => {
-									if (value !== operator) {
-										setOperator(value);
-									}
-								}} style={{
-									iconContainer: {justifyContent: "center", padding: 15},
-									inputAndroidContainer: {...styles.input, justifyContent: "center"},
-									inputAndroid: styles.pickerSelect
-								}} Icon={() => {
-									return (<Chevron size={1.5} color="gray"/>);
-								}} useNativeAndroidPickerStyle={false}/>
-
-								:
-
-								<Text style={styles.text}>{assignment.service_operator ? assignment.service_operator : "No operator"}</Text>
-						}
+						<RNPickerSelect value={operator} items={operators.map(item => {
+							return {key: item.ID, label: item.name, value: item.ID};
+						})} onValueChange={(value) => {
+							if (value !== operator) {
+								setOperator(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
 					{/* Observations field */}
-					<View style={isEditable ? styles.section : {}}>
+					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Observations: </Text>
-						{
-							isEditable ?
-								<TextInput multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
-								:
-								<Text style={styles.text}>{observations ? observations.toString() : "No observations"}</Text>
-						}
+						<TextInput multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
 					</View>
 
 					{/*
 					Save and delete buttons
 					Only show up when the fields are editable
 					*/}
-					{isEditable &&
-						<View style={styles.section}>
-							<Button title={"Save"} onPress={onSavePress}/>
-						</View>
-					}
-					{isEditable &&
-						<View>
-							<Button color={"#dc3545"} title={"Delete"} onPress={onDeletePress}/>
-						</View>
-					}
+					<View style={styles.section}>
+						<Button title={"Save"} onPress={onSavePress}/>
+					</View>
+					<View>
+						<Button color={"#dc3545"} title={"Delete"} onPress={onDeletePress}/>
+					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</View>
@@ -316,6 +262,11 @@ const styles = StyleSheet.create({
 
 	pickerSelect: {
 		color: "#fff",
+		fontSize: 16
+	},
+
+	disabledPicker: {
+		color: "#A3A9AA",
 		fontSize: 16
 	},
 

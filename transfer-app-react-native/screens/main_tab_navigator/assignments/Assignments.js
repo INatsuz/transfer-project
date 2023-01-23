@@ -10,7 +10,7 @@ export default function Assignments(props) {
 	const fetchAllAssignments = function () {
 		return new Promise(function (resolve, reject) {
 			getWithAuth("api/getAllTransfers").then(res => {
-				setAssignments(res.data.transfers.slice(0, 10));
+				setAssignments(res.data.transfers);
 				resolve()
 			}).catch(err => {
 				console.log("Could not get transfers");
@@ -21,12 +21,12 @@ export default function Assignments(props) {
 	}
 
 	const navigateToDetails = function (assignment) {
-		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isEditable: true})
+		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: true})
 	};
 
 	return (
 		<View style={styles.container}>
-			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment")}>
+			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: true})}>
 				<Ionicons name="add" size={22} color={"#222222"}/>
 			</TouchableOpacity>
 			<View style={styles.section}>

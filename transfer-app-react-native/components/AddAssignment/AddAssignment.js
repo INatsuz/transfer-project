@@ -9,50 +9,78 @@ import {
 	TextInput,
 	View
 } from "react-native";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import {Chevron} from "react-native-shapes";
-import useOperators from "../../../hooks/useOperators";
-import {postWithAuth} from "../../../utils/Requester";
+import useDrivers from "../../hooks/useDrivers";
+import useVehicles from "../../hooks/useVehicles";
+import useOperators from "../../hooks/useOperators";
+import {postWithAuth} from "../../utils/Requester";
 
 export default function AddAssignment(props) {
+	const {userID, isAdmin} = props.route.params;
+
 	const [pickingDate, setPickingDate] = useState(false);
 	const [pickingTime, setPickingTime] = useState(false);
 
+	const [drivers] = useDrivers();
+	const [vehicles] = useVehicles();
+	const [operators] = useOperators();
+
 	const [personName, setPersonName] = useState("");
-	const [numberOfPeople, setNumberOfPeople] = useState(1);
-	const [price, setPrice] = useState("");
+	const [numberOfPeople, setNumberOfPeople] = useState("");
+	const [price, setPrice] = useState(0);
+	const [paid, setPaid] = useState(0);
 	const [origin, setOrigin] = useState("");
 	const [destination, setDestination] = useState("");
 	const [date, setDate] = useState(new Date());
 	const [time, setTime] = useState(new Date());
+	const [status, setStatus] = useState("PENDING");
 	const [flight, setFlight] = useState("");
+	const [driver, setDriver] = useState(userID ?? null);
+	const [vehicle, setVehicle] = useState(null);
 	const [operator, setOperator] = useState(null);
 	const [observations, setObservations] = useState("");
 
-	const [operators] = useOperators();
-
 	let dateString = String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0") + "/" + date.getFullYear();
 	let timeString = String(time.getHours()).padStart(2, "0") + ":" + String(time.getMinutes()).padStart(2, "0");
+
+	useEffect(() => {
+		if (driver) {
+			let userVehicle = vehicles.find(vehicle => vehicle.userID === driver);
+
+			if (userVehicle) {
+				setVehicle(userVehicle.ID);
+			} else {
+				setVehicle(null);
+			}
+		}
+	}, [vehicles])
 
 	function onAddPress() {
 		let data = {
 			person_name: personName,
 			num_of_people: numberOfPeople,
 			price,
+			paid,
 			origin,
 			destination,
 			flight,
 			datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:00`,
+			status,
+			driver,
+			driverCommission: drivers.find(value => value.ID === driver) ? drivers.find(value => value.ID === driver).commission : 0,
+			vehicle,
 			operator,
+			operatorCommission: operators.find(value => value.ID === operator) ? operators.find(value => value.ID === operator).commission : 0,
 			observations
 		};
 		console.log(data)
 
 		postWithAuth("api/addTransfer", data).then(res => {
 			console.log("Transfer added successfully");
-			props.navigation.navigate("Assignments");
+			props.navigation.goBack();
 		}).catch(err => {
 			console.log(err);
 		});
@@ -71,24 +99,30 @@ export default function AddAssignment(props) {
 				setTime(time);
 			}}/>}
 
-			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
+			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
 					{/* Person Name field */}
 					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Person Name: </Text>
+						<Text style={[styles.text, styles.title]}>Person: </Text>
 						<TextInput placeholder={"Person Name"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPersonName(value)}/>
 					</View>
 
 					{/* Number of People field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Number of People: </Text>
-						<TextInput keyboardType={"number-pad"} placeholder={"Number of People"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
+						<TextInput placeholder={"Number of People"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
 					</View>
 
 					{/* Price field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Price: </Text>
-						<TextInput keyboardType={"number-pad"} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPrice(value)}/>
+						<TextInput keyboardType={"number-pad"} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPrice(parseFloat(value))}/>
+					</View>
+
+					{/* Paid field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Paid: </Text>
+						<TextInput keyboardType={"number-pad"} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
 					</View>
 
 					{/* Origin field */}
@@ -119,6 +153,77 @@ export default function AddAssignment(props) {
 						</Pressable>
 					</View>
 
+					{/* Status field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Status: </Text>
+						<RNPickerSelect value={status} items={[{
+							label: "PENDING",
+							value: "PENDING",
+							key: "PENDING"
+						}, {
+							label: "IN PROGRESS",
+							value: "IN PROGRESS",
+							key: "IN PROGRESS"
+						}, {
+							label: "FINISHED",
+							value: "FINISHED",
+							key: "FINISHED"
+						}]} onValueChange={(value) => {
+							if (value !== status) {
+								setStatus(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
+					</View>
+
+					{/* Drivers field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Driver: </Text>
+						<RNPickerSelect disabled={!isAdmin} value={driver} items={drivers.map(item => {
+							return {key: item.ID, label: item.name, value: item.ID};
+						})} onValueChange={(value) => {
+							if (value !== driver) {
+								setDriver(value);
+								let userVehicle = vehicles.find(vehicle => vehicle.userID === value);
+
+								if (userVehicle) {
+									setVehicle(userVehicle.ID);
+								} else {
+									setVehicle(null);
+								}
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, ...styles.disabledPicker, justifyContent: "center"},
+							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)}
+						}} Icon={() => {
+							return isAdmin ? (<Chevron size={1.5} color="gray"/>) : null;
+						}} useNativeAndroidPickerStyle={false}/>
+					</View>
+
+					{/* Vehicles field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Vehicle: </Text>
+						<RNPickerSelect value={vehicle} items={vehicles.map(item => {
+							return {key: item.ID, label: item.displayName, value: item.ID};
+						})} onValueChange={(value) => {
+							if (value !== vehicle) {
+								setVehicle(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
+					</View>
+
 					{/* Operators field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Operator: </Text>
@@ -126,7 +231,6 @@ export default function AddAssignment(props) {
 							return {key: item.ID, label: item.name, value: item.ID};
 						})} onValueChange={(value) => {
 							if (value !== operator) {
-								console.log(value);
 								setOperator(value);
 							}
 						}} style={{
@@ -170,6 +274,11 @@ const styles = StyleSheet.create({
 
 	pickerSelect: {
 		color: "#fff",
+		fontSize: 16
+	},
+
+	disabledPicker: {
+		color: "#A3A9AA",
 		fontSize: 16
 	},
 

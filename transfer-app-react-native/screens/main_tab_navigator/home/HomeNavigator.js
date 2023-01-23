@@ -6,6 +6,7 @@ import {Menu, MenuItem} from "react-native-material-menu";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, {useState} from "react";
 import {putWithAuth} from "../../../utils/Requester";
+import AddAssignment from "../../../components/AddAssignment/AddAssignment";
 
 const Stack = createNativeStackNavigator();
 
@@ -110,6 +111,17 @@ export default function HomeNavigator() {
 					)
 				}
 			})}/>
+			<Stack.Screen name={"AddAssignment"} component={AddAssignment} options={{
+				headerBackButtonMenuEnabled: true,
+				headerTitle: "Add Assignment",
+				headerStyle: {
+					backgroundColor: "#222222",
+				},
+				headerTitleStyle: {
+					color: "#fff"
+				},
+				headerTintColor: "#fff"
+			}}/>
 		</Stack.Navigator>
 	);
 };

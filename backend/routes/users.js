@@ -11,6 +11,7 @@ router.post('/login', function (req, res, next) {
 	console.log(req.body);
 	verifyLoginAndGenerateTokens(req.body.email, req.body.password).then(({accessToken, refreshToken, payload}) => {
 		res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, user: payload});
+
 		db.query(`UPDATE appuser SET notificationToken = ? WHERE email = ?`, [req.body.notificationToken, req.body.email]).then(() => {
 			console.log("Updated notification token on login for " + req.body.email);
 		}).catch(err => {
@@ -57,7 +58,7 @@ router.get("/renew", function (req, res, next) {
 router.get("/checkLogin", mustBeAuthenticated, function (req, res, next) {
 	res.status(200).json({
 		"loggedIn": true,
-		user: {email: req.tokenPayload.email, name: req.tokenPayload.name, userType: req.tokenPayload.userType}
+		user: {ID: req.tokenPayload.ID, email: req.tokenPayload.email, name: req.tokenPayload.name, userType: req.tokenPayload.userType}
 	});
 });
 

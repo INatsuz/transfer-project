@@ -26,7 +26,7 @@ export default function MainTabNavigator() {
 
 				<Tab.Screen name={"Home Navigator"} component={HomeNavigator} options={{
 					headerShown: false,
-					unmountOnBlur: true,
+					// unmountOnBlur: true,
 					title: "Home",
 					tabBarIcon: ({color, size}) => (
 						<Ionicons name="home" size={size} color={color}/>
@@ -36,7 +36,7 @@ export default function MainTabNavigator() {
 					userType === 1 &&
 					<Tab.Screen name={"AssignmentsNavigator"} component={AssignmentsNavigator} options={{
 						headerShown: false,
-						unmountOnBlur: true,
+						// unmountOnBlur: true,
 						tabBarIcon: ({color, size}) => (
 							<Ionicons name="car" size={size} color={color}/>
 						),

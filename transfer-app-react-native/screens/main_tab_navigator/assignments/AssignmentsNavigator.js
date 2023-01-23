@@ -1,7 +1,7 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Assignments from "./Assignments";
 import AssignmentDetails from "../../../components/AssignmentDetails/AssignmentDetails";
-import AddAssignment from "./AddAssignment";
+import AddAssignment from "../../../components/AddAssignment/AddAssignment";
 import {StyleSheet, Text, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Menu, MenuItem} from 'react-native-material-menu';
@@ -38,7 +38,7 @@ function onMenuItemPress(navigation, route, value) {
 	navigation.setParams({assignment: assignment});
 }
 
-export default function AssignmentsNavigator(props) {
+export default function AssignmentsNavigator() {
 	const [isMenuVisible, setIsMenuVisible] = useState(false);
 
 	return (

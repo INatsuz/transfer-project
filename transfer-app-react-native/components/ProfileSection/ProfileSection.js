@@ -1,14 +1,14 @@
 import {Alert, StyleSheet, Text, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select"
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, {useEffect, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
 import {deleteTokens} from "../../utils/TokenManager";
 
-export default function ProfileSection(props) {
+function ProfileSection(props) {
 	const dispatch = useDispatch();
 	const [vehicles, setVehicles] = useState([]);
 	const [activeVehicle, setActiveVehicle] = useState(null);
@@ -153,3 +153,5 @@ const styles = StyleSheet.create({
 		fontSize: 18
 	}
 });
+
+export default memo(ProfileSection);

@@ -1,5 +1,5 @@
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import React from 'react';
+import React, {memo} from 'react';
 
 function getStatusColor(status) {
 	switch (status) {
@@ -12,7 +12,7 @@ function getStatusColor(status) {
 	}
 }
 
-export default function AssignmentListItem(props) {
+function AssignmentListItem(props) {
 	let datetime = new Date(props.data.transfer_time);
 	const dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
 	const timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
@@ -80,3 +80,5 @@ const styles = StyleSheet.create({
 		fontSize: 14
 	}
 });
+
+export default memo(AssignmentListItem)

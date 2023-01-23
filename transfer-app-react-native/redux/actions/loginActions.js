@@ -3,6 +3,7 @@ export const LOG_OFF = 'LOG_OFF';
 
 export const loginAction = (user) => ({
 	type: LOG_IN,
+	userID: user.ID,
 	email: user.email,
 	name: user.name,
 	userType: user.userType,

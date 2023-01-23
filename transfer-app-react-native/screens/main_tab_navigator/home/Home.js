@@ -4,8 +4,10 @@ import ProfileSection from "../../../components/ProfileSection/ProfileSection";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {getWithAuth} from "../../../utils/Requester";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Home(props) {
+	const userID = useSelector(state => state.login.userID);
 	const email = useSelector(state => state.login.email);
 	const name = useSelector(state => state.login.name);
 	const userType = useSelector(state => state.login.userType);
@@ -42,11 +44,14 @@ export default function Home(props) {
 	}
 
 	const navigateToDetails = function (assignment) {
-		props.navigation.navigate("AssignmentDetails", {assignment: assignment})
+		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: false})
 	};
 
 	return (
 		<View style={styles.container}>
+			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: false, userID: userID})}>
+				<Ionicons name="add" size={22} color={"#222222"}/>
+			</TouchableOpacity>
 			<View>
 				<ProfileSection assignmentCount={assignments.length} userData={{
 					userType: userType,
@@ -111,5 +116,18 @@ const styles = StyleSheet.create({
 
 	selected: {
 		backgroundColor: "#935CBF"
+	},
+
+	plusContainer: {
+		position: "absolute",
+		bottom: 10,
+		right: 10,
+		height: 50,
+		width: 50,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#AB81CD",
+		borderRadius: 25,
+		zIndex: 10
 	}
 });
