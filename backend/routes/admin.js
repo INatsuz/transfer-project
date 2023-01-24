@@ -73,6 +73,11 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 		clauseVariables.push(req.query.endDate);
 	}
 
+	if (req.query.person) {
+		clauses.push("transfer.person_name LIKE ?");
+		clauseVariables.push(`%${req.query.person}%`);
+	}
+
 	if (clauses.length > 0) {
 		timePeriodFilter = "WHERE " + clauses.join(" AND ");
 		queryVariables.push(...clauseVariables);

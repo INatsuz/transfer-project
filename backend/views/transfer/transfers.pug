@@ -1,35 +1,28 @@
 extends ../layouts/layout
 
 block content
-	div#exportModal.modal.fade(tabindex="-1" aria-labelledby="exportModal" aria-hidden="true")
+	div#searchModal.modal.fade(tabindex="-1" aria-labelledby="searchModal" aria-hidden="true")
 		div.modal-dialog
-			form(method="post" action="/admin/genTransferCSV")
+			form#search-form(method="GET")
 				div.modal-content
 					div.modal-header
-						h5#exportModalLabel.modal-title Export Transfers
+						h5#searchModalLabel.modal-title Search Transfers
 						button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
 					div.modal-body
 						div.mb-3
-							label.form-label(for="start-date") Start Date
-							input.form-control#start-date(type="date" name="startDate")
+							label.form-label(for="start-date-filter-input") Start Date
+							input.form-control#start-date-filter-input(type="date")
+							input#start-date-filter(type="hidden" name="startDate")
 						div.mb-3
-							label.form-label(for="end-date") End Date
-							input.form-control#end-date(type="date" name="endDate")
+							label.form-label(for="end-date-filter-input") End Date
+							input.form-control#end-date-filter-input(type="date")
+							input#end-date-filter(type="hidden" name="endDate")
 						div.mb-3
-							label.form-label(for="driver") Driver
-							select#driver.form-select(name="driver")
-								option(value="null" selected) All drivers
-								option(value=17) Ângelo Lopes
-								option(value=18) Benjamim Ramos
-						div.mb-3
-							label.form-label(for="operator") Operator
-							select#operator.form-select(name="operator")
-								option(value="null" selected) All operators
-								option(value=1) Conception
-								option(value=2) Outdoor
+							label.form-label(for="person-filter") Person
+							input.form-control#person-filter(type="text" name="person")
 					div.modal-footer
 						button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close
-						button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Export
+						button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Search
 
 	include transfer_table
 
@@ -38,32 +31,22 @@ block content
 			a.btn.btn-success(href="/admin/transfers/create")
 				i.bi.bi-plus-lg
 				|  Create
-			button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#exportModal")
-				i.bi.bi-file-earmark-arrow-down
-				|  Export
-		div
-			form.row.g-1#date-filter-form(method="GET")
-				div.col
-					label.form-label(for="start-date-filter-input") Start Date
-					input.form-control#start-date-filter-input(type="date")
-					input#start-date-filter(type="hidden" name="startDate")
-				div.col
-					label.form-label(for="end-date-filter-input") End Date
-					input.form-control#end-date-filter-input(type="date")
-					input#end-date-filter(type="hidden" name="endDate")
-				div.col.d-flex.align-items-end
-					button.btn.btn-primary(type="submit")
-						i.bi.bi-search
-						|  Search
-			div.row.g-0
-				a.col.btn.btn-primary.text-nowrap(href="/admin/transfers")
-					| All
-				a#today-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
-					| Today
-				a#week-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
-					| This Week
-				a#month-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
-					| This Month
+			button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#searchModal")
+				i.bi.bi-search
+				|  Search
+		div.row.g-0
+			a.col.btn.btn-primary.text-nowrap(href="/admin/transfers")
+				| All
+			a#yesterday-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
+				| Yesterday
+			a#today-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
+				| Today
+			a#tomorrow-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
+				| Tomorrow
+			a#week-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
+				| This Week
+			a#month-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
+				| This Month
 
 	+transfer_table(transfers)
 
@@ -72,10 +55,16 @@ block scripts
 		//Today button dates and setting of href attribute
 		let today = new Date();
 		today.setHours(0, 0, 0, 0);
+		let yesterday = new Date(today.getTime());
+		yesterday.setDate(today.getDate() - 1);
 		let tomorrow = new Date(today.getTime());
 		tomorrow.setDate(tomorrow.getDate() + 1);
+		let day_after_tomorrow = new Date(tomorrow.getTime());
+		day_after_tomorrow.setDate(day_after_tomorrow.getDate() + 1);
 
+		document.getElementById("yesterday-button").setAttribute("href", `/admin/transfers?startDate=${yesterday.toISOString()}&endDate=${today.toISOString()}`);
 		document.getElementById("today-button").setAttribute("href", `/admin/transfers?startDate=${today.toISOString()}&endDate=${tomorrow.toISOString()}`);
+		document.getElementById("tomorrow-button").setAttribute("href", `/admin/transfers?startDate=${tomorrow.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`);
 
 		// Week button dates and setting of href attribute
 		let firstDayOfWeek = new Date(today.getTime());
@@ -109,7 +98,7 @@ block scripts
 			timeSpan.innerHTML = `${timeString}`;
 		}
 
-		document.getElementById("date-filter-form").addEventListener("submit", function (event) {
+		document.getElementById("search-form").addEventListener("submit", function (event) {
 			event.preventDefault();
 
 			let startDate = new Date(document.getElementById("start-date-filter-input").value);

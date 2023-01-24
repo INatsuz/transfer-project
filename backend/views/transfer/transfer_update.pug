@@ -19,7 +19,7 @@ block content
 				div.mb-3
 					input#datetime-utc(type="hidden" value=transfer.transfer_time)
 					label.form-label(for="datetime-input") Date and time
-					input.form-control#datetime-input(type="datetime-local")
+					input.form-control#datetime-input(type="datetime-local" name="datetime-input" step=60 required)
 					input#datetime(type="hidden" name="datetime")
 				div.mb-3
 					label.form-label(for="status") Status
