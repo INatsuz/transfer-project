@@ -41,12 +41,12 @@ block content
             td= `${parseFloat((transfer.driverCommission * 100).toFixed(2))}%`
         tr
             th Paid
-            if transfer.paid
+            if transfer.paid >= transfer.price
                 td
-                    span.badge.text-bg-success Yes
+                    span.badge.text-bg-success= `${transfer.paid}€`
             else
                 td
-                    span.badge.text-bg-danger No
+                    span.badge.text-bg-danger= `${transfer.paid}€`
         tr
             th Driver
             td= transfer.driver

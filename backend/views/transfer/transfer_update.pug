@@ -34,8 +34,8 @@ block content
 					label.form-label(for="price") Price
 					input.form-control#price(type="number" name="price" step="0.01" value=transfer.price)
 				div.mb-3
-					label.form-label(for="isPaid") Is Paid
-					input.form-check-input.ms-2#isPaid(type="checkbox" name="isPaid" checked=transfer.paid === 1)
+					label.form-label(for="paid") Paid
+					input.form-control#paid(type="number" name="paid" step="0.01" value=transfer.paid)
 				div.mb-3
 					label.form-label(for="driver") Driver
 					select.form-select#driver(name="driver")

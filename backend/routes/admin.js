@@ -128,7 +128,7 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 					VALUES(?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[req.body.personName, req.body.origin, req.body.destination,
 			req.body.numberOfPeople, req.body.datetime, req.body.status,
-			req.body.flight, req.body.price, req.body.isPaid === "on", req.body.driver === 'null' ? null : req.body.driver,
+			req.body.flight, req.body.price, req.body.paid, req.body.driver === 'null' ? null : req.body.driver,
 			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.operatorCommission, req.body.driverCommission]).then(() => {
 		res.redirect("/admin/transfers");
 
@@ -186,8 +186,7 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 				 	driverCommission = IF(driver = ?, driverCommission, ?), driver = ?, seen = IF(driver = ?, seen, 0)
 					WHERE ID = ?`,
 			[req.body.person_name, req.body.origin, req.body.destination, req.body.num_of_people,
-				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.isPaid === "on",
-				req.body.vehicle,
+				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.paid, req.body.vehicle,
 				req.body.operator, req.body.operatorCommission, req.body.operator, req.body.observations,
 				req.body.driver, req.body.driverCommission, req.body.driver, req.body.driver, req.params.id]).then(() => {
 			res.redirect("/admin/transfers");
@@ -363,7 +362,7 @@ router.post("/appusers/create", mustHaveSession, function (req, res) {
 
 	bcrypt.hash(req.body.password, SALT_ROUNDS, function (err, hash) {
 		db.query(`INSERT INTO appuser(email, password, name, birthday, userType, commission) 
-					VALUES (?, ?, ?, ?, ?)`, [req.body.email, hash, req.body.name, req.body.birthday, req.body.userType, req.body.commission / 100]).then(() => {
+					VALUES (?, ?, ?, ?, ?, ?)`, [req.body.email, hash, req.body.name, req.body.birthday, req.body.userType, req.body.commission / 100]).then(() => {
 			res.redirect("/admin/appusers");
 		}).catch(err => {
 			console.log(err);
