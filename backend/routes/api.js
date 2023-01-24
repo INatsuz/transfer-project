@@ -57,7 +57,7 @@ router.get("/getDrivers", mustBeAdmin, function (req, res, next) {
 });
 
 // GET getOperators
-router.get("/getOperators", mustBeAdmin, function (req, res, next) {
+router.get("/getOperators", mustBeAuthenticated, function (req, res, next) {
 	db.query(`SELECT ID, name, commission FROM serviceoperator`, []).then(({result: operators}) => {
 		res.status(200).json({operators: operators});
 	}).catch(err => {
