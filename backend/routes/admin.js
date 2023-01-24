@@ -179,6 +179,7 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 	if (req.body.operator === "null") req.body.operator = null;
 	if (req.body.driver === "null") req.body.driver = null;
 	if (req.body.vehicle === "null") req.body.vehicle = null;
+	if (req.body.paid === "") req.body.paid = 0;
 
 	db.query(`SELECT driver from transfer WHERE ID = ?`, [req.params.id]).then(({result: transfer}) => {
 		db.query(`UPDATE transfer SET person_name = ?, origin = ?, destination = ?, num_of_people = ?, 
