@@ -123,7 +123,8 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 });
 
 router.post("/transfers/create", mustHaveSession, function (req, res) {
-	console.log(req.body.driverCommission)
+	if (req.body.paid === "") req.body.paid = 0;
+
 	db.query(`INSERT INTO transfer(person_name, origin, destination, num_of_people, transfer_time, status, flight, price, paid, driver, vehicle, service_operator, observations, operatorCommission, driverCommission)
 					VALUES(?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%T.000Z'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[req.body.personName, req.body.origin, req.body.destination,
