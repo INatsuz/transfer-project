@@ -191,7 +191,7 @@ router.put("/updateActiveVehicle", mustBeAuthenticated, function (req, res, next
 
 // TODO Add logic to send push notification
 // POST addTransfer
-router.post("/addTransfer", mustBeAdmin, function (req, res, next) {
+router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 	let {
 		person_name,
 		num_of_people,
