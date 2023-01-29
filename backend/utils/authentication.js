@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "w5JVIErNaQ";
 
-const ACCESS_TOKEN_DURATION = "10s";
+const ACCESS_TOKEN_DURATION = "30m";
 const REFRESH_TOKEN_DURATION = "7d";
 
 const USER_TYPES = {ADMIN: 1, DRIVER: 2}
