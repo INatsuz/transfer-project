@@ -22,7 +22,6 @@ import useDrivers from "../../hooks/useDrivers";
 export default function AssignmentDetails(props) {
 	let {assignment, isAdmin} = props.route.params;
 
-	console.log(assignment);
 	const [pickingDate, setPickingDate] = useState(false);
 	const [pickingTime, setPickingTime] = useState(false);
 	const [personName, setPersonName] = useState(assignment.person_name);
@@ -67,7 +66,7 @@ export default function AssignmentDetails(props) {
 		}).then(() => {
 			props.navigation.goBack();
 		}).catch(err => {
-			console.log(err.response.data);
+			console.log(err);
 		});
 	}
 

@@ -76,7 +76,6 @@ export default function AddAssignment(props) {
 			operatorCommission: operators.find(value => value.ID === operator) ? operators.find(value => value.ID === operator).commission : 0,
 			observations
 		};
-		console.log(data)
 
 		postWithAuth("api/addTransfer", data).then(res => {
 			console.log("Transfer added successfully");

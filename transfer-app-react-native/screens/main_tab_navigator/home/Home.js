@@ -39,7 +39,9 @@ export default function Home(props) {
 			let day_after_tomorrow = new Date(today.getTime());
 			day_after_tomorrow.setDate(day_after_tomorrow.getDate() + 2);
 
-			getWithAuth(`api/getAssignedTransfers?startDate=${yesterday.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`).then(res => {
+			let endpoint = userType === 1 ? "api/getAllTransfers" : "api/getAssignedTransfers";
+
+			getWithAuth(`${endpoint}?startDate=${yesterday.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`).then(res => {
 				setAssignments(res.data.transfers);
 				resolve();
 			}).catch(err => {
@@ -51,12 +53,12 @@ export default function Home(props) {
 	}
 
 	const navigateToDetails = function (assignment) {
-		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: false})
+		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: userType === 1})
 	};
 
 	return (
 		<View style={styles.container}>
-			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: false, userID: userID})}>
+			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: userType === 1, userID: userID})}>
 				<Ionicons name="add" size={22} color={"#222222"}/>
 			</TouchableOpacity>
 			<View>

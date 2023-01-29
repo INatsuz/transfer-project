@@ -2,7 +2,7 @@ import {Alert, StyleSheet, Text, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select"
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, {memo, useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
@@ -12,6 +12,7 @@ function ProfileSection(props) {
 	const dispatch = useDispatch();
 	const [vehicles, setVehicles] = useState([]);
 	const [activeVehicle, setActiveVehicle] = useState(null);
+	const userType = useSelector(state => state.login.userType);
 
 	function updateActiveVehicle(vehicle) {
 		let data = {vehicle: vehicle};
@@ -91,7 +92,9 @@ function ProfileSection(props) {
 	}
 
 	useEffect(() => {
-		fetchVehicles();
+		if (userType === 2) {
+			fetchVehicles();
+		}
 	}, []);
 
 	return (
@@ -101,6 +104,7 @@ function ProfileSection(props) {
 				<Text style={[styles.textStyle, {flex: 1}]}>Driver: {props.userData.name}</Text>
 				<Ionicons name="log-out" size={22} color={styles.textStyle.color} onPress={() => confirmLogoutDialog()}/>
 			</View>
+			{userType === 2 &&
 			<View style={[styles.area, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
 				<Text style={styles.textStyle}>Car: </Text>
 				<View style={{flex: 1}}>
@@ -115,8 +119,9 @@ function ProfileSection(props) {
 					}}/>
 				</View>
 			</View>
+			}
 			<View style={[styles.area, {marginBottom: 0}]}>
-				<Text style={styles.textStyle}>Assigned
+				<Text style={styles.textStyle}>{userType === 2 ? "Assigned " : "Total "}
 					Jobs: {props.assignment !== [] ? props.assignmentCount : 0}</Text>
 			</View>
 		</View>

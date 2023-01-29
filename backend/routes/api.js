@@ -5,6 +5,27 @@ const db = require('../utils/db');
 
 // GET getVehicles
 router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
+	let {startDate, endDate} = req.query;
+
+	let clauses = [];
+	let queryVariables = [];
+
+	let queryFilter = "";
+
+	if (startDate) {
+		clauses.push("transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		queryVariables.push(req.query.startDate);
+	}
+
+	if (endDate) {
+		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		queryVariables.push(req.query.endDate);
+	}
+
+	if (clauses.length > 0) {
+		queryFilter = "WHERE " + clauses.join(" AND ");
+	}
+
 	db.query(`SELECT transfer.*, appuser.name as driverName, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')' ) as vehicleName
 					FROM transfer
 					LEFT JOIN appuser
@@ -13,8 +34,9 @@ router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
 					ON transfer.service_operator = serviceoperator.ID
 					LEFT JOIN vehicle
 					ON transfer.vehicle = vehicle.ID
-					ORDER BY transfer.transfer_time DESC
-					`).then(({result: transfers}) => {
+					${queryFilter}
+					ORDER BY transfer.transfer_time ${startDate ? "ASC" : "DESC"}
+					`, [...queryVariables]).then(({result: transfers}) => {
 		res.status(200).json({transfers: transfers});
 	}).catch(err => {
 		console.log(err);
@@ -44,8 +66,6 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 	if (clauses.length > 0) {
 		queryFilter = "AND " + clauses.join(" AND ");
 	}
-
-	console.log(queryFilter);
 
 	db.query(`SELECT transfer.*, appuser.name as driverName, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
 					FROM transfer 
@@ -131,9 +151,6 @@ router.put("/updateTransfer", mustBeAuthenticated, function (req, res, next) {
 	num_of_people = num_of_people.trim();
 	flight = flight.toUpperCase();
 	observations = observations.trim()
-
-	console.log(driverCommission);
-	console.log(operatorCommission);
 
 	if (!Number.isInteger(ID) || ID <= 0) {
 		res.status(400).json({err: "ID validation error"});
