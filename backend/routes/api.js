@@ -236,7 +236,7 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 		observations
 	} = req.body;
 
-	if (person_name && num_of_people && price !== undefined && paid !== undefined && origin && destination && flight && datetime && status && observations) {
+	if (person_name && num_of_people && price !== undefined && paid !== undefined && origin && destination && flight !== undefined && datetime && status && observations !== undefined) {
 		db.query(`INSERT INTO 
 						transfer(person_name, num_of_people, price, paid, origin, destination, flight, transfer_time, status, driver, vehicle, service_operator, observations, driverCommission, operatorCommission) 
 						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -247,8 +247,6 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 			console.log(err);
 			res.status(406).json({err: "Something went wrong with the query"});
 		});
-
-
 	} else {
 		res.status(400).json({err: "Missing parameters"});
 	}
