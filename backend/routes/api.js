@@ -69,7 +69,7 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 });
 
 // GET getDrivers
-router.get("/getDrivers", mustBeAdmin, function (req, res, next) {
+router.get("/getDrivers", mustBeAuthenticated, function (req, res, next) {
 	db.query(`SELECT appuser.ID, appuser.name, appuser.activeVehicle, appuser.commission, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName 
 			FROM appuser 
 			LEFT JOIN vehicle 
