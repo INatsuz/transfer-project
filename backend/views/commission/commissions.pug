@@ -5,14 +5,16 @@ block content
 
     div.row.g-0.mt-2
         div.col-12
-            form(method="GET" action="/admin/commissions")
+            form#search-form(method="GET" action="/admin/commissions")
                 div.row
                     div.col-3
-                        label.form-label(for="start-date") Start Date
-                        input.form-control#start-date(type="date" name="startDate" value=startDate)
+                        label.form-label(for="start-date-input") Start Date
+                        input.form-control#start-date-input(type="date" name="startDateInput" value=startDate)
+                        input#start-date(type="hidden" name="startDate")
                     div.col-3
                         label.form-label(for="end-date") End Date
-                        input.form-control#end-date(type="date" name="endDate" value=endDate)
+                        input.form-control#end-date-input(type="date" name="endDateInput" value=endDate)
+                        input#end-date(type="hidden" name="endDate")
                     div.col-3
                         label.form-label(for="operator") Operator
                         select#operator.form-select(name="operator")
@@ -58,3 +60,24 @@ block scripts
 
             datetimeFields[i].innerHTML = `${dateString} ${timeString}`;
         }
+
+        document.getElementById("search-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let startDate = new Date(document.getElementById("start-date-input").value);
+            let endDate = new Date(document.getElementById("end-date-input").value);
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(0, 0, 0, 0);
+            endDate.setDate(endDate.getDate() + 1);
+
+            console.log(endDate);
+
+            if (!isNaN(startDate)) {
+                document.getElementById("start-date").value = startDate.toISOString();
+            }
+            if (!isNaN(endDate)) {
+                document.getElementById("end-date").value = endDate.toISOString();
+            }
+
+            event.target.submit();
+        });

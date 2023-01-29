@@ -30,8 +30,8 @@ export default function AddAssignment(props) {
 
 	const [personName, setPersonName] = useState("");
 	const [numberOfPeople, setNumberOfPeople] = useState("");
-	const [price, setPrice] = useState(0);
-	const [paid, setPaid] = useState(0);
+	const [price, setPrice] = useState("");
+	const [paid, setPaid] = useState("");
 	const [origin, setOrigin] = useState("");
 	const [destination, setDestination] = useState("");
 	const [date, setDate] = useState(new Date());
@@ -62,10 +62,10 @@ export default function AddAssignment(props) {
 		let data = {
 			person_name: personName,
 			num_of_people: numberOfPeople,
-			price,
-			paid,
 			origin,
 			destination,
+			price: isNaN(parseFloat(price)) ? 0 : price,
+			paid: isNaN(parseFloat(paid)) ? 0 : paid,
 			flight,
 			datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:00`,
 			status,
@@ -113,18 +113,6 @@ export default function AddAssignment(props) {
 						<TextInput placeholder={"Number of People"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
 					</View>
 
-					{/* Price field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Price: </Text>
-						<TextInput keyboardType={"number-pad"} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPrice(parseFloat(value))}/>
-					</View>
-
-					{/* Paid field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Paid: </Text>
-						<TextInput keyboardType={"number-pad"} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
-					</View>
-
 					{/* Origin field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Origin: </Text>
@@ -135,6 +123,18 @@ export default function AddAssignment(props) {
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Destination: </Text>
 						<TextInput placeholder={"Destination"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setDestination(value)}/>
+					</View>
+
+					{/* Price field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Price: </Text>
+						<TextInput keyboardType={"number-pad"} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPrice(parseFloat(value))}/>
+					</View>
+
+					{/* Paid field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Paid: </Text>
+						<TextInput keyboardType={"number-pad"} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
 					</View>
 
 					{/* Flight field */}

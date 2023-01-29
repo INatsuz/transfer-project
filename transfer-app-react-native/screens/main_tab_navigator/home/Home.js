@@ -32,7 +32,14 @@ export default function Home(props) {
 
 	async function fetchAssignments() {
 		return new Promise(function (resolve, reject) {
-			getWithAuth("api/getAssignedTransfers").then(res => {
+			let today = new Date();
+			today.setHours(0, 0, 0, 0);
+			let yesterday = new Date(today.getTime());
+			yesterday.setDate(yesterday.getDate() - 1)
+			let day_after_tomorrow = new Date(today.getTime());
+			day_after_tomorrow.setDate(day_after_tomorrow.getDate() + 2);
+
+			getWithAuth(`api/getAssignedTransfers?startDate=${yesterday.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`).then(res => {
 				setAssignments(res.data.transfers);
 				resolve();
 			}).catch(err => {

@@ -28,14 +28,14 @@ block content
 
 	div.d-flex.flex-row.justify-content-between.my-3
 		div.d-flex.align-items-end
-			a.btn.btn-success(href="/admin/transfers/create")
+			a.btn.btn-success(href=`/admin/transfers/create?returnLink=${url}`)
 				i.bi.bi-plus-lg
 				|  Create
 			button.ms-2.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#searchModal")
 				i.bi.bi-search
 				|  Search
 		div.row.g-0
-			a.col.btn.btn-primary.text-nowrap(href="/admin/transfers")
+			a#all-button.col.btn.btn-primary.text-nowrap(href="/admin/transfers?activeButton=all-button")
 				| All
 			a#yesterday-button.col.ms-2.btn.btn-primary.text-nowrap(href=`/admin/transfers`)
 				| Yesterday
@@ -52,6 +52,12 @@ block content
 
 block scripts
 	script.
+		let activeButton = "#{activeButton}";
+
+		if (activeButton) {
+			document.getElementById(activeButton).classList.add("active");
+		}
+
 		//Today button dates and setting of href attribute
 		let today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -62,9 +68,9 @@ block scripts
 		let day_after_tomorrow = new Date(tomorrow.getTime());
 		day_after_tomorrow.setDate(day_after_tomorrow.getDate() + 1);
 
-		document.getElementById("yesterday-button").setAttribute("href", `/admin/transfers?startDate=${yesterday.toISOString()}&endDate=${today.toISOString()}`);
-		document.getElementById("today-button").setAttribute("href", `/admin/transfers?startDate=${today.toISOString()}&endDate=${tomorrow.toISOString()}`);
-		document.getElementById("tomorrow-button").setAttribute("href", `/admin/transfers?startDate=${tomorrow.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`);
+		document.getElementById("yesterday-button").setAttribute("href", `/admin/transfers?activeButton=yesterday-button&&startDate=${yesterday.toISOString()}&endDate=${today.toISOString()}`);
+		document.getElementById("today-button").setAttribute("href", `/admin/transfers?activeButton=today-button&startDate=${today.toISOString()}&endDate=${tomorrow.toISOString()}`);
+		document.getElementById("tomorrow-button").setAttribute("href", `/admin/transfers?activeButton=tomorrow-button&startDate=${tomorrow.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`);
 
 		// Week button dates and setting of href attribute
 		let firstDayOfWeek = new Date(today.getTime());
@@ -72,7 +78,7 @@ block scripts
 		let lastDayOfWeek = new Date(firstDayOfWeek.getTime());
 		lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 7);
 
-		document.getElementById("week-button").setAttribute("href", `/admin/transfers?startDate=${firstDayOfWeek.toISOString()}&endDate=${lastDayOfWeek.toISOString()}`);
+		document.getElementById("week-button").setAttribute("href", `/admin/transfers?activeButton=week-button&startDate=${firstDayOfWeek.toISOString()}&endDate=${lastDayOfWeek.toISOString()}`);
 
 		// Month button dates and setting of href attribute
 		let firstDayOfMonth = new Date(today.getTime());
@@ -80,7 +86,7 @@ block scripts
 		let lastDayOfMonth = new Date(firstDayOfMonth.getTime());
 		lastDayOfMonth.setMonth(lastDayOfMonth.getMonth() + 1);
 
-		document.getElementById("month-button").setAttribute("href", `/admin/transfers?startDate=${firstDayOfMonth.toISOString()}&endDate=${lastDayOfMonth.toISOString()}`);
+		document.getElementById("month-button").setAttribute("href", `/admin/transfers?activeButton=month-button&startDate=${firstDayOfMonth.toISOString()}&endDate=${lastDayOfMonth.toISOString()}`);
 
 		let datetimeInputs = document.querySelectorAll(".datetime");
 		let datetimeFields = document.querySelectorAll(".datetime-field");

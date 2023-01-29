@@ -34,10 +34,10 @@ mixin transfer_table_row(row)
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/transfers/details/${row.ID}`)
                 i.bi.bi-list
                 |  Details
-            a.btn.btn-sm.btn-warning.me-1.ms-1(href=`/admin/transfers/update/${row.ID}`)
+            a.btn.btn-sm.btn-warning.me-1.ms-1(href=`/admin/transfers/update/${row.ID}?returnLink=${url}`)
                 i.bi.bi-pencil
                 |  Edit
-            a.btn.btn-sm.btn-danger.ms-1(href=`/admin/transfers/delete/${row.ID}`)
+            a.btn.btn-sm.btn-danger.ms-1(href=`/admin/transfers/delete/${row.ID}?returnLink=${url}`)
                 i.bi.bi-trash
                 |  Delete
 

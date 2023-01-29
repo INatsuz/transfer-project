@@ -55,44 +55,42 @@ router.get("/logout", mustHaveSession, function (req, res) {
 
 // Transfer routes
 router.get("/transfers", mustHaveSession, function (req, res) {
-	// Parsing and creating the SQL WHERE clause for time periods like "DAY", "WEEK" AND "MONTH"
-	let timePeriodFilter = "";
+	let clauses = [];
 	let queryVariables = [];
 
-	// Parsing and creating the SQL WHERE clause for start and end dates
-	let clauses = [];
-	let clauseVariables = [];
+	let queryFilter = "";
 
 	if (req.query.startDate) {
 		clauses.push("transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
-		clauseVariables.push(req.query.startDate);
+		queryVariables.push(req.query.startDate);
 	}
 
 	if (req.query.endDate) {
 		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
-		clauseVariables.push(req.query.endDate);
+		queryVariables.push(req.query.endDate);
 	}
 
 	if (req.query.person) {
 		clauses.push("transfer.person_name LIKE ?");
-		clauseVariables.push(`%${req.query.person}%`);
+		queryVariables.push(`%${req.query.person}%`);
 	}
 
 	if (clauses.length > 0) {
-		timePeriodFilter = "WHERE " + clauses.join(" AND ");
-		queryVariables.push(...clauseVariables);
+		queryFilter = "WHERE " + clauses.join(" AND ");
 	}
 
 	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, transfer.status, transfer.seen, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
-					${timePeriodFilter}
-					ORDER BY transfer.transfer_time ${req.query.startDate || req.query.timePeriodFilter ? "ASC" : "DESC"}`, queryVariables).then(({result}) => {
+					${queryFilter}
+					ORDER BY transfer.transfer_time ${req.query.startDate ? "ASC" : "DESC"}`, queryVariables).then(({result}) => {
 		res.render("transfer/transfers", {
 			userID: req.session.userID,
 			username: req.session.username,
-			transfers: result
+			transfers: result,
+			activeButton: req.query.activeButton,
+			url: encodeURIComponent(req.originalUrl)
 		});
 	}).catch(err => {
 		console.log(err);
@@ -115,7 +113,8 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 			username: req.session.username,
 			drivers: driverRes.result,
 			vehicles: vehicleRes.result,
-			operators: operatorRes.result
+			operators: operatorRes.result,
+			url: encodeURIComponent(req.query.returnLink)
 		});
 	}).catch(err => {
 		console.log(err);
@@ -136,7 +135,7 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 			req.body.numberOfPeople, req.body.datetime, req.body.status,
 			req.body.flight, req.body.price, req.body.paid, req.body.driver === 'null' ? null : req.body.driver,
 			req.body.vehicle === 'null' ? null : req.body.vehicle, req.body.operator === 'null' ? null : req.body.operator, req.body.observations, req.body.operatorCommission, req.body.driverCommission]).then(() => {
-		res.redirect("/admin/transfers");
+		res.redirect(req.query.returnLink);
 
 		if (req.body.driver !== "null") {
 			db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
@@ -167,7 +166,8 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 				drivers: driverRes.result,
 				vehicles: vehicleRes.result,
 				operators: operatorRes.result,
-				transfer: result[0]
+				transfer: result[0],
+				url: encodeURIComponent(req.query.returnLink)
 			});
 		}).catch(err => {
 			console.log(err);
@@ -180,7 +180,6 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 });
 
 router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
-	console.log(req.body.operator);
 	if (req.body.operator === "null") req.body.operator = null;
 	if (req.body.driver === "null") req.body.driver = null;
 	if (req.body.vehicle === "null") req.body.vehicle = null;
@@ -196,7 +195,7 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 				req.body.datetime, req.body.status, req.body.flight, req.body.price, req.body.paid, req.body.vehicle,
 				req.body.operator, req.body.operatorCommission, req.body.operator, req.body.observations,
 				req.body.driver, req.body.driverCommission, req.body.driver, req.body.driver, req.params.id]).then(() => {
-			res.redirect("/admin/transfers");
+			res.redirect(req.query.returnLink);
 
 			if (parseInt(transfer[0].driver) !== parseInt(req.body.driver) && req.body.driver !== null) {
 				db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
@@ -233,7 +232,8 @@ router.get("/transfers/delete/:id", mustHaveSession, function (req, res) {
 	res.render("transfer/transfer_delete", {
 		ID: req.params.id,
 		userID: req.session.userID,
-		username: req.session.username
+		username: req.session.username,
+		url: encodeURIComponent(req.query.returnLink)
 	});
 });
 
@@ -247,7 +247,7 @@ router.post("/transfers/delete", mustHaveSession, function (req, res) {
 	}).catch(err => {
 		console.log(err);
 	}).finally(() => {
-		res.redirect("/admin/transfers");
+		res.redirect(req.query.returnLink);
 	});
 });
 
@@ -556,9 +556,10 @@ router.get("/commissions", mustHaveSession, function (req, res) {
 						FROM transfer
 						LEFT JOIN appuser ON transfer.driver = appuser.ID
 						LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
-						WHERE transfer_time BETWEEN ? AND ?
+						WHERE transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z') AND transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')
 						${req.query.driver === "null" ? "" : " AND transfer.driver = ?"}
-						${req.query.operator === "null" ? "" : " AND transfer.service_operator = ?"}`,
+						${req.query.operator === "null" ? "" : " AND transfer.service_operator = ?"}
+						ORDER BY transfer.transfer_time ASC`,
 					[req.query.startDate, req.query.endDate, ...clauseValues]).then(({result}) => {
 					res.render("commission/commissions", {
 						ID: req.params.id,
@@ -569,8 +570,8 @@ router.get("/commissions", mustHaveSession, function (req, res) {
 						currentOperator: req.query.operator,
 						drivers: drivers,
 						currentDriver: req.query.driver,
-						startDate: req.query.startDate,
-						endDate: req.query.endDate,
+						startDate: req.query.startDateInput,
+						endDate: req.query.endDateInput,
 					});
 				}).catch(err => {
 					console.log(err);
@@ -588,50 +589,48 @@ router.get("/commissions", mustHaveSession, function (req, res) {
 	});
 });
 
-router.post("/genTransferCSV", mustHaveSession, function (req, res, next) {
-	console.log(req.body)
-
-	let queryConditions = [];
-	if (req.body.startDate !== "") {
-		queryConditions.push(`transfer.transfer_time >= CAST('${req.body.startDate}' AS DATE)`);
-	}
-	if (req.body.endDate !== "") {
-		queryConditions.push(`transfer.transfer_time <= CAST('${req.body.endDate}' AS DATE)`);
-	}
-
-	if (req.body.driver !== "null") {
-		queryConditions.push(`transfer.driver = ${req.body.driver}`);
-	}
-	if (req.body.operator !== "null") {
-		queryConditions.push(`transfer.service_operator = ${req.body.operator}`);
-	}
-
-	db.query(`SELECT
-				transfer.ID AS "Transfer Number", 
-				transfer.person_name AS "Person Name",
-				transfer.num_of_people AS "Number of People",
-				transfer.flight AS "Flight",
-				transfer.origin AS "Origin",
-				transfer.destination AS "Destination",
-				DATE_FORMAT(transfer.transfer_time, '%d/%m/%Y %T') AS "Transfer Time",
-				transfer.status AS "Status",
-				appuser.name AS "Driver",
-				CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')' ) AS "Vehicle",
-				serviceoperator.name AS "Operator",
-				transfer.price AS "Price",
-				transfer.paid AS "Is Paid",
-				transfer.observations AS "Observations"
-				FROM transfer
-				LEFT JOIN appuser ON transfer.driver = appuser.ID
-				LEFT JOIN vehicle ON transfer.vehicle = vehicle.ID
-				LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID 
-				${queryConditions.length > 0 ? " WHERE " + queryConditions.join(" AND ") : ""}`)
-		.then(({result, fields}) => {
-			res.set('Content-Disposition', 'attachment; filename=export.csv').send(generateCSV(result, fields));
-		}).catch(err => {
-		console.log(err);
-	});
-});
+// router.post("/genTransferCSV", mustHaveSession, function (req, res, next) {
+// 	let queryConditions = [];
+// 	if (req.body.startDate !== "") {
+// 		queryConditions.push(`transfer.transfer_time >= CAST('${req.body.startDate}' AS DATE)`);
+// 	}
+// 	if (req.body.endDate !== "") {
+// 		queryConditions.push(`transfer.transfer_time <= CAST('${req.body.endDate}' AS DATE)`);
+// 	}
+//
+// 	if (req.body.driver !== "null") {
+// 		queryConditions.push(`transfer.driver = ${req.body.driver}`);
+// 	}
+// 	if (req.body.operator !== "null") {
+// 		queryConditions.push(`transfer.service_operator = ${req.body.operator}`);
+// 	}
+//
+// 	db.query(`SELECT
+// 				transfer.ID AS "Transfer Number",
+// 				transfer.person_name AS "Person Name",
+// 				transfer.num_of_people AS "Number of People",
+// 				transfer.flight AS "Flight",
+// 				transfer.origin AS "Origin",
+// 				transfer.destination AS "Destination",
+// 				DATE_FORMAT(transfer.transfer_time, '%d/%m/%Y %T') AS "Transfer Time",
+// 				transfer.status AS "Status",
+// 				appuser.name AS "Driver",
+// 				CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')' ) AS "Vehicle",
+// 				serviceoperator.name AS "Operator",
+// 				transfer.price AS "Price",
+// 				transfer.paid AS "Is Paid",
+// 				transfer.observations AS "Observations"
+// 				FROM transfer
+// 				LEFT JOIN appuser ON transfer.driver = appuser.ID
+// 				LEFT JOIN vehicle ON transfer.vehicle = vehicle.ID
+// 				LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
+// 				${queryConditions.length > 0 ? " WHERE " + queryConditions.join(" AND ") : ""}`)
+// 		.then(({result, fields}) => {
+// 			res.set('Content-Disposition', 'attachment; filename=export.csv').send(generateCSV(result, fields));
+// 		}).catch(err => {
+// 		console.log(err);
+// 	});
+// });
 
 router.get("/genCommissionCSV", mustHaveSession, function (req, res, next) {
 	let clauseValues = [];
@@ -664,7 +663,6 @@ router.get("/genCommissionCSV", mustHaveSession, function (req, res, next) {
 				${req.query.driver === "null" ? "" : " AND transfer.driver = ?"}
 				${req.query.operator === "null" ? "" : " AND transfer.service_operator = ?"}`,
 		[req.query.startDate, req.query.endDate, ...clauseValues]).then(({result, fields}) => {
-		console.log(result);
 		res.set('Content-Disposition', 'attachment; filename=export.csv').send(generateCSV(result, fields));
 	}).catch(err => {
 		console.log(err);

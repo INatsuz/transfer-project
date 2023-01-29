@@ -38,9 +38,9 @@ router.get('/register', function (req, res, next) {
 });
 
 router.get("/renew", function (req, res, next) {
-	let {refreshToken} = req.query;
-	if (refreshToken) {
-		verifyToken(refreshToken).then(payload => {
+	let {refreshToken : token} = req.query;
+	if (token && token.isRefreshToken) {
+		verifyToken(token).then(payload => {
 			let newPayload = {ID: payload.ID, email: payload.email, name: payload.name, userType: payload.userType};
 			generateTokens(newPayload).then(tokens => {
 				res.status(200).json({...tokens, user: newPayload});
@@ -52,6 +52,8 @@ router.get("/renew", function (req, res, next) {
 			console.log(err);
 			res.status(401).json({err: "Could not renew token"});
 		});
+	} else {
+		res.status(401).json("Could not renew token");
 	}
 });
 

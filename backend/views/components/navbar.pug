@@ -29,4 +29,4 @@ nav.navbar.navbar-expand-lg.bg-light.d-print-none
 			let navTomorrow = new Date(navToday.getTime());
 			navTomorrow.setDate(navTomorrow.getDate() + 1);
 
-			document.getElementById("transfers-nav-link").setAttribute("href", `/admin/transfers?startDate=${navToday.toISOString()}&endDate=${navTomorrow.toISOString()}`)
+			document.getElementById("transfers-nav-link").setAttribute("href", `/admin/transfers?activeButton=today-button&startDate=${navToday.toISOString()}&endDate=${navTomorrow.toISOString()}`)

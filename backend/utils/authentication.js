@@ -82,7 +82,7 @@ function generateTokens(payload) {
 				reject(err);
 			}
 
-			jwt.sign(payload, JWT_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}, function (err, refreshToken) {
+			jwt.sign({...payload, isRefreshToken: true}, JWT_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}, function (err, refreshToken) {
 				if (err) {
 					console.log(err);
 					reject(err);
@@ -122,6 +122,11 @@ function mustBeAuthenticated(req, res, next) {
 
 	jwt.verify(accessToken, JWT_SECRET, {}, function (err, payload) {
 		if (err) {
+			res.status(401).json({err: "Unauthorized"});
+			return;
+		}
+
+		if (payload.isRefreshToken) {
 			res.status(401).json({err: "Unauthorized"});
 			return;
 		}

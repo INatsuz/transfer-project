@@ -55,8 +55,8 @@ export default function AssignmentDetails(props) {
 			flight: flight,
 			origin: origin,
 			destination: destination,
-			price: price,
-			paid: paid,
+			price: isNaN(parseFloat(price)) ? 0 : price,
+			paid: isNaN(parseFloat(paid)) ? 0 : paid,
 			time: `${datetime.getUTCFullYear()}-${datetime.getUTCMonth() + 1}-${datetime.getUTCDate()} ${datetime.getUTCHours()}:${datetime.getUTCMinutes()}:00`,
 			driver: driver,
 			driverCommission: drivers.find(value => value.ID === driver) ? drivers.find(value => value.ID === driver).commission : 0,
@@ -141,7 +141,7 @@ export default function AssignmentDetails(props) {
 					{/* Paid field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Paid: </Text>
-						<TextInput keyboardType={"number-pad"} value={paid.toString()} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
+						<TextInput keyboardType={"number-pad"} value={paid.toString()} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(value)}/>
 					</View>
 
 					<View style={styles.section}>

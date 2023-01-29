@@ -14,6 +14,7 @@ export async function refreshTokens(refreshToken) {
 		axios.get(`https://${IP}/users/renew?refreshToken=${refreshToken}`, {timeout: 5000}).then(res => {
 			saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken}).then(() => {
 				resolve({newAccessToken: res.data.accessToken, newRefreshToken: res.data.refreshToken});
+				console.log(res.data);
 			}).catch(err => {
 				console.log(err);
 				reject(err);
@@ -44,9 +45,7 @@ export function getWithAuth(endpoint) {
 				},
 				timeout: 5000
 			}).then(res => {
-				if (res.status === 200) {
-					resolve(res);
-				}
+				resolve(res);
 			}).catch(err => {
 				if (err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken}) => {

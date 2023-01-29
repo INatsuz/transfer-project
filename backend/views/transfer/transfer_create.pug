@@ -3,7 +3,7 @@ extends ../layouts/layout
 block content
     div.row.g-0.mt-2
         div.col-12
-            form#form(method="post" action="/admin/transfers/create")
+            form#form(method="post" action=`/admin/transfers/create?returnLink=${url}`)
                 div.mb-3
                     label.form-label(for="person-name") Person Name
                     input.form-control#person-name(type="text" name="personName")

@@ -4,11 +4,11 @@ block content
     div.row.g-0.mt-2
         div.col-12
             h4.alert.alert-danger Are you sure you want to delete this transfer?
-            form(method="post" action="/admin/transfers/delete")
+            form(method="post" action=`/admin/transfers/delete?returnLink=${url}`)
                 input(type="hidden" value=`${ID}` name="id")
                 button.btn.btn-danger(type="submit")
                     i.bi.bi-trash
                     |  Delete
-                a.btn.btn-secondary.ms-1(href="/admin/transfers")
+                a.btn.btn-secondary.ms-1(href=`${decodeURIComponent(url)}`)
                     i.bi.bi-arrow-left
                     |  Cancel

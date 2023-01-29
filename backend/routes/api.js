@@ -13,7 +13,7 @@ router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
 					ON transfer.service_operator = serviceoperator.ID
 					LEFT JOIN vehicle
 					ON transfer.vehicle = vehicle.ID
-					ORDER BY ID DESC
+					ORDER BY transfer.transfer_time DESC
 					`).then(({result: transfers}) => {
 		res.status(200).json({transfers: transfers});
 	}).catch(err => {
@@ -24,6 +24,29 @@ router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
 
 // GET getAssignedJobs
 router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, next) {
+	let {startDate, endDate} = req.query;
+
+	let clauses = [];
+	let queryVariables = [];
+
+	let queryFilter = "";
+
+	if (startDate) {
+		clauses.push("transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		queryVariables.push(req.query.startDate);
+	}
+
+	if (endDate) {
+		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		queryVariables.push(req.query.endDate);
+	}
+
+	if (clauses.length > 0) {
+		queryFilter = "AND " + clauses.join(" AND ");
+	}
+
+	console.log(queryFilter);
+
 	db.query(`SELECT transfer.*, appuser.name as driverName, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
 					FROM transfer 
 					INNER JOIN appuser
@@ -32,9 +55,11 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 					ON transfer.service_operator = serviceoperator.ID
 					LEFT JOIN vehicle
 					ON transfer.vehicle = vehicle.ID
-					WHERE transfer.status <> 'FINISHED'
-					AND appuser.ID = ?;`, [req.tokenPayload.ID]).then(({result: transfers}) => {
+					WHERE appuser.ID = ?
+					${queryFilter}
+					ORDER BY transfer.transfer_time ASC`, [req.tokenPayload.ID, ...queryVariables]).then(({result: transfers}) => {
 		if (transfers) {
+			console.log(transfers.length);
 			res.status(200).json({transfers: transfers});
 		}
 	}).catch(err => {
@@ -117,24 +142,25 @@ router.put("/updateTransfer", mustBeAuthenticated, function (req, res, next) {
 
 	if (!person_name || person_name.length <= 0 || person_name.length > 128 || typeof (person_name) !== "string") {
 		res.status(400).json({err: "Person name validation error"});
+		console.log("Person name validation error");
 		return;
 	}
 
 	if (!origin || origin.length <= 0 || origin.length > 128 || typeof (origin) !== "string") {
 		res.status(400).json({err: "Origin validation error"});
+		console.log("Origin validation error");
 		return;
 	}
 
 	if (!destination || destination.length <= 0 || destination.length > 128 || typeof (destination) !== "string") {
 		res.status(400).json({err: "Destination validation error"});
+		console.log("Destination validation error");
 		return;
 	}
 
 	if (!time || !Date.parse(time)) {
-		console.log(Date.parse(time) < new Date());
-		console.log(!time);
-		console.log(time);
 		res.status(400).json({err: "Time validation error"});
+		console.log("Time validation error")
 		return;
 	}
 
@@ -210,7 +236,7 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 		observations
 	} = req.body;
 
-	if (person_name && num_of_people && price && paid && origin && destination && flight && datetime && status && observations) {
+	if (person_name && num_of_people && price !== undefined && paid !== undefined && origin && destination && flight && datetime && status && observations) {
 		db.query(`INSERT INTO 
 						transfer(person_name, num_of_people, price, paid, origin, destination, flight, transfer_time, status, driver, vehicle, service_operator, observations, driverCommission, operatorCommission) 
 						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

@@ -30,7 +30,7 @@ function AssignmentListItem(props) {
 				<View style={styles.itemColumn}>
 					<View style={styles.topItemField}>
 						<Text style={styles.textStyle}>Date/Time:</Text>
-						<Text style={styles.textStyle}>{dateString} {timeString}</Text>
+						<Text style={styles.textStyle}>{dateString} <Text style={styles.time}>{timeString}</Text></Text>
 					</View>
 					<View>
 						<Text style={styles.textStyle}>Origin:</Text>
@@ -78,6 +78,10 @@ const styles = StyleSheet.create({
 	textStyle: {
 		color: "#fff",
 		fontSize: 14
+	},
+
+	time: {
+		fontWeight: "bold"
 	}
 });
 
