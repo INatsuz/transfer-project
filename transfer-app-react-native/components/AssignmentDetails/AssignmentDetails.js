@@ -13,8 +13,8 @@ import {
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Chevron} from "react-native-shapes";
-import React, {useEffect, useState} from "react";
-import {deleteWithAuth, getWithAuth, putWithAuth} from "../../utils/Requester";
+import React, {useState} from "react";
+import {deleteWithAuth, putWithAuth} from "../../utils/Requester";
 import useOperators from "../../hooks/useOperators";
 import useVehicles from "../../hooks/useVehicles";
 import useDrivers from "../../hooks/useDrivers";
@@ -30,6 +30,7 @@ export default function AssignmentDetails(props) {
 	const [destination, setDestination] = useState(assignment.destination);
 	const [price, setPrice] = useState(assignment.price);
 	const [paid, setPaid] = useState(assignment.paid);
+	const [paymentMethod, setPaymentMethod] = useState(assignment.payment_method);
 	const [date, setDate] = useState(new Date(assignment.transfer_time));
 	const [time, setTime] = useState(new Date(assignment.transfer_time));
 	const [flight, setFlight] = useState(assignment.flight);
@@ -56,6 +57,7 @@ export default function AssignmentDetails(props) {
 			destination: destination,
 			price: isNaN(parseFloat(price)) ? 0 : price,
 			paid: isNaN(parseFloat(paid)) ? 0 : paid,
+			paymentMethod,
 			time: `${datetime.getUTCFullYear()}-${datetime.getUTCMonth() + 1}-${datetime.getUTCDate()} ${datetime.getUTCHours()}:${datetime.getUTCMinutes()}:00`,
 			driver: driver,
 			driverCommission: drivers.find(value => value.ID === driver) ? drivers.find(value => value.ID === driver).commission : 0,
@@ -95,7 +97,7 @@ export default function AssignmentDetails(props) {
 
 	return (
 		<View style={styles.container}>
-			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
+			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
 					{pickingDate && <DateTimePicker value={datetime} mode="date" onChange={(event, date) => {
 						setPickingDate(false);
@@ -141,6 +143,30 @@ export default function AssignmentDetails(props) {
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Paid: </Text>
 						<TextInput keyboardType={"number-pad"} value={paid.toString()} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(value)}/>
+					</View>
+
+					{/* Payment method field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Payment method: </Text>
+						<RNPickerSelect value={paymentMethod} items={[{
+							label: "Cash",
+							value: "CASH",
+							key: "CASH"
+						}, {
+							label: "Card",
+							value: "CARD",
+							key: "CARD"
+						}]} onValueChange={(value) => {
+							if (value !== paymentMethod) {
+								setPaymentMethod(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
 					<View style={styles.section}>

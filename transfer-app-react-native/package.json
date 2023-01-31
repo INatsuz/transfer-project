@@ -1,6 +1,6 @@
 {
   "name": "transfer-app",
-  "version": "1.0.12",
+  "version": "1.1.1",
   "scripts": {
     "start": "expo start -c",
     "android": "expo run:android",

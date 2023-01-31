@@ -1,4 +1,4 @@
-const DELIMITER = ','
+const DELIMITER = ';'
 
 function generateCSV(data, fields) {
 	let csvString = "\uFEFF";

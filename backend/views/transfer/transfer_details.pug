@@ -26,19 +26,21 @@ block content
             td#datetime-field= `${dateString} ${timeString}`
         tr
             th Status
-            td= transfer.status
+            if transfer.status === "PENDING"
+                td.align-middle
+                    span.badge.text-bg-warning PENDING
+            else if transfer.status === "IN PROGRESS"
+                td.align-middle
+                    span.badge.text-bg-success IN PROGRESS
+            else if transfer.status === "FINISHED"
+                td.align-middle
+                    span.badge.text-bg-secondary FINISHED
         tr
             th Flight
             td= transfer.flight
         tr
             th Price
             td= `${transfer.price}€`
-        tr
-            th Operator Commission (in %)
-            td= `${parseFloat((transfer.operatorCommission * 100).toFixed(2))}%`
-        tr
-            th Driver Commission (in %)
-            td= `${parseFloat((transfer.driverCommission * 100).toFixed(2))}%`
         tr
             th Paid
             if transfer.paid >= transfer.price
@@ -47,6 +49,24 @@ block content
             else
                 td
                     span.badge.text-bg-danger= `${transfer.paid}€`
+        tr
+            th Payment method
+            if transfer.payment_method === "CASH"
+                td.align-middle
+                    i.bi.bi-cash.text-success
+                    |  Cash
+            else if transfer.payment_method === "CARD"
+                td.align-middle
+                    i.bi.bi-credit-card.text-primary
+                    |  Card
+            else
+                td None
+        tr
+            th Operator Commission (in %)
+            td= `${parseFloat((transfer.operatorCommission * 100).toFixed(2))}%`
+        tr
+            th Driver Commission (in %)
+            td= `${parseFloat((transfer.driverCommission * 100).toFixed(2))}%`
         tr
             th Driver
             td= transfer.driver

@@ -36,6 +36,12 @@ block content
                     label.form-label(for="paid") Paid
                     input.form-control#paid(type="number" name="paid" step="0.01" value=0)
                 div.mb-3
+                    label.form-label(for="status") Payment method
+                    select.form-select#payment-method(name="paymentMethod")
+                        option(value="null") None
+                        option(value="CASH") Cash
+                        option(value="CARD") Card
+                div.mb-3
                     label.form-label(for="driver") Driver
                     select.form-select#driver(name="driver")
                         option(value="null") No driver

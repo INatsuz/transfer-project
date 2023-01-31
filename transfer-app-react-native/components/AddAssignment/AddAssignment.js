@@ -32,6 +32,7 @@ export default function AddAssignment(props) {
 	const [numberOfPeople, setNumberOfPeople] = useState("");
 	const [price, setPrice] = useState("");
 	const [paid, setPaid] = useState("");
+	const [paymentMethod, setPaymentMethod] = useState(null);
 	const [origin, setOrigin] = useState("");
 	const [destination, setDestination] = useState("");
 	const [date, setDate] = useState(new Date());
@@ -66,6 +67,7 @@ export default function AddAssignment(props) {
 			destination,
 			price: isNaN(parseFloat(price)) ? 0 : price,
 			paid: isNaN(parseFloat(paid)) ? 0 : paid,
+			paymentMethod,
 			flight,
 			datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:00`,
 			status,
@@ -136,6 +138,30 @@ export default function AddAssignment(props) {
 						<TextInput keyboardType={"number-pad"} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
 					</View>
 
+					{/* Payment method field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Payment method: </Text>
+						<RNPickerSelect value={paymentMethod} items={[{
+							label: "Cash",
+							value: "CASH",
+							key: "CASH"
+						}, {
+							label: "Card",
+							value: "CARD",
+							key: "CARD"
+						}]} onValueChange={(value) => {
+							if (value !== paymentMethod) {
+								setPaymentMethod(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
+					</View>
+
 					{/* Flight field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Flight: </Text>
@@ -155,7 +181,7 @@ export default function AddAssignment(props) {
 					{/* Status field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Status: </Text>
-						<RNPickerSelect value={status} items={[{
+						<RNPickerSelect value={status} placeholder={{}} items={[{
 							label: "PENDING",
 							value: "PENDING",
 							key: "PENDING"
@@ -198,7 +224,10 @@ export default function AddAssignment(props) {
 							}
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
-							inputAndroidContainer: {...styles.input, ...styles.disabledPicker, justifyContent: "center"},
+							inputAndroidContainer: {
+								...styles.input, ...styles.disabledPicker,
+								justifyContent: "center"
+							},
 							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)}
 						}} Icon={() => {
 							return isAdmin ? (<Chevron size={1.5} color="gray"/>) : null;

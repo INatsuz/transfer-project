@@ -137,6 +137,7 @@ router.put("/updateTransfer", mustBeAuthenticated, function (req, res, next) {
 		destination,
 		price,
 		paid,
+		paymentMethod,
 		time,
 		driver,
 		driverCommission,
@@ -192,9 +193,9 @@ router.put("/updateTransfer", mustBeAuthenticated, function (req, res, next) {
 	}
 
 	db.query(`UPDATE transfer 
-				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, paid = ?, transfer_time = ?, driverCommission = IF(driver = ?, driverCommission, ?), operatorCommission = IF(service_operator = ?, operatorCommission, ?), driver = ?, vehicle = ?, service_operator = ?, observations = ?
+				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, paid = ?, payment_method = ?, transfer_time = ?, driverCommission = IF(driver = ?, driverCommission, ?), operatorCommission = IF(service_operator = ?, operatorCommission, ?), driver = ?, vehicle = ?, service_operator = ?, observations = ?
 				WHERE ID = ?`,
-		[person_name, num_of_people, flight, origin, destination, price, paid, time, driver, driverCommission, operator, operatorCommission, driver, vehicle, operator, observations, ID]).then(() => {
+		[person_name, num_of_people, flight, origin, destination, price, paid, paymentMethod ?? null, time, driver ?? null, driverCommission, operator ?? null, operatorCommission, driver ?? null, vehicle ?? null, operator ?? null, observations, ID]).then(() => {
 		res.status(200).json({res: "Transfer updated with success"});
 	}).catch(err => {
 		console.log(err);
@@ -240,6 +241,7 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 		num_of_people,
 		price,
 		paid,
+		paymentMethod,
 		origin,
 		destination,
 		flight,
@@ -255,9 +257,9 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 
 	if (person_name && num_of_people && price !== undefined && paid !== undefined && origin && destination && flight !== undefined && datetime && status && observations !== undefined) {
 		db.query(`INSERT INTO 
-						transfer(person_name, num_of_people, price, paid, origin, destination, flight, transfer_time, status, driver, vehicle, service_operator, observations, driverCommission, operatorCommission) 
-						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			[person_name, num_of_people, price, paid, origin, destination, flight, datetime, status, driver ?? null, vehicle ?? null, operator ?? null, observations, driverCommission, operatorCommission]
+						transfer(person_name, num_of_people, price, paid, payment_method, origin, destination, flight, transfer_time, status, driver, vehicle, service_operator, observations, driverCommission, operatorCommission) 
+						VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			[person_name, num_of_people, price, paid, paymentMethod ?? null, origin, destination, flight, datetime, status, driver ?? null, vehicle ?? null, operator ?? null, observations, driverCommission, operatorCommission]
 		).then(({result, fields}) => {
 			res.status(200).json({res: "Transfer added successfully"});
 		}).catch(err => {

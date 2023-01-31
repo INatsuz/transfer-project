@@ -34,8 +34,8 @@ block content
         div.row.g-0.mt-1.d-print-none
             div.col-12
                 form(method="GET" action="/admin/genCommissionCSV")
-                    input(type="hidden" name="startDate" value=startDate)
-                    input(type="hidden" name="endDate" value=endDate)
+                    input(type="hidden" name="startDate" value=startDateTime)
+                    input(type="hidden" name="endDate" value=endDateTime)
                     input(type="hidden" name="operator" value=currentOperator)
                     input(type="hidden" name="driver" value=currentDriver)
                     button.btn.btn-primary(type="submit")
