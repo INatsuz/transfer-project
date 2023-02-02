@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {mustBeAuthenticated, mustBeAdmin} = require("../utils/authentication");
 const db = require('../utils/db');
+const {sendPushNotification} = require("../utils/PushNotificationManager");
 
 // GET getVehicles
 router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
@@ -192,14 +193,33 @@ router.put("/updateTransfer", mustBeAuthenticated, function (req, res, next) {
 		return;
 	}
 
+	let previousDriver;
+
+	db.query(`SELECT transfer.driver FROM transfer WHERE transfer.ID = ?`, [ID]).then(({result}) => {
+		previousDriver = result[0].driver;
+	}).catch(err => {
+		console.log(err);
+		res.status(400).json({err: "Something went wrong with the query"});
+	});
+
 	db.query(`UPDATE transfer 
 				SET person_name = ?, num_of_people = ?, flight = ?, origin = ?, destination = ?, price = ?, paid = ?, payment_method = ?, transfer_time = ?, driverCommission = IF(driver = ?, driverCommission, ?), operatorCommission = IF(service_operator = ?, operatorCommission, ?), driver = ?, vehicle = ?, service_operator = ?, observations = ?
 				WHERE ID = ?`,
 		[person_name, num_of_people, flight, origin, destination, price, paid, paymentMethod ?? null, time, driver ?? null, driverCommission, operator ?? null, operatorCommission, driver ?? null, vehicle ?? null, operator ?? null, observations, ID]).then(() => {
 		res.status(200).json({res: "Transfer updated with success"});
+
+		if (driver && driver !== previousDriver && driver !== req.tokenPayload.ID) {
+			db.query(`SELECT ID, notificationToken FROM appuser WHERE ID = ?`, [driver]).then(({result}) => {
+				if (result[0].notificationToken) {
+					sendPushNotification(result[0].notificationToken, "You have a new service");
+				}
+			}).catch(err => {
+				console.log(err);
+			});
+		}
 	}).catch(err => {
 		console.log(err);
-		res.status(406).json({err: "Something went wrong with the query"});
+		res.status(400).json({err: "Something went wrong with the query"});
 	});
 });
 
@@ -262,6 +282,18 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 			[person_name, num_of_people, price, paid, paymentMethod ?? null, origin, destination, flight, datetime, status, driver ?? null, vehicle ?? null, operator ?? null, observations, driverCommission, operatorCommission]
 		).then(({result, fields}) => {
 			res.status(200).json({res: "Transfer added successfully"});
+
+			if (driver) {
+				if (driver !== req.tokenPayload.ID) {
+					db.query(`SELECT ID, notificationToken FROM appuser WHERE ID = ?`, [driver]).then(({result}) => {
+						if (result[0].notificationToken) {
+							sendPushNotification(result[0].notificationToken, "You have a new service");
+						}
+					}).catch(err => {
+						console.log(err);
+					});
+				}
+			}
 		}).catch(err => {
 			console.log(err);
 			res.status(406).json({err: "Something went wrong with the query"});

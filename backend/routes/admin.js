@@ -139,7 +139,7 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 
 		if (req.body.driver !== "null") {
 			db.query(`SELECT notificationToken FROM appuser WHERE ID = ?`, [req.body.driver]).then(({result: appuser}) => {
-				sendPushNotification(appuser[0].notificationToken, "You have a new trip");
+				sendPushNotification(appuser[0].notificationToken, "You have a new service");
 			});
 		}
 	}).catch(err => {
