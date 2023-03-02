@@ -623,8 +623,8 @@ router.get("/genCommissionCSV", mustHaveSession, function (req, res, next) {
 				transfer.price - ROUND(transfer.driverCommission * (transfer.price - transfer.operatorCommission * transfer.price), 2) - ROUND(transfer.operatorCommission * transfer.price, 2) AS "Value After Commissions",
 				transfer.observations AS Observations
 				FROM transfer
-				INNER JOIN appuser ON transfer.driver = appuser.ID
-				INNER JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
+				LEFT JOIN appuser ON transfer.driver = appuser.ID
+				LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
 				WHERE transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z') AND transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')
 				${req.query.driver === "null" ? "" : " AND transfer.driver = ?"}
 				${req.query.operator === "null" ? "" : " AND transfer.service_operator = ?"}
