@@ -99,28 +99,27 @@ function ProfileSection(props) {
 
 	return (
 		<View style={styles.container}>
-
 			<View style={[styles.area, styles.nameSection, {marginTop: 0}]}>
 				<Text style={[styles.textStyle, {flex: 1}]}>Driver: {props.userData.name}</Text>
 				<Ionicons name="log-out" size={22} color={styles.textStyle.color} onPress={() => confirmLogoutDialog()}/>
 			</View>
 			{userType === 2 &&
-			<View style={[styles.area, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
-				<Text style={styles.textStyle}>Car: </Text>
-				<View style={{flex: 1}}>
-					<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
-						return {key: item.ID, label: item.displayName, value: item.ID}
-					})} onValueChange={onVehicleValueChange} Icon={() => {
-						return <Chevron size={1.5} color="gray"/>;
-					}} useNativeAndroidPickerStyle={false} style={{
-						iconContainer: {justifyContent: "center", padding: 10},
-						inputAndroid: styles.textStyle,
-						inputAndroidContainer: {padding: 0, justifyContent: "center"},
-						inputIOS: styles.textStyle,
-						inputIOSContainer: {padding: 0, justifyContent: "center"},
-					}}/>
+				<View style={[styles.area, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
+					<Text style={styles.textStyle}>Car: </Text>
+					<View style={{flex: 1}}>
+						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+							return {key: item.ID, label: item.displayName, value: item.ID}
+						})} onValueChange={onVehicleValueChange} Icon={() => {
+							return <Chevron size={1.5} color="gray"/>;
+						}} useNativeAndroidPickerStyle={false} style={{
+							iconContainer: {justifyContent: "center", padding: 10},
+							inputAndroid: styles.textStyle,
+							inputAndroidContainer: {padding: 0, justifyContent: "center"},
+							inputIOS: styles.textStyle,
+							inputIOSContainer: {padding: 0, justifyContent: "center"},
+						}}/>
+					</View>
 				</View>
-			</View>
 			}
 			<View style={[styles.area, {marginBottom: 0}]}>
 				<Text style={styles.textStyle}>{userType === 2 ? "Assigned " : "Total "}
@@ -132,15 +131,7 @@ function ProfileSection(props) {
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 5,
-		backgroundColor: "#181818",
-		borderRadius: 10,
-		borderBottomStartRadius: 0,
-		borderBottomEndRadius: 0,
-		borderColor: "#AB81CD",
-		borderWidth: 2,
-		borderBottomWidth: 0,
-		borderStyle: "solid",
+		backgroundColor: "#222222",
 	},
 
 	nameSection: {
@@ -149,10 +140,12 @@ const styles = StyleSheet.create({
 	},
 
 	area: {
-		backgroundColor: "#222222",
+		backgroundColor: "#181818",
 		marginVertical: 2,
 		padding: 5,
-		borderRadius: 10
+		borderWidth: 1,
+		borderColor: "#AB81CD",
+		borderRadius: 5
 	},
 
 	textStyle: {

@@ -61,7 +61,7 @@ export default function Home(props) {
 			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: userType === 1, userID: userID})}>
 				<Ionicons name="add" size={22} color={"#222222"}/>
 			</TouchableOpacity>
-			<View>
+			<View style={styles.profileSectionContainer}>
 				<ProfileSection assignmentCount={assignments.length} userData={{
 					userType: userType,
 					name: name,
@@ -96,6 +96,10 @@ const styles = StyleSheet.create({
 
 	section: {
 		flex: 1
+	},
+
+	profileSectionContainer: {
+		marginBottom: 5,
 	},
 
 	tabs: {

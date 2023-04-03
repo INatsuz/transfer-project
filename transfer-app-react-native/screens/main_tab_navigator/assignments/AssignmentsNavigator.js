@@ -7,6 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {Menu, MenuItem} from 'react-native-material-menu';
 import React, {useState} from "react";
 import {putWithAuth} from "../../../utils/Requester";
+import StatusMenu from "../../../components/StatusMenu/StatusMenu";
 
 const Stack = createNativeStackNavigator();
 
@@ -56,58 +57,7 @@ export default function AssignmentsNavigator() {
 				headerTintColor: "#fff",
 				headerRight: () => {
 					return (
-						<View>
-							<Menu
-								style={{padding: 0, backgroundColor: "#222222"}}
-								visible={isMenuVisible}
-								anchor={
-									<Text onPress={() => setIsMenuVisible(true)}>
-										<Ionicons name={"chevron-down-circle"} size={40} color={getStatusColor(route.params.assignment.status)}/>
-									</Text>
-								}
-								onRequestClose={() => setIsMenuVisible(false)}
-							>
-								<MenuItem
-									onPress={
-										() => {
-											setIsMenuVisible(false);
-											onMenuItemPress(navigation, route, "PENDING");
-										}
-									}
-									style={{minWidth: 150}}>
-									<View style={{display: "flex", flexDirection: "row"}}>
-										<Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("PENDING")}/>
-										<View style={{justifyContent: "center"}}><Text style={styles.menuText}>Pending</Text></View>
-									</View>
-								</MenuItem>
-								<MenuItem
-									onPress={
-										() => {
-											setIsMenuVisible(false);
-											onMenuItemPress(navigation, route, "IN PROGRESS");
-										}
-									}
-									style={{minWidth: 150}}>
-									<View style={{display: "flex", flexDirection: "row"}}>
-										<Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("IN PROGRESS")}/>
-										<View style={{justifyContent: "center"}}><Text style={styles.menuText}>Progress</Text></View>
-									</View>
-								</MenuItem>
-								<MenuItem
-									onPress={
-										() => {
-											setIsMenuVisible(false);
-											onMenuItemPress(navigation, route, "FINISHED");
-										}
-									}
-									style={{minWidth: 150}}>
-									<View style={{display: "flex", flexDirection: "row"}}>
-										<Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("FINISHED")}/>
-										<View style={{justifyContent: "center"}}><Text style={styles.menuText}>Finished</Text></View>
-									</View>
-								</MenuItem>
-							</Menu>
-						</View>
+						<StatusMenu navigation={navigation} route={route} onMenuItemPress={onMenuItemPress}/>
 					)
 				}
 			})}/>

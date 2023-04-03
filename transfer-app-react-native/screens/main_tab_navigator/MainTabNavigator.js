@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {Platform, View, StatusBar, StyleSheet, SafeAreaView} from "react-native";
+import {Platform, StatusBar, StyleSheet, View} from "react-native";
 import {useSelector} from "react-redux";
 import AssignmentsNavigator from "./assignments/AssignmentsNavigator";
 import HomeNavigator from "./home/HomeNavigator";

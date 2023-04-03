@@ -1,4 +1,4 @@
-import {FlatList, StyleSheet, Text, View} from "react-native";
+import {FlatList, SafeAreaView, StyleSheet, Text, View} from "react-native";
 import AssignmentListItem from "./AssignmentListItem";
 import React, {useEffect, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
@@ -20,8 +20,10 @@ export default function AssignmentList(props) {
 
 
 	return (
-		<View style={props.roundedTop ? [styles.container, styles.roundedTop] : styles.container}>
-			<Text style={styles.title}>{!props.title ? "Your Active Assignments:" : props.title}</Text>
+		<SafeAreaView style={props.roundedTop ? [styles.container, styles.roundedTop] : styles.container}>
+			<View style={styles.titleContainer}>
+				<Text style={styles.title}>{!props.title ? "Your Active Assignments:" : props.title}</Text>
+			</View>
 			<FlatList
 				data={props.assignments}
 				renderItem={({item}) => <AssignmentListItem key={item.id} data={item} onItemPress={props.onItemPress}/>}
@@ -33,33 +35,28 @@ export default function AssignmentList(props) {
 					});
 				}}
 			/>
-		</View>
+		</SafeAreaView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		height: "100%",
-		borderColor: "#AB81CD",
-		borderLeftWidth: 2,
-		borderBottomWidth: 2,
-		borderRightWidth: 2,
-		borderStyle: "solid",
 		paddingBottom: 2
 	},
 
-	roundedTop: {
-		borderTopWidth: 2,
-		borderTopLeftRadius: 10,
-		borderTopRightRadius: 10,
+	titleContainer: {
+		borderBottomColor: "#AB81CD",
+		borderBottomWidth: 2,
+		borderStyle: "solid"
 	},
 
 	title: {
 		paddingHorizontal: 15,
 		paddingTop: 7,
-		paddingBottom: 5,
+		paddingBottom: 10,
 		color: "#fff",
 		fontSize: 20,
-		fontWeight: "bold"
+		fontWeight: "bold",
 	}
 });

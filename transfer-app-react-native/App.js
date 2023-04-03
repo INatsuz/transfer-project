@@ -11,6 +11,7 @@ import {Provider} from "react-redux";
 import store from "./redux/setupStore";
 import {navigationRef} from './utils/RootNavigation';
 import {saveNotificationAction} from "./redux/actions/notificationActions";
+import {MenuProvider} from "react-native-popup-menu";
 
 const Stack = createNativeStackNavigator();
 
@@ -52,21 +53,23 @@ export default function App() {
 
 	return (
 		<Provider store={store}>
-			<StatusBar backgroundColor="#222222" translucent={true}/>
-			<NavigationContainer ref={navigationRef} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-				<Stack.Navigator>
-					<Stack.Screen
-						name={"Login"}
-						component={Login}
-						options={{title: 'Login', headerShown: false}}
-					/>
-					<Stack.Screen
-						name={"Main Tab Navigator"}
-						component={MainTabNavigator}
-						options={{title: 'Main Tab Navigator', headerShown: false}}
-					/>
-				</Stack.Navigator>
-			</NavigationContainer>
+			<MenuProvider>
+				<StatusBar backgroundColor="#222222" translucent={true}/>
+				<NavigationContainer ref={navigationRef} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+					<Stack.Navigator>
+						<Stack.Screen
+							name={"Login"}
+							component={Login}
+							options={{title: 'Login', headerShown: false}}
+						/>
+						<Stack.Screen
+							name={"Main Tab Navigator"}
+							component={MainTabNavigator}
+							options={{title: 'Main Tab Navigator', headerShown: false}}
+						/>
+					</Stack.Navigator>
+				</NavigationContainer>
+			</MenuProvider>
 		</Provider>
 	);
 }

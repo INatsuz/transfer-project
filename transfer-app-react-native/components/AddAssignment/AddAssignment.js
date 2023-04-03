@@ -2,7 +2,7 @@ import {
 	Button,
 	KeyboardAvoidingView,
 	Platform,
-	Pressable, SafeAreaView,
+	Pressable,
 	ScrollView,
 	StyleSheet,
 	Text,
