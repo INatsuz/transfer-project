@@ -3,7 +3,7 @@ import {
 	Button,
 	KeyboardAvoidingView,
 	Platform,
-	Pressable,
+	Pressable, SafeAreaView,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -96,8 +96,8 @@ export default function AssignmentDetails(props) {
 	}
 
 	return (
-		<View style={styles.container}>
-			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+		<SafeAreaView style={styles.container}>
+			<KeyboardAvoidingView keyboardVerticalOffset={30} behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
 					{pickingDate && <DateTimePicker value={datetime} mode="date" onChange={(event, date) => {
 						setPickingDate(false);
@@ -161,9 +161,11 @@ export default function AssignmentDetails(props) {
 								setPaymentMethod(value);
 							}
 						}} style={{
-							iconContainer: {justifyContent: "center", padding: 15},
+							iconContainer: styles.iconContainer,
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							inputIOS: styles.pickerSelect
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
@@ -193,12 +195,17 @@ export default function AssignmentDetails(props) {
 								}
 							}
 						}} style={{
-							iconContainer: {justifyContent: "center", padding: 15},
+							iconContainer: styles.iconContainer,
 							inputAndroidContainer: {
 								...styles.input, ...styles.disabledPicker,
 								justifyContent: "center"
 							},
-							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)}
+							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)},
+							inputIOSContainer: {
+								...styles.input, ...styles.disabledPicker,
+								justifyContent: "center"
+							},
+							inputIOS: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)}
 						}} Icon={() => {
 							return isAdmin ? (<Chevron size={1.5} color="gray"/>) : null;
 						}} useNativeAndroidPickerStyle={false}/>
@@ -214,9 +221,11 @@ export default function AssignmentDetails(props) {
 								setActiveVehicle(value);
 							}
 						}} style={{
-							iconContainer: {justifyContent: "center", padding: 15},
+							iconContainer: styles.iconContainer,
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							inputIOS: styles.pickerSelect
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
@@ -232,9 +241,11 @@ export default function AssignmentDetails(props) {
 								setOperator(value);
 							}
 						}} style={{
-							iconContainer: {justifyContent: "center", padding: 15},
+							iconContainer: styles.iconContainer,
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							inputIOS: styles.pickerSelect
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
@@ -243,7 +254,7 @@ export default function AssignmentDetails(props) {
 					{/* Observations field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Observations: </Text>
-						<TextInput multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
+						<TextInput scrollEnabled={false} multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
 					</View>
 
 					{/*
@@ -258,7 +269,7 @@ export default function AssignmentDetails(props) {
 					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
-		</View>
+		</SafeAreaView>
 	);
 };
 
@@ -283,6 +294,11 @@ const styles = StyleSheet.create({
 	text: {
 		color: "#fff",
 		fontSize: 18
+	},
+
+	iconContainer: {
+		justifyContent: "center",
+		padding: 15
 	},
 
 	pickerSelect: {

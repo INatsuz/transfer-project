@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {Platform, SafeAreaView, StatusBar, StyleSheet} from "react-native";
+import {Platform, View, StatusBar, StyleSheet, SafeAreaView} from "react-native";
 import {useSelector} from "react-redux";
 import AssignmentsNavigator from "./assignments/AssignmentsNavigator";
 import HomeNavigator from "./home/HomeNavigator";
@@ -12,7 +12,7 @@ export default function MainTabNavigator() {
 	const userType = useSelector(state => state.login.userType);
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<View style={styles.container}>
 			<Tab.Navigator screenOptions={{
 				tabBarActiveTintColor: '#fff',
 				tabBarInactiveTintColor: 'lightgray',
@@ -20,8 +20,8 @@ export default function MainTabNavigator() {
 				tabBarInactiveBackgroundColor: '#B18BD1',
 				tabBarStyle: {
 					backgroundColor: '#AB81CD',
-					borderTopColor: '#AB81CD'
-				}
+					borderTopColor: '#AB81CD',
+				},
 			}}>
 
 				<Tab.Screen name={"Home Navigator"} component={HomeNavigator} options={{
@@ -42,7 +42,7 @@ export default function MainTabNavigator() {
 					}}/>
 				}
 			</Tab.Navigator>
-		</SafeAreaView>
+		</View>
 	);
 };
 

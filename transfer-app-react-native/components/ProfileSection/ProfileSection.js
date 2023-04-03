@@ -115,7 +115,9 @@ function ProfileSection(props) {
 					}} useNativeAndroidPickerStyle={false} style={{
 						iconContainer: {justifyContent: "center", padding: 10},
 						inputAndroid: styles.textStyle,
-						inputAndroidContainer: {padding: 0, justifyContent: "center"}
+						inputAndroidContainer: {padding: 0, justifyContent: "center"},
+						inputIOS: styles.textStyle,
+						inputIOSContainer: {padding: 0, justifyContent: "center"},
 					}}/>
 				</View>
 			</View>

@@ -75,7 +75,12 @@ export default function HomeNavigator() {
 										}
 									}
 									style={{minWidth: 150}}>
-									<View style={{display: "flex", flexDirection: "row"}}>
+									<View style={{
+										display: "flex",
+										flexDirection: "row",
+										justifyContent: "center",
+										alignItems: "center"
+									}}>
 										<Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("PENDING")}/>
 										<View style={{justifyContent: "center"}}><Text style={styles.menuText}>Pending</Text></View>
 									</View>

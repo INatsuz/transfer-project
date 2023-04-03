@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity, View, Text} from "react-native";
+import {StyleSheet, TouchableOpacity, View, Text, SafeAreaView} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import ProfileSection from "../../../components/ProfileSection/ProfileSection";
 import React, {useEffect, useState} from "react";
@@ -57,7 +57,7 @@ export default function Home(props) {
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: userType === 1, userID: userID})}>
 				<Ionicons name="add" size={22} color={"#222222"}/>
 			</TouchableOpacity>
@@ -84,7 +84,7 @@ export default function Home(props) {
 			<View style={styles.section}>
 				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails}/>
 			</View>
-		</View>
+		</SafeAreaView>
 	)
 };
 

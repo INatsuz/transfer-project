@@ -2,7 +2,7 @@ import {
 	Button,
 	KeyboardAvoidingView,
 	Platform,
-	Pressable,
+	Pressable, SafeAreaView,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -95,12 +95,13 @@ export default function AddAssignment(props) {
 				setDate(date);
 				setPickingTime(true);
 			}}/>}
-			{pickingTime && <DateTimePicker value={time} mode="time" onChange={(event, time) => {
-				setPickingTime(false);
-				setTime(time);
-			}}/>}
+			{pickingTime && Platform.OS === "android" &&
+				<DateTimePicker value={time} mode="time" onChange={(event, time) => {
+					setPickingTime(false);
+					setTime(time);
+				}}/>}
 
-			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+			<KeyboardAvoidingView keyboardVerticalOffset={30} behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
 				<ScrollView style={styles.scrollView}>
 					{/* Person Name field */}
 					<View style={styles.section}>
@@ -156,7 +157,9 @@ export default function AddAssignment(props) {
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOS: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
@@ -171,10 +174,11 @@ export default function AddAssignment(props) {
 					{/* Time/Date field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Time: </Text>
-						<Pressable onPress={() => {
+						<Pressable style={{backgroundColor: "blue", zIndex: 10}} onPress={() => {
+							console.log("Pressed time");
 							if (!pickingDate && !pickingTime) setPickingDate(true);
 						}}>
-							<TextInput editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
+							<TextInput pointerEvents={"none"} editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
 						</Pressable>
 					</View>
 
@@ -200,7 +204,9 @@ export default function AddAssignment(props) {
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOS: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
@@ -225,10 +231,15 @@ export default function AddAssignment(props) {
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
 							inputAndroidContainer: {
-								...styles.input, ...styles.disabledPicker,
+								...styles.input, ...(isAdmin ? {} : styles.disabledPicker),
 								justifyContent: "center"
 							},
-							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)}
+							inputAndroid: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)},
+							inputIOS: {...styles.pickerSelect, ...(isAdmin ? {} : styles.disabledPicker)},
+							inputIOSContainer: {
+								...styles.input, ...(isAdmin ? {} : styles.disabledPicker),
+								justifyContent: "center"
+							},
 						}} Icon={() => {
 							return isAdmin ? (<Chevron size={1.5} color="gray"/>) : null;
 						}} useNativeAndroidPickerStyle={false}/>
@@ -246,7 +257,9 @@ export default function AddAssignment(props) {
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOS: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
@@ -264,7 +277,9 @@ export default function AddAssignment(props) {
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
 							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect
+							inputAndroid: styles.pickerSelect,
+							inputIOS: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
 						}} Icon={() => {
 							return (<Chevron size={1.5} color="gray"/>);
 						}} useNativeAndroidPickerStyle={false}/>
