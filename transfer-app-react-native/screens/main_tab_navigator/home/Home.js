@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity, View, Text, SafeAreaView} from "react-native";
+import {StyleSheet, TouchableOpacity, View, Text, SafeAreaView, Platform, StatusBar} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import ProfileSection from "../../../components/ProfileSection/ProfileSection";
 import React, {useEffect, useState} from "react";
@@ -52,14 +52,14 @@ export default function Home(props) {
 		});
 	}
 
-	const navigateToDetails = function (assignment) {
+	function navigateToDetails(assignment) {
 		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: userType === 1})
-	};
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: userType === 1, userID: userID})}>
-				<Ionicons name="add" size={22} color={"#222222"}/>
+				<Ionicons name="add" size={22} color={"white"}/>
 			</TouchableOpacity>
 			<View style={styles.profileSectionContainer}>
 				<ProfileSection assignmentCount={assignments.length} userData={{
@@ -82,14 +82,17 @@ export default function Home(props) {
 				</TouchableOpacity>
 			</View>
 			<View style={styles.section}>
-				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails}/>
+				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails} isSearchButtonVisible={userType !== 3}/>
 			</View>
 		</SafeAreaView>
 	)
 };
 
+const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
+
 const styles = StyleSheet.create({
 	container: {
+		paddingTop: statusBarHeight,
 		height: "100%",
 		backgroundColor: "#222222"
 	},

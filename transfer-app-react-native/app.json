@@ -9,6 +9,7 @@
     "notification":{
       "icon":"./assets/notification-icon.png"
     },
+    "scheme": "transferapp",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

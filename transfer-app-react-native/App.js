@@ -12,6 +12,8 @@ import store from "./redux/setupStore";
 import {navigationRef} from './utils/RootNavigation';
 import {saveNotificationAction} from "./redux/actions/notificationActions";
 import {MenuProvider} from "react-native-popup-menu";
+import * as Linking from "expo-linking";
+import * as SplashScreen from 'expo-splash-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +29,36 @@ export default function App() {
 	const [notification, setNotification] = useState(false);
 	const notificationListener = useRef();
 	const responseListener = useRef();
+
+	const url = Linking.useURL();
+
+	const prefix = Linking.createURL("/");
+
+	useEffect(() => {
+		if (url) {
+			SplashScreen.hideAsync();
+		}
+	}, [url])
+
+	const linking = {
+		prefixes: [prefix],
+		config: {
+			screens: {
+				initialRouteName: "Login",
+				Login: "login",
+				MainTabNavigator: {
+					screens: {
+						HomeNavigator: {
+							screens: {
+								AddAssignment: "home/add"
+							}
+						}
+					}
+				}
+
+			}
+		}
+	};
 
 	const colorScheme = useColorScheme();
 
@@ -55,7 +87,7 @@ export default function App() {
 		<Provider store={store}>
 			<MenuProvider>
 				<StatusBar backgroundColor="#222222" translucent={true}/>
-				<NavigationContainer ref={navigationRef} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+				<NavigationContainer ref={navigationRef} linking={linking} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 					<Stack.Navigator>
 						<Stack.Screen
 							name={"Login"}
@@ -63,7 +95,7 @@ export default function App() {
 							options={{title: 'Login', headerShown: false}}
 						/>
 						<Stack.Screen
-							name={"Main Tab Navigator"}
+							name={"MainTabNavigator"}
 							component={MainTabNavigator}
 							options={{title: 'Main Tab Navigator', headerShown: false}}
 						/>

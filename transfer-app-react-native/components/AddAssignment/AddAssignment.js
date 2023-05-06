@@ -1,5 +1,4 @@
 import {
-	Button,
 	KeyboardAvoidingView,
 	Platform,
 	Pressable,
@@ -17,9 +16,24 @@ import useDrivers from "../../hooks/useDrivers";
 import useVehicles from "../../hooks/useVehicles";
 import useOperators from "../../hooks/useOperators";
 import {postWithAuth} from "../../utils/Requester";
+import Button from "../Button/Button";
+import {useSelector} from "react-redux";
+import {useNavigation} from "@react-navigation/native";
+import {useURL} from "expo-linking";
 
 export default function AddAssignment(props) {
-	const {userID, isAdmin} = props.route.params;
+	const userID = useSelector(state => state.login.userID);
+	const isAdmin = useSelector(state => state.login.userType === 1);
+	const isLoggedIn = useSelector(state => state.login.loggedIn);
+	const navigation = useNavigation();
+
+	const url = useURL();
+
+	useEffect(() => {
+		if (!isLoggedIn) {
+			navigation.navigate("Login", {shouldRedirect: true});
+		}
+	}, [isLoggedIn, url]);
 
 	const [pickingDate, setPickingDate] = useState(false);
 	const [pickingTime, setPickingTime] = useState(false);
@@ -28,21 +42,21 @@ export default function AddAssignment(props) {
 	const [vehicles] = useVehicles();
 	const [operators] = useOperators();
 
-	const [personName, setPersonName] = useState("");
-	const [numberOfPeople, setNumberOfPeople] = useState("");
-	const [price, setPrice] = useState("");
-	const [paid, setPaid] = useState("");
-	const [paymentMethod, setPaymentMethod] = useState(null);
-	const [origin, setOrigin] = useState("");
-	const [destination, setDestination] = useState("");
-	const [date, setDate] = useState(new Date());
-	const [time, setTime] = useState(new Date());
-	const [status, setStatus] = useState("PENDING");
-	const [flight, setFlight] = useState("");
+	const [personName, setPersonName] = useState(props.route.params && props.route.params.name ? props.route.params.name : "");
+	const [numberOfPeople, setNumberOfPeople] = useState(props.route.params && props.route.params.people ? props.route.params.people : "");
+	const [price, setPrice] = useState(props.route.params && props.route.params.price ? props.route.params.price : "");
+	const [paid, setPaid] = useState(props.route.params && props.route.params.paid ? props.route.params.paid : "");
+	const [paymentMethod, setPaymentMethod] = useState(props.route.params && props.route.params.paymentMethod ? props.route.params.paymentMethod : null);
+	const [origin, setOrigin] = useState(props.route.params && props.route.params.origin ? props.route.params.origin : "");
+	const [destination, setDestination] = useState(props.route.params && props.route.params.destination ? props.route.params.destination : "");
+	const [date, setDate] = useState(props.route.params && props.route.params.datetime ? new Date(props.route.params.datetime) : new Date());
+	const [time, setTime] = useState(props.route.params && props.route.params.datetime ? new Date(props.route.params.datetime) : new Date());
+	const [status, setStatus] = useState(props.route.params && props.route.params.status ? props.route.params.status : "PENDING");
+	const [flight, setFlight] = useState(props.route.params && props.route.params.flight ? props.route.params.flight : "");
 	const [driver, setDriver] = useState(userID ?? null);
 	const [vehicle, setVehicle] = useState(null);
 	const [operator, setOperator] = useState(null);
-	const [observations, setObservations] = useState("");
+	const [observations, setObservations] = useState(props.route.params && props.route.params.observations ? props.route.params.observations : "");
 
 	let dateString = String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0") + "/" + date.getFullYear();
 	let timeString = String(time.getHours()).padStart(2, "0") + ":" + String(time.getMinutes()).padStart(2, "0");
@@ -58,6 +72,18 @@ export default function AddAssignment(props) {
 			}
 		}
 	}, [vehicles])
+
+	useEffect(() => {
+		if (props.route.params && props.route.params.operator) {
+			let operator = operators.find(op => op.name === props.route.params.operator);
+
+			if (operator) {
+				setOperator(operator.ID);
+			} else {
+				setOperator(null);
+			}
+		}
+	}, [operators])
 
 	function onAddPress() {
 		let data = {
@@ -87,14 +113,21 @@ export default function AddAssignment(props) {
 		});
 	}
 
+	function onTimePress() {
+		if (Platform.OS === "android") {
+			if (!pickingDate && !pickingTime) setPickingDate(true);
+		}
+	}
+
 	return (
 		<View style={styles.container}>
 			{/* Datetime modals */}
-			{pickingDate && <DateTimePicker value={date} mode="date" onChange={(event, date) => {
-				setPickingDate(false);
-				setDate(date);
-				setPickingTime(true);
-			}}/>}
+			{pickingDate && Platform.OS === "android" &&
+				<DateTimePicker value={date} mode="date" onChange={(event, date) => {
+					setPickingDate(false);
+					setDate(date);
+					setPickingTime(true);
+				}}/>}
 			{pickingTime && Platform.OS === "android" &&
 				<DateTimePicker value={time} mode="time" onChange={(event, time) => {
 					setPickingTime(false);
@@ -105,82 +138,49 @@ export default function AddAssignment(props) {
 				<ScrollView style={styles.scrollView}>
 					{/* Person Name field */}
 					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Person: </Text>
-						<TextInput placeholder={"Person Name"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPersonName(value)}/>
-					</View>
-
-					{/* Number of People field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Number of People: </Text>
-						<TextInput placeholder={"Number of People"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
+						<Text style={[styles.text, styles.title]}>Name: </Text>
+						<TextInput placeholder={"Name"} defaultValue={personName} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPersonName(value)}/>
 					</View>
 
 					{/* Origin field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Origin: </Text>
-						<TextInput placeholder={"Origin"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setOrigin(value)}/>
+						<TextInput placeholder={"Origin"} defaultValue={origin} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setOrigin(value)}/>
 					</View>
 
 					{/* Destination field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Destination: </Text>
-						<TextInput placeholder={"Destination"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setDestination(value)}/>
+						<TextInput placeholder={"Destination"} defaultValue={destination} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setDestination(value)}/>
 					</View>
 
-					{/* Price field */}
+					{/* Number of People field */}
 					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Price: </Text>
-						<TextInput keyboardType={"number-pad"} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPrice(parseFloat(value))}/>
-					</View>
-
-					{/* Paid field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Paid: </Text>
-						<TextInput keyboardType={"number-pad"} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(parseFloat(value))}/>
-					</View>
-
-					{/* Payment method field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Payment method: </Text>
-						<RNPickerSelect value={paymentMethod} items={[{
-							label: "Cash",
-							value: "CASH",
-							key: "CASH"
-						}, {
-							label: "Card",
-							value: "CARD",
-							key: "CARD"
-						}]} onValueChange={(value) => {
-							if (value !== paymentMethod) {
-								setPaymentMethod(value);
-							}
-						}} style={{
-							iconContainer: {justifyContent: "center", padding: 15},
-							inputAndroidContainer: {...styles.input, justifyContent: "center"},
-							inputAndroid: styles.pickerSelect,
-							inputIOS: styles.pickerSelect,
-							inputIOSContainer: {...styles.input, justifyContent: "center"},
-						}} Icon={() => {
-							return (<Chevron size={1.5} color="gray"/>);
-						}} useNativeAndroidPickerStyle={false}/>
-					</View>
-
-					{/* Flight field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Flight: </Text>
-						<TextInput placeholder={"Flight"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setFlight(value)}/>
+						<Text style={[styles.text, styles.title]}>Pax: </Text>
+						<TextInput placeholder={"Pax"} defaultValue={numberOfPeople} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
 					</View>
 
 					{/* Time/Date field */}
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Time: </Text>
-						<Pressable style={{backgroundColor: "blue", zIndex: 10}} onPress={() => {
-							console.log("Pressed time");
-							if (!pickingDate && !pickingTime) setPickingDate(true);
-						}}>
-							<TextInput pointerEvents={"none"} editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
-						</Pressable>
-					</View>
+					{
+						Platform.OS === "ios" ?
+							<View style={styles.iosTimeSection}>
+								<View>
+									<Text style={[styles.text, styles.title, {paddingBottom: 0}]}>Time: </Text>
+								</View>
+
+								<DateTimePicker value={date} mode="datetime" preferredDatePickerStyle={"compact"} onChange={(event, datetime) => {
+									setDate(datetime);
+									setTime(datetime);
+								}}/>
+							</View>
+							:
+							<View style={styles.section}>
+								<Text style={[styles.text, styles.title]}>Time: </Text>
+								<Pressable onPress={onTimePress}>
+									<TextInput pointerEvents={"none"} editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
+								</Pressable>
+							</View>
+					}
 
 					{/* Status field */}
 					<View style={styles.section}>
@@ -197,9 +197,67 @@ export default function AddAssignment(props) {
 							label: "FINISHED",
 							value: "FINISHED",
 							key: "FINISHED"
+						}, {
+							label: "REVIEW",
+							value: "REVIEW",
+							key: "REVIEW"
 						}]} onValueChange={(value) => {
 							if (value !== status) {
 								setStatus(value);
+							}
+						}} style={{
+							iconContainer: {justifyContent: "center", padding: 15},
+							inputAndroidContainer: {...styles.input, justifyContent: "center"},
+							inputAndroid: styles.pickerSelect,
+							inputIOS: styles.pickerSelect,
+							inputIOSContainer: {...styles.input, justifyContent: "center"},
+						}} Icon={() => {
+							return (<Chevron size={1.5} color="gray"/>);
+						}} useNativeAndroidPickerStyle={false}/>
+					</View>
+
+					{/* Flight field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Flight: </Text>
+						<TextInput placeholder={"Flight"} defaultValue={flight} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setFlight(value)}/>
+					</View>
+
+					{/* Price field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Price: </Text>
+						<TextInput keyboardType="numeric" defaultValue={price} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+							let dotted_value = value.replace(",", ".");
+							setPrice(parseFloat(dotted_value));
+						}}/>
+					</View>
+
+					{/* Paid field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Paid: </Text>
+						<TextInput keyboardType="numeric" defaultValue={paid} placeholder="Paid" placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+							let dotted_value = value.replace(",", ".");
+							setPaid(parseFloat(dotted_value));
+						}}/>
+					</View>
+
+					{/* Payment method field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Payment method: </Text>
+						<RNPickerSelect value={paymentMethod} items={[{
+							label: "Cash",
+							value: "CASH",
+							key: "CASH"
+						}, {
+							label: "Card",
+							value: "CARD",
+							key: "CARD"
+						}, {
+							label: "Bank Transfer",
+							value: "TRANSFER",
+							key: "TRANSFER"
+						}]} onValueChange={(value) => {
+							if (value !== paymentMethod) {
+								setPaymentMethod(value);
 							}
 						}} style={{
 							iconContainer: {justifyContent: "center", padding: 15},
@@ -220,12 +278,14 @@ export default function AddAssignment(props) {
 						})} onValueChange={(value) => {
 							if (value !== driver) {
 								setDriver(value);
-								let userVehicle = vehicles.find(vehicle => vehicle.userID === value);
+								if (value !== null) {
+									let userVehicle = vehicles.find(vehicle => vehicle.userID === value);
 
-								if (userVehicle) {
-									setVehicle(userVehicle.ID);
-								} else {
-									setVehicle(null);
+									if (userVehicle) {
+										setVehicle(userVehicle.ID);
+									} else {
+										setVehicle(null);
+									}
 								}
 							}
 						}} style={{
@@ -287,12 +347,12 @@ export default function AddAssignment(props) {
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Observations: </Text>
-						<TextInput placeholder={"Observations"} placeholderTextColor="#A3A9AA" multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
+						<TextInput placeholder={"Observations"} defaultValue={observations} placeholderTextColor="#A3A9AA" multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
 					</View>
 
 					{/* Add button */}
 					<View style={{paddingBottom: 10}}>
-						<Button title={"Add"} onPress={onAddPress}/>
+						<Button text={"Add"} onPress={onAddPress}/>
 					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
@@ -349,6 +409,13 @@ const styles = StyleSheet.create({
 	},
 
 	section: {
-		marginBottom: 15
+		marginBottom: 15,
+	},
+
+	iosTimeSection: {
+		marginBottom: 15,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
 	},
 });

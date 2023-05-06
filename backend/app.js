@@ -8,6 +8,7 @@ const session = require('express-session');
 const usersRouter = require('./routes/users');
 const apiRouter = require('./routes/api');
 const adminRouter = require('./routes/admin');
+const deeplinkRouter = require('./routes/deeplink');
 
 const http_app = express();
 http_app.use(function (req, res) {
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
+app.use('/deeplink', deeplinkRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

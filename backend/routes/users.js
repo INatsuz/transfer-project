@@ -1,14 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
-const {verifyLoginAndGenerateTokens, verifyToken, generateTokens, mustBeAuthenticated} = require("../utils/authentication");
+const {verifyLoginAndGenerateTokens, verifyToken, generateTokens, mustBeAuthenticated, USER_TYPES} = require("../utils/authentication");
 const db = require('../utils/db');
 
 const SALT_ROUNDS = 10;
 
 // Login POST method
 router.post('/login', function (req, res, next) {
-	console.log(req.body);
 	verifyLoginAndGenerateTokens(req.body.email, req.body.password).then(({accessToken, refreshToken, payload}) => {
 		res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, user: payload});
 

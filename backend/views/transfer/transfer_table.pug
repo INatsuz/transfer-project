@@ -12,25 +12,28 @@ mixin transfer_table_row(row)
         td.align-middle= row.destination
         td.align-middle= row.person_name
         if row.status === "PENDING"
-            td.align-middle
+            td.align-middle.d-print-none
                 span.badge.text-bg-warning PENDING
         else if row.status === "IN PROGRESS"
-            td.align-middle
+            td.align-middle.d-print-none
                 span.badge.text-bg-success IN PROGRESS
         else if row.status === "FINISHED"
-            td.align-middle
+            td.align-middle.d-print-none
                 span.badge.text-bg-secondary FINISHED
+        else if row.status === "REVIEW"
+            td.align-middle.d-print-none
+                span.badge.text-bg-danger REVIEW
         if row.seen
-            td.align-middle
+            td.d-print-none.align-middle
                 span.badge.text-bg-success Yes
         else
-            td.align-middle
+            td.d-print-none.align-middle
                 span.badge.text-bg-danger No
         td.align-middle= row.num_of_people
-        td.align-middle= row.driver
-        td.align-middle= row.ID
+        td.align-middle.d-print-none= row.driver
+        td.align-middle= `${parseFloat((row.price).toFixed(2))}€`
 
-        td.text-nowrap.align-middle
+        td.text-nowrap.align-middle.d-print-none
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/transfers/details/${row.ID}`)
                 i.bi.bi-list
                 |  Details
@@ -49,13 +52,24 @@ mixin transfer_table(data)
                     th Date/Time
                     th Origin
                     th Destination
-                    th Person
-                    th Status
-                    th Seen
-                    th People
-                    th Driver
-                    th ID
-                    th
+                    th Name
+                    th.d-print-none Status
+                    th.d-print-none Seen
+                    th Pax
+                    th.d-print-none Driver
+                    th Price
+                    th.d-print-none
             tbody
                 each row in data
                     +transfer_table_row(row)
+                tr
+                    td
+                    td
+                    td
+                    td
+                    td.d-print-none
+                    td.d-print-none
+                    td
+                    td.d-print-none
+                    td= `${parseFloat(data.reduce((sum, row) => sum + row.price, 0).toFixed(2))}€`
+                    td.d-print-none

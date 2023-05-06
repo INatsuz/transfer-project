@@ -5,7 +5,7 @@ block content
 		div.col-12
 			form#form(method="post" action=`/admin/transfers/update/${ID}?returnLink=${url}`)
 				div.mb-3
-					label.form-label(for="person-name") Person Name
+					label.form-label(for="person-name") Name
 					input.form-control#person-name(type="text" name="person_name" value=transfer.person_name)
 				div.mb-3
 					label.form-label(for="origin") Origin
@@ -14,7 +14,7 @@ block content
 					label.form-label(for="destination") Destination
 					input.form-control#destination(type="text" name="destination" value=transfer.destination)
 				div.mb-3
-					label.form-label(for="num-of-people") Number of People
+					label.form-label(for="num-of-people") Pax
 					input.form-control#num-of-people(type="text" name="num_of_people" value=transfer.num_of_people)
 				div.mb-3
 					input#datetime-utc(type="hidden" value=transfer.transfer_time)
@@ -27,6 +27,7 @@ block content
 						option(value="PENDING" selected=transfer.status === "PENDING") PENDING
 						option(value="IN PROGRESS" selected=transfer.status === "IN PROGRESS") IN PROGRESS
 						option(value="FINISHED" selected=transfer.status === "FINISHED") FINISHED
+						option(value="REVIEW" selected=transfer.status === "REVIEW") REVIEW
 				div.mb-3
 					label.form-label(for="flight") Flight
 					input.form-control#flight(type="text" name="flight" value=transfer.flight)
@@ -42,6 +43,7 @@ block content
 						option(value="null") None
 						option(value="CASH" selected=transfer.payment_method === "CASH") Cash
 						option(value="CARD" selected=transfer.payment_method === "CARD") Card
+						option(value="TRANSFER" selected=transfer.payment_method === "TRANSFER") Bank Transfer
 				div.mb-3
 					label.form-label(for="driver") Driver
 					select.form-select#driver(name="driver")

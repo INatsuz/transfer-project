@@ -1,7 +1,7 @@
-import {Alert, StyleSheet, Text, View} from "react-native";
+import {Alert, Platform, StyleSheet, Text, View} from "react-native";
 import RNPickerSelect from "react-native-picker-select"
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, {memo, useEffect, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
@@ -12,6 +12,7 @@ function ProfileSection(props) {
 	const dispatch = useDispatch();
 	const [vehicles, setVehicles] = useState([]);
 	const [activeVehicle, setActiveVehicle] = useState(null);
+	const originalVehicle = useRef()
 	const userType = useSelector(state => state.login.userType);
 
 	function updateActiveVehicle(vehicle) {
@@ -19,7 +20,9 @@ function ProfileSection(props) {
 
 		putWithAuth("api/updateActiveVehicle", data).then(res => {
 			console.log("Active vehicle changed successfully");
+			originalVehicle.current = vehicle;
 		}).catch(err => {
+			setActiveVehicle(originalVehicle.current);
 			console.log(err);
 		});
 	}
@@ -28,10 +31,35 @@ function ProfileSection(props) {
 		if (value === activeVehicle) {
 			return;
 		}
-		let original_value = activeVehicle;
 		setActiveVehicle(value);
 
-		let vehicle = vehicles.find(el => el.ID === value);
+		if (Platform.OS === "android"){
+			let vehicle = vehicles.find(el => el.ID === value);
+
+			Alert.alert(
+				"Confirm",
+				`Are you sure you want to change to ${vehicle ? vehicle.displayName : "no vehicle"}.`,
+				[
+					{
+						text: "Yes",
+						onPress: () => {
+							updateActiveVehicle(value);
+						}
+					},
+					{
+						text: "Cancel",
+						style: "cancel",
+						onPress: () => {
+							setActiveVehicle(originalVehicle.current);
+						},
+					}
+				]
+			);
+		}
+	};
+
+	function onVehicleSelectClose() {
+		let vehicle = vehicles.find(el => el.ID === activeVehicle);
 
 		Alert.alert(
 			"Confirm",
@@ -40,19 +68,19 @@ function ProfileSection(props) {
 				{
 					text: "Yes",
 					onPress: () => {
-						updateActiveVehicle(value);
+						updateActiveVehicle(activeVehicle);
 					}
 				},
 				{
 					text: "Cancel",
 					style: "cancel",
 					onPress: () => {
-						setActiveVehicle(original_value);
+						setActiveVehicle(originalVehicle.current);
 					},
 				}
 			]
 		);
-	};
+	}
 
 	const confirmLogoutDialog = () => {
 		Alert.alert(
@@ -84,6 +112,7 @@ function ProfileSection(props) {
 			if (res.data.vehicles.length > 0) {
 				if (res.data.vehicles[0].userID !== null) {
 					setActiveVehicle(res.data.vehicles[0].ID);
+					originalVehicle.current = res.data.vehicles[0].ID;
 				}
 			}
 		}).catch(err => {
@@ -117,7 +146,7 @@ function ProfileSection(props) {
 							inputAndroidContainer: {padding: 0, justifyContent: "center"},
 							inputIOS: styles.textStyle,
 							inputIOSContainer: {padding: 0, justifyContent: "center"},
-						}}/>
+						}} onClose={onVehicleSelectClose}/>
 					</View>
 				</View>
 			}

@@ -23,6 +23,10 @@ export default function StatusMenu(props) {
 					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("FINISHED")}/></Text>
 					<Text style={styles.menuOptionText}>Finished</Text>
 				</MenuOption>
+				<MenuOption style={styles.menuOption} onSelect={() => props.onMenuItemPress(props.navigation, props.route, "REVIEW")}>
+					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("REVIEW")}/></Text>
+					<Text style={styles.menuOptionText}>Review</Text>
+				</MenuOption>
 			</MenuOptions>
 		</Menu>
 	);

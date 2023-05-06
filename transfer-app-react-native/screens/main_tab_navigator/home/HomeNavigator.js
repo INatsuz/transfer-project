@@ -1,14 +1,10 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import AssignmentDetails from "../../../components/AssignmentDetails/AssignmentDetails";
 import Home from "./Home";
-import {StyleSheet, Text, View} from "react-native";
-import {Menu, MenuItem} from "react-native-material-menu";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import React, {useState} from "react";
 import {putWithAuth} from "../../../utils/Requester";
 import AddAssignment from "../../../components/AddAssignment/AddAssignment";
-import getStatusColor from "../../../utils/StatusColor";
 import StatusMenu from "../../../components/StatusMenu/StatusMenu";
+import SearchResults from "./SearchResults";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,8 +26,6 @@ function onMenuItemPress(navigation, route, value) {
 }
 
 export default function HomeNavigator() {
-	const [isMenuVisible, setIsMenuVisible] = useState(false);
-
 	return (
 		<Stack.Navigator>
 			<Stack.Screen name={"Home"} component={Home} options={{headerShown: false}}/>
@@ -62,17 +56,17 @@ export default function HomeNavigator() {
 				},
 				headerTintColor: "#fff"
 			}}/>
+			<Stack.Screen name={"SearchResults"} component={SearchResults} options={{
+				headerBackButtonMenuEnabled: true,
+				headerTitle: "Search Results",
+				headerStyle: {
+					backgroundColor: "#222222",
+				},
+				headerTitleStyle: {
+					color: "#fff"
+				},
+				headerTintColor: "#fff"
+			}}/>
 		</Stack.Navigator>
 	);
 };
-
-const styles = StyleSheet.create({
-	icon: {
-		fontSize: 40
-	},
-
-	menuText: {
-		fontSize: 15,
-		fontWeight: "500"
-	}
-});

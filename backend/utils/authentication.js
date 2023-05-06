@@ -7,11 +7,25 @@ const JWT_SECRET = "w5JVIErNaQ";
 const ACCESS_TOKEN_DURATION = "30m";
 const REFRESH_TOKEN_DURATION = "7d";
 
-const USER_TYPES = {ADMIN: 1, DRIVER: 2}
+const USER_TYPES = {ADMIN: 1, DRIVER: 2, HOTEL: 3}
 
-function verifyLoginCredentials(email, password, type) {
-	let query = "SELECT * FROM appuser WHERE email = ?" + (type ? " AND userType = ?" : "");
-	let params = (type ? [email, USER_TYPES[type]] : [email]);
+function verifyLoginCredentials(email, password, ...types) {
+	console.log(types);
+	let userTypeFilters = [];
+	let typeFilterParams = [];
+
+	types.forEach(type => {
+		userTypeFilters.push("userType = ?");
+		typeFilterParams.push(type);
+	});
+
+	let userTypeFilter = ` AND (${userTypeFilters.join(" OR ")})`;
+
+	let query = "SELECT * FROM appuser WHERE email = ?" + (types.length > 0 ? userTypeFilter : "");
+	let params = (types.length > 0 ? [email, ...typeFilterParams] : [email]);
+
+	console.log(query);
+	console.log(params);
 
 	return new Promise((resolve, reject) => {
 		db.query(query, params).then(({result}) => {
@@ -39,16 +53,15 @@ function verifyLoginCredentials(email, password, type) {
 	});
 }
 
-function verifyLoginAndGenerateTokens(email, password) {
+function verifyLoginAndGenerateTokens(email, password, ...types) {
 	return new Promise((resolve, reject) => {
-		verifyLoginCredentials(email, password).then(result => {
+		verifyLoginCredentials(email, password, ...types).then(result => {
 			let payload = {
 				ID: result.ID,
 				email: result.email,
 				name: result.name,
 				userType: result.userType
 			};
-			console.log(payload);
 
 			generateTokens(payload).then(tokens => {
 				resolve({...tokens, payload: payload});
@@ -173,6 +186,21 @@ function mustHaveSession(req, res, next) {
 	next();
 }
 
+function mustHaveAdminSession(req, res, next) {
+	if (!req.session.userID) {
+		res.status(401).redirect("/admin/login");
+		return;
+	}
+
+	if (req.session.userType !== USER_TYPES.ADMIN) {
+		res.status(401).redirect("/admin/login");
+		return;
+	}
+
+	next();
+}
+
+module.exports.USER_TYPES = USER_TYPES;
 module.exports.verifyLoginCredentials = verifyLoginCredentials;
 module.exports.verifyLoginAndGenerateTokens = verifyLoginAndGenerateTokens;
 module.exports.verifyToken = verifyToken;
@@ -180,3 +208,4 @@ module.exports.generateTokens = generateTokens;
 module.exports.mustBeAuthenticated = mustBeAuthenticated;
 module.exports.mustBeAdmin = mustBeAdmin;
 module.exports.mustHaveSession = mustHaveSession;
+module.exports.mustHaveAdminSession = mustHaveAdminSession;

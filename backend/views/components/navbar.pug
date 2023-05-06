@@ -6,15 +6,17 @@ nav.navbar.navbar-expand-lg.bg-light.d-print-none
 		div.collapse.navbar-collapse.justify-content-between#navbarNav
 			ul.navbar-nav
 				li.nav-item
+				if userID
 					a#transfers-nav-link.nav-link(href=`/admin/transfers`) Transfers
-				li.nav-item
-					a.nav-link(href="/admin/vehicles") Vehicles
-				li.nav-item
-					a.nav-link(href="/admin/appusers") Users
-				li.nav-item
-					a.nav-link(href="/admin/operators") Operators
-				li.nav-item
-					a.nav-link(href="/admin/commissions") Commissions
+				if userType === 1
+					li.nav-item
+						a.nav-link(href="/admin/vehicles") Vehicles
+					li.nav-item
+						a.nav-link(href="/admin/appusers") Users
+					li.nav-item
+						a.nav-link(href="/admin/operators") Operators
+					li.nav-item
+						a.nav-link(href="/admin/commissions") Commissions
 			if userID === undefined || userID === null
 				a.nav-link(href="/admin/login") Login
 			else

@@ -1,6 +1,5 @@
 import {
 	ActivityIndicator,
-	Button,
 	Dimensions,
 	ImageBackground,
 	KeyboardAvoidingView,
@@ -20,8 +19,10 @@ import axios from 'axios';
 import React, {useEffect, useRef, useState} from "react";
 import {deleteTokens, getTokens, saveTokens} from "../../utils/TokenManager";
 import {getWithAuth, IP} from "../../utils/Requester";
+import Button from "../../components/Button/Button";
+import {openURL, useURL} from "expo-linking";
 
-export default function Login(props) {
+export default function Login({route, navigation}) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isLoggingIn, setIsLoggingIn] = useState(false);
 	const {email, setEmail, isValidStyling} = useEmailField();
@@ -29,20 +30,27 @@ export default function Login(props) {
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
 	const notificationToken = useSelector(state => state.notification.token);
 	const dispatch = useDispatch();
+	const url = useURL();
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			props.navigation.reset({
+			navigation.reset({
 				index: 0,
-				routes: [{name: "Main Tab Navigator"}]
+				routes: [{name: "MainTabNavigator"}]
 			});
+
+			if (route.params && route.params.shouldRedirect && url) {
+				openURL(url);
+			}
 		}
 	}, [isLoggedIn])
 
 	//Checking if logged in on startup
 	useEffect(() => {
 		getTokens().then(() => {
-			ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
+			if (Platform.OS === "android") {
+				ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
+			}
 
 			getWithAuth("users/checkLogin").then(res => {
 				if (res.data.loggedIn) {
@@ -64,7 +72,9 @@ export default function Login(props) {
 	const handleLoginClick = event => {
 		if (!isLoggingIn) {
 			setIsLoggingIn(true);
-			ToastAndroid.show("Logging in...", ToastAndroid.SHORT);
+			if (Platform.OS === "android") {
+				ToastAndroid.show("Logging in...", ToastAndroid.SHORT);
+			}
 
 			axios.post(`https://${IP}/users/login`, {
 				email: email,
@@ -79,7 +89,9 @@ export default function Login(props) {
 				}
 			}).catch(err => {
 				setIsLoggingIn(false);
-				ToastAndroid.show("Login failed... Check your credentials.", ToastAndroid.SHORT);
+				if (Platform.OS === "android") {
+					ToastAndroid.show("Login failed... Check your credentials.", ToastAndroid.SHORT);
+				}
 				console.log(JSON.stringify(err));
 			});
 		}
@@ -101,7 +113,7 @@ export default function Login(props) {
 							<TextInput autoCapitalize={"none"} keyboardType={"email-address"} textContentType={"username"} caretHidden={false} style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" autoComplete={"email"} importantForAutofill={"yes"} onChangeText={setEmail}/>
 							<TextInput secureTextEntry={true} textContentType={"password"} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" autoComplete={"password"} importantForAutofill={"yes"} onChangeText={text => password.current = text}/>
 							<View style={{width: "100%"}}>
-								<Button title={"Login"} onPress={handleLoginClick}/>
+								<Button text={"Login"} onPress={handleLoginClick}/>
 							</View>
 						</View>
 					</View>

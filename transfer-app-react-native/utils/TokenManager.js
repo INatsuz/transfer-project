@@ -8,7 +8,6 @@ export async function getTokens() {
 					resolve({accessToken: accessToken, refreshToken: refreshToken});
 				} else {
 					await deleteTokens();
-					reject("One is null");
 				}
 			}).catch(async err => {
 				await deleteTokens();
@@ -24,15 +23,11 @@ export async function getTokens() {
 export async function saveTokens(tokens) {
 	let {accessToken, refreshToken} = tokens;
 
-	console.log("Saving tokens...");
-	console.log(accessToken);
-	console.log(refreshToken);
 	await SecureStore.setItemAsync("accessToken", accessToken);
 	await SecureStore.setItemAsync("refreshToken", refreshToken);
 }
 
 export async function deleteTokens() {
-	console.log("Deleting tokens...");
 	await SecureStore.deleteItemAsync("accessToken");
 	await SecureStore.deleteItemAsync("refreshToken");
 }

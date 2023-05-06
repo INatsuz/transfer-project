@@ -1,6 +1,5 @@
 import {
 	Alert,
-	Button,
 	KeyboardAvoidingView,
 	Platform,
 	Pressable, SafeAreaView,
@@ -13,11 +12,12 @@ import {
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Chevron} from "react-native-shapes";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {deleteWithAuth, putWithAuth} from "../../utils/Requester";
 import useOperators from "../../hooks/useOperators";
 import useVehicles from "../../hooks/useVehicles";
 import useDrivers from "../../hooks/useDrivers";
+import Button from "../Button/Button";
 
 export default function AssignmentDetails(props) {
 	let {assignment, isAdmin} = props.route.params;
@@ -43,9 +43,21 @@ export default function AssignmentDetails(props) {
 	const [vehicles] = useVehicles(activeVehicle, assignment.vehicleName);
 	const [operators] = useOperators(operator, assignment.operatorName);
 
+	const priceRef = useRef(assignment.price);
+	const paidRef = useRef(assignment.paid);
+
 	let datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
 	let dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();
 	let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
+
+	useEffect(() => {
+		putWithAuth("api/markAsSeen", {
+			ID: assignment.ID
+		}).then(() => {
+		}).catch(err => {
+			console.log(err);
+		});
+	}, []);
 
 	function onSavePress() {
 		putWithAuth("api/updateTransfer", {
@@ -95,6 +107,12 @@ export default function AssignmentDetails(props) {
 		);
 	}
 
+	function onTimePress() {
+		if (Platform.OS === "android") {
+			if (!pickingDate && !pickingTime) setPickingDate(true);
+		}
+	}
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView keyboardVerticalOffset={30} behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
@@ -110,18 +128,8 @@ export default function AssignmentDetails(props) {
 					}}/>}
 
 					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Person: </Text>
+						<Text style={[styles.text, styles.title]}>Name: </Text>
 						<TextInput value={personName} style={[styles.text, styles.input]} onChangeText={(value) => setPersonName(value)}/>
-					</View>
-
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Number of People: </Text>
-						<TextInput value={numberOfPeople.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
-					</View>
-
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Flight: </Text>
-						<TextInput value={flight ? flight.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setFlight(value)}/>
 					</View>
 
 					<View style={styles.section}>
@@ -135,14 +143,62 @@ export default function AssignmentDetails(props) {
 					</View>
 
 					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Pax: </Text>
+						<TextInput value={numberOfPeople.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
+					</View>
+
+					{/* Time/Date field */}
+					{
+						Platform.OS === "ios" ?
+							<View style={styles.iosTimeSection}>
+								<View>
+									<Text style={[styles.text, styles.title, {paddingBottom: 0}]}>Time: </Text>
+								</View>
+
+								<DateTimePicker value={date} mode="datetime" preferredDatePickerStyle={"compact"} onChange={(event, datetime) => {
+									setDate(datetime);
+									setTime(datetime);
+								}}/>
+							</View>
+							:
+							<View style={styles.section}>
+								<Text style={[styles.text, styles.title]}>Time: </Text>
+								<Pressable onPress={onTimePress}>
+									<TextInput pointerEvents={"none"} editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
+								</Pressable>
+							</View>
+					}
+
+					{/* Flight field */}
+					<View style={styles.section}>
+						<Text style={[styles.text, styles.title]}>Flight: </Text>
+						<TextInput value={flight ? flight.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setFlight(value)}/>
+					</View>
+
+					{/* Price field */}
+					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Price: </Text>
-						<TextInput keyboardType={"number-pad"} value={price.toString()} style={[styles.text, styles.input]} onChangeText={(value) => setPrice(value)}/>
+						<TextInput keyboardType={"numeric"} defaultValue={priceRef.current.toString()} style={[styles.text, styles.input]} onChangeText={(value) => {
+							let dotted_value = value.replace(",", ".");
+							if (!isNaN(parseFloat(dotted_value))) {
+								setPrice(parseFloat(dotted_value));
+							} else {
+								setPrice("");
+							}
+						}}/>
 					</View>
 
 					{/* Paid field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Paid: </Text>
-						<TextInput keyboardType={"number-pad"} value={paid.toString()} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPaid(value)}/>
+						<TextInput keyboardType={"numeric"} defaultValue={paidRef.current.toString()} placeholder={"Paid"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+							let dotted_value = value.replace(",", ".");
+							if (!isNaN(parseFloat(dotted_value))) {
+								setPaid(parseFloat(dotted_value));
+							} else {
+								setPaid("");
+							}
+						}}/>
 					</View>
 
 					{/* Payment method field */}
@@ -156,6 +212,10 @@ export default function AssignmentDetails(props) {
 							label: "Card",
 							value: "CARD",
 							key: "CARD"
+						}, {
+							label: "Bank Transfer",
+							value: "TRANSFER",
+							key: "TRANSFER"
 						}]} onValueChange={(value) => {
 							if (value !== paymentMethod) {
 								setPaymentMethod(value);
@@ -171,13 +231,6 @@ export default function AssignmentDetails(props) {
 						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
-					<View style={styles.section}>
-						<Text style={[styles.text, styles.title]}>Time: </Text>
-						<Pressable onPress={() => setPickingDate(true)}>
-							<TextInput editable={false} value={dateString + " - " + timeString} style={[styles.text, styles.input]}/>
-						</Pressable>
-					</View>
-
 					{/* Drivers field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Driver: </Text>
@@ -186,12 +239,14 @@ export default function AssignmentDetails(props) {
 						})} onValueChange={(value) => {
 							if (value !== driver) {
 								setDriver(value);
-								let userVehicle = vehicles.find(vehicle => vehicle.userID === value);
+								if (value !== null) {
+									let userVehicle = vehicles.find(vehicle => vehicle.userID === value);
 
-								if (userVehicle) {
-									setActiveVehicle(userVehicle.ID);
-								} else {
-									setActiveVehicle(null);
+									if (userVehicle) {
+										setActiveVehicle(userVehicle.ID);
+									} else {
+										setActiveVehicle(null);
+									}
 								}
 							}
 						}} style={{
@@ -261,12 +316,15 @@ export default function AssignmentDetails(props) {
 					Save and delete buttons
 					Only show up when the fields are editable
 					*/}
-					<View style={styles.section}>
-						<Button title={"Save"} onPress={onSavePress}/>
+					<View style={isAdmin ? styles.section : {}}>
+						<Button text={"Save"} onPress={onSavePress}/>
 					</View>
-					<View>
-						<Button color={"#dc3545"} title={"Delete"} onPress={onDeletePress}/>
-					</View>
+					{
+						isAdmin &&
+						<View>
+							<Button backgroundColor={"#dc3545"} text={"Delete"} onPress={onDeletePress}/>
+						</View>
+					}
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -328,5 +386,12 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		width: "100%",
 		alignSelf: "center"
-	}
+	},
+
+	iosTimeSection: {
+		marginBottom: 15,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
+	},
 });

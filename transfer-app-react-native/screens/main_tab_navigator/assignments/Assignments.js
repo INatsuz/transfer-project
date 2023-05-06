@@ -1,6 +1,6 @@
-import {StyleSheet, TouchableOpacity, View} from "react-native";
+import {Platform, StatusBar, StyleSheet, TouchableOpacity, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
-import React, {useState} from "react";
+import {useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {getWithAuth} from "../../../utils/Requester";
 
@@ -27,7 +27,7 @@ export default function Assignments(props) {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: true})}>
-				<Ionicons name="add" size={22} color={"#222222"}/>
+				<Ionicons name="add" size={22} color={"white"}/>
 			</TouchableOpacity>
 			<View style={styles.section}>
 				<AssignmentList title={"All Assignments"} assignments={assignments} fetchAssignments={fetchAllAssignments} onItemPress={navigateToDetails} roundedTop={true}/>
@@ -36,11 +36,14 @@ export default function Assignments(props) {
 	);
 };
 
+const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
+
 const styles = StyleSheet.create({
 	container: {
+		paddingTop: statusBarHeight,
 		height: "100%",
 		backgroundColor: "#222222",
-		position: "relative"
+		position: "relative",
 	},
 
 	section: {

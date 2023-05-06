@@ -5,7 +5,7 @@ block content
         div.col-12
             form#form(method="post" action=`/admin/transfers/create?returnLink=${url}`)
                 div.mb-3
-                    label.form-label(for="person-name") Person Name
+                    label.form-label(for="person-name") Name
                     input.form-control#person-name(type="text" name="personName")
                 div.mb-3
                     label.form-label(for="origin") Origin
@@ -14,10 +14,10 @@ block content
                     label.form-label(for="destination") Destination
                     input.form-control#destination(type="text" name="destination")
                 div.mb-3
-                    label.form-label(for="num-of-people") Number of People
+                    label.form-label(for="num-of-people") Pax
                     input.form-control#num-of-people(type="text" name="numberOfPeople")
                 div.mb-3
-                    label.form-label(for="datetime-input") Date and time
+                    label.form-label(for="datetime-input") Date/Time
                     input.form-control#datetime-input(type="datetime-local" name="datetime-input" step=60 required)
                     input#datetime(type="hidden" name="datetime")
                 div.mb-3
@@ -26,6 +26,7 @@ block content
                         option(value="PENDING") PENDING
                         option(value="IN PROGRESS") IN PROGRESS
                         option(value="FINISHED") FINISHED
+                        option(value="REVIEW") REVIEW
                 div.mb-3
                     label.form-label(for="flight") Flight
                     input.form-control#flight(type="text" name="flight")
@@ -36,11 +37,12 @@ block content
                     label.form-label(for="paid") Paid
                     input.form-control#paid(type="number" name="paid" step="0.01" value=0)
                 div.mb-3
-                    label.form-label(for="status") Payment method
+                    label.form-label(for="payment-method") Payment method
                     select.form-select#payment-method(name="paymentMethod")
                         option(value="null") None
                         option(value="CASH") Cash
                         option(value="CARD") Card
+                        option(value="TRANSFER") Bank Transfer
                 div.mb-3
                     label.form-label(for="driver") Driver
                     select.form-select#driver(name="driver")

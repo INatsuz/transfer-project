@@ -38,6 +38,7 @@ block content
                     input(type="hidden" name="endDate" value=endDateTime)
                     input(type="hidden" name="operator" value=currentOperator)
                     input(type="hidden" name="driver" value=currentDriver)
+                    input(type="hidden" name="tz" value=`${new Date().getTimezoneOffset()}`)
                     button.btn.btn-primary(type="submit")
                         i.bi.bi-file-earmark-arrow-down
                         | Export

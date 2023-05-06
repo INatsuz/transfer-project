@@ -9,7 +9,6 @@ export const IP = process.env.API_URL ?? API_URL;
 console.log(IP);
 
 export async function refreshTokens(refreshToken) {
-	console.log("Refreshing token (Requester util)");
 	return new Promise(function (resolve, reject) {
 		axios.get(`https://${IP}/users/renew?refreshToken=${refreshToken}`, {timeout: 5000}).then(res => {
 			saveTokens({accessToken: res.data.accessToken, refreshToken: res.data.refreshToken}).then(() => {
@@ -25,7 +24,6 @@ export async function refreshTokens(refreshToken) {
 }
 
 export async function logOff() {
-	console.log("Logging you off (Requester)");
 	deleteTokens().then(() => {
 		store.dispatch(logoffAction());
 		navigationRef.reset({
@@ -120,7 +118,7 @@ export function putWithAuth(endpoint, data) {
 					resolve(res);
 				}
 			}).catch(err => {
-				if (err.response.status === 401) {
+				if (err.response && err.response.status === 401) {
 					refreshTokens(refreshToken).then(({newAccessToken, newRefreshToken}) => {
 						axios.put(`https://${IP}/${endpoint}`, data, {
 							headers: {
@@ -136,7 +134,6 @@ export function putWithAuth(endpoint, data) {
 						logOff().then(r => reject(err));
 					});
 				} else {
-					console.log(err);
 					reject(err);
 				}
 			});

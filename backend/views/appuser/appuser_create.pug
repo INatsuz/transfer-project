@@ -18,6 +18,10 @@ block content
                     select.form-select#user-type(name="userType")
                         option(value="1") Admin
                         option(value="2") Driver
+                        option(value="3") Hotel
+                div.mb-3
+                    label.form-label(for="color") Color
+                    input.form-control.form-control-color#color(type="color" name="color" title="Choose a color to match the driver")
                 div.mb-3
                     label.form-label(for="commission") Commission (in %)
                     input.form-control#commission(type="number" name="commission" step=0.01)

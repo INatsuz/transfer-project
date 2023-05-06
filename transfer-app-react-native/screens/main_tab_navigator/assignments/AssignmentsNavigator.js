@@ -2,25 +2,11 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Assignments from "./Assignments";
 import AssignmentDetails from "../../../components/AssignmentDetails/AssignmentDetails";
 import AddAssignment from "../../../components/AddAssignment/AddAssignment";
-import {StyleSheet, Text, View} from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import {Menu, MenuItem} from 'react-native-material-menu';
-import React, {useState} from "react";
+import {StyleSheet} from "react-native";
 import {putWithAuth} from "../../../utils/Requester";
 import StatusMenu from "../../../components/StatusMenu/StatusMenu";
 
 const Stack = createNativeStackNavigator();
-
-function getStatusColor(status) {
-	switch (status) {
-		case "PENDING":
-			return "#FFC107";
-		case "IN PROGRESS":
-			return "#28a745";
-		case "FINISHED":
-			return "#6C757D";
-	}
-}
 
 function onMenuItemPress(navigation, route, value) {
 	let assignment = {...route.params.assignment}; // TODO Remove ... to update the list as well
@@ -40,8 +26,6 @@ function onMenuItemPress(navigation, route, value) {
 }
 
 export default function AssignmentsNavigator() {
-	const [isMenuVisible, setIsMenuVisible] = useState(false);
-
 	return (
 		<Stack.Navigator>
 			<Stack.Screen name={"Assignments"} component={Assignments} options={{headerShown: false}}/>
