@@ -47,10 +47,12 @@ export default function Login({route, navigation}) {
 
 	//Checking if logged in on startup
 	useEffect(() => {
+		console.log("Hello");
 		getTokens().then(() => {
 			if (Platform.OS === "android") {
 				ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
 			}
+			console.log("There");
 
 			getWithAuth("users/checkLogin").then(res => {
 				if (res.data.loggedIn) {
@@ -63,6 +65,7 @@ export default function Login({route, navigation}) {
 				setIsLoading(false);
 			});
 		}).catch(err => {
+			console.log("Error");
 			console.log(err);
 			setIsLoading(false);
 			deleteTokens();

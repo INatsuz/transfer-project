@@ -7,6 +7,7 @@ export async function getTokens() {
 				if (accessToken && refreshToken) {
 					resolve({accessToken: accessToken, refreshToken: refreshToken});
 				} else {
+					reject("At least 1 invalid token");
 					await deleteTokens();
 				}
 			}).catch(async err => {
