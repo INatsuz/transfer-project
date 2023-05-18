@@ -3,8 +3,8 @@ const mysql = require("mysql");
 const pool = mysql.createPool({
 	connectionLimit: 10,
 	host: process.env.DB_HOST,
-	user: 'inatsuz',
-	password: 'VRaminhos2509',
+	user: process.env.DB_USERNAME,
+	password: process.env.DB_PASSWORD,
 	database: 'transfer_app',
 	timezone: 'Z'
 });

@@ -21,6 +21,7 @@ import {deleteTokens, getTokens, saveTokens} from "../../utils/TokenManager";
 import {getWithAuth, IP} from "../../utils/Requester";
 import Button from "../../components/Button/Button";
 import {openURL, useURL} from "expo-linking";
+import {StatusBar} from "expo-status-bar";
 
 export default function Login({route, navigation}) {
 	const [isLoading, setIsLoading] = useState(true);
@@ -47,12 +48,10 @@ export default function Login({route, navigation}) {
 
 	//Checking if logged in on startup
 	useEffect(() => {
-		console.log("Hello");
 		getTokens().then(() => {
 			if (Platform.OS === "android") {
 				ToastAndroid.show("Checking if already logged in", ToastAndroid.SHORT);
 			}
-			console.log("There");
 
 			getWithAuth("users/checkLogin").then(res => {
 				if (res.data.loggedIn) {
@@ -102,6 +101,7 @@ export default function Login({route, navigation}) {
 
 	return (
 		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
+			<StatusBar backgroundColor="#222222" translucent={true}/>
 			<ImageBackground source={require("../../assets/login_bg_2.png")} style={styles.background_image}>
 			</ImageBackground>
 			{isLoading ? (

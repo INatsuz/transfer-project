@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		flexDirection: "row",
 		justifyContent: "space-evenly",
-		backgroundColor: "#AB81CD",
+		backgroundColor: "#5F9EA0",
 		padding: 0
 	},
 
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
 	},
 
 	selected: {
-		backgroundColor: "#935CBF"
+		backgroundColor: "#4C7E80"
 	},
 
 	plusContainer: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
 		width: 50,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#AB81CD",
+		backgroundColor: "#5F9EA0",
 		borderRadius: 25,
 		zIndex: 10
 	}

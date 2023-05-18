@@ -16,8 +16,8 @@ export default function MainTabNavigator() {
 				tabBarActiveTintColor: '#fff',
 				tabBarInactiveTintColor: '#c8c8c8',
 				tabBarStyle: {
-					backgroundColor: '#AB81CD',
-					borderTopColor: '#AB81CD',
+					backgroundColor: '#5F9EA0',
+					borderTopColor: '#5F9EA0',
 				},
 			}}>
 
