@@ -32,4 +32,4 @@ jobs:
             docker build . -t inatsuz/personal-images:transfer-app-backend
             docker container stop transfer-app-backend
             docker container prune -f
-            docker container run --name transfer-app-backend -e DB_HOST='vraminhos.com' -d -p 443:443 -p 80:80 inatsuz/personal-images:transfer-app-backend
+            docker container run --name transfer-app-backend -e DB_HOST='172.17.0.1' -e DB_USERNAME='inatsuz' -e DB_PASSWORD='VRaminhos2509' -d -p 443:443 -p 80:80 inatsuz/personal-images:transfer-app-backend
