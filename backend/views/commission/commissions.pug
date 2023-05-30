@@ -38,7 +38,7 @@ block content
                     input(type="hidden" name="endDate" value=endDateTime)
                     input(type="hidden" name="operator" value=currentOperator)
                     input(type="hidden" name="driver" value=currentDriver)
-                    input#tz-input(type="hidden" name="tz" value="null")
+                    input#tz-input(type="hidden" name="tz" value=0)
                     button.btn.btn-primary(type="submit")
                         i.bi.bi-file-earmark-arrow-down
                         | Export
@@ -53,9 +53,6 @@ block scripts
         console.log(datetimeInputs);
         console.log(datetimeFields);
 
-        if(commissions)
-            document.getElementById("tz-input").value = new Date().getTimezoneOffset();
-
         for (let i = 0; i < datetimeInputs.length; i++) {
             let datetime = new Date(datetimeInputs[i].value);
 
@@ -63,6 +60,11 @@ block scripts
             let timeString = String(datetime.getHours()).padStart(2, "0") + ":" + String(datetime.getMinutes()).padStart(2, "0");
 
             datetimeFields[i].innerHTML = `${dateString} ${timeString}`;
+        }
+
+        let tzInput = document.querySelector("#tz-input");
+        if (tzInput) {
+            tzInput.value = new Date().getTimezoneOffset();
         }
 
         document.getElementById("search-form").addEventListener("submit", function (event) {
