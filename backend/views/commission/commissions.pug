@@ -53,7 +53,8 @@ block scripts
         console.log(datetimeInputs);
         console.log(datetimeFields);
 
-        document.getElementById("tz-input").value = new Date().getTimezoneOffset();
+        if(commissions)
+            document.getElementById("tz-input").value = new Date().getTimezoneOffset();
 
         for (let i = 0; i < datetimeInputs.length; i++) {
             let datetime = new Date(datetimeInputs[i].value);
