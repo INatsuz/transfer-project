@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#222222",
-		borderTopColor: "#AB81CD",
+		borderTopColor: "#5F9EA0",
 		borderTopWidth: 1,
 		borderStyle: "solid",
 		paddingVertical: 10,

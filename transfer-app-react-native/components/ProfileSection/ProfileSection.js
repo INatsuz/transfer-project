@@ -150,10 +150,6 @@ function ProfileSection(props) {
 					</View>
 				</View>
 			}
-			<View style={[styles.area, {marginBottom: 0}]}>
-				<Text style={styles.textStyle}>{userType === 2 ? "Assigned " : "Total "}
-					Jobs: {props.assignment !== [] ? props.assignmentCount : 0}</Text>
-			</View>
 		</View>
 	);
 };

@@ -86,7 +86,7 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<MenuProvider>
-				<StatusBar backgroundColor="#5F9EA0" translucent={true}/>
+				<StatusBar backgroundColor="#222222" translucent={true}/>
 				<NavigationContainer ref={navigationRef} linking={linking} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 					<Stack.Navigator>
 						<Stack.Screen

@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "Transfer App",
-    "slug": "TransferApp",
-    "version": "1.2.1",
+    "name": "Take Me There",
+    "slug": "TakeMeThere",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "notification":{
       "icon":"./assets/notification-icon.png"
     },
-    "scheme": "transferapp",
+    "scheme": "vrtransfer",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -23,7 +23,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.inatsuz.transferapp"
+      "bundleIdentifier": "com.inatsuz.takemethere"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -32,7 +32,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#222222"
       },
-      "package": "com.inatsuz.transferapp"
+      "package": "com.inatsuz.takemethere"
     },
     "web": {
       "favicon": "./assets/favicon.png"

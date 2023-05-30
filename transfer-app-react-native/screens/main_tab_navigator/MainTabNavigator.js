@@ -4,6 +4,8 @@ import {StyleSheet, View} from "react-native";
 import {useSelector} from "react-redux";
 import AssignmentsNavigator from "./assignments/AssignmentsNavigator";
 import HomeNavigator from "./home/HomeNavigator";
+import {StatusBar} from "expo-status-bar";
+import React from "react";
 
 const Tab = createBottomTabNavigator();
 
@@ -12,6 +14,7 @@ export default function MainTabNavigator() {
 
 	return (
 		<View style={styles.container}>
+			<StatusBar backgroundColor="#5F9EA0" translucent={true}/>
 			<Tab.Navigator screenOptions={{
 				tabBarActiveTintColor: '#fff',
 				tabBarInactiveTintColor: '#c8c8c8',

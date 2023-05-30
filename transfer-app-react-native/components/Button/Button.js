@@ -21,7 +21,7 @@ export default function Button(props) {
 const styles = StyleSheet.create({
 	buttonContainer: {
 		padding: 7,
-		backgroundColor: "#007bff"
+		backgroundColor: "#5F9EA0"
 	},
 
 	button: {

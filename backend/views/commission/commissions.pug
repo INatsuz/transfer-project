@@ -33,12 +33,13 @@ block content
     if commissions
         div.row.g-0.mt-1.d-print-none
             div.col-12
+                - let timezoneOffset = (new Date()).getTimezoneOffset();
                 form(method="GET" action="/admin/genCommissionCSV")
                     input(type="hidden" name="startDate" value=startDateTime)
                     input(type="hidden" name="endDate" value=endDateTime)
                     input(type="hidden" name="operator" value=currentOperator)
                     input(type="hidden" name="driver" value=currentDriver)
-                    input(type="hidden" name="tz" value=`${new Date().getTimezoneOffset()}`)
+                    input(type="hidden" name="tz" value=timezoneOffset)
                     button.btn.btn-primary(type="submit")
                         i.bi.bi-file-earmark-arrow-down
                         | Export
