@@ -30,6 +30,12 @@ export default function AssignmentList(props) {
 			<View style={styles.titleContainer}>
 				<Text style={styles.title}>{!props.title ? "Your Active Assignments:" : props.title}</Text>
 				{
+				props.isCalendarButtonVisible &&
+				<Pressable onPress={() => setIsSearchModalVisible(true)}>
+					<Ionicons name={"search"} color={"white"} size={22}/>
+				</Pressable>
+				}
+				{
 				props.isSearchButtonVisible &&
 				<Pressable onPress={() => setIsSearchModalVisible(true)}>
 					<Ionicons name={"search"} color={"white"} size={22}/>
