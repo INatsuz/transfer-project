@@ -6,7 +6,8 @@ const pool = mysql.createPool({
 	user: process.env.DB_USERNAME,
 	password: process.env.DB_PASSWORD,
 	database: 'transfer_app',
-	timezone: 'Z'
+	timezone: 'Z',
+	charset: 'utf8mb4'
 });
 
 function query(query, params, callback) {
