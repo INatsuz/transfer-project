@@ -6,6 +6,7 @@ import Tooltip from "react-native-walkthrough-tooltip";
 import {useSelector} from "react-redux";
 import * as Linking from "expo-linking";
 import {IP} from "../../utils/Requester";
+import {ITEM_BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 function AssignmentListItem(props) {
 	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -75,7 +76,7 @@ function AssignmentListItem(props) {
 				}
 				<View style={styles.shareIconContainer}>
 					<Pressable onPress={onSharePress}>
-						<Ionicons name={"share-social"} size={16} color={"white"}/>
+						<Ionicons name={"share-social"} size={16} color={TEXT_COLOR}/>
 					</Pressable>
 				</View>
 				<View style={styles.itemColumn}>
@@ -109,13 +110,17 @@ const styles = StyleSheet.create({
 		overflow: "hidden",
 		flexDirection: "row",
 		borderRadius: 10,
+		borderWidth: 1,
 		borderRightWidth: 4,
+		borderTopColor: ITEM_BORDER_COLOR,
+		borderLeftColor: ITEM_BORDER_COLOR,
+		borderBottomColor: ITEM_BORDER_COLOR,
 		marginVertical: 2,
 		marginHorizontal: 10,
 		paddingVertical: 10,
 		paddingHorizontal: 10,
 		minHeight: 85,
-		backgroundColor: "#181818"
+		backgroundColor: ITEM_BACKGROUND_COLOR
 	},
 
 	itemColumn: {
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
 	},
 
 	textStyle: {
-		color: "#fff",
+		color: TEXT_COLOR,
 		fontSize: 14
 	},
 

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Take Me There",
-    "slug": "TakeMeThere",
+    "name": "High Class Chauffeurs",
+    "slug": "HighClassChauffeurs",
     "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,7 +23,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.inatsuz.takemethere"
+      "bundleIdentifier": "com.inatsuz.highclasschauffeurs"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -32,7 +32,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#222222"
       },
-      "package": "com.inatsuz.takemethere"
+      "package": "com.inatsuz.highclasschauffeurs"
     },
     "web": {
       "favicon": "./assets/favicon.png"

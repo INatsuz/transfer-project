@@ -5,6 +5,7 @@ import {putWithAuth} from "../../../utils/Requester";
 import AddAssignment from "../../../components/AddAssignment/AddAssignment";
 import StatusMenu from "../../../components/StatusMenu/StatusMenu";
 import SearchResults from "./SearchResults";
+import {BACKGROUND_COLOR, TEXT_COLOR} from "../../../utils/Colors";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,12 +34,12 @@ export default function HomeNavigator() {
 				headerBackButtonMenuEnabled: true,
 				headerTitle: "Transfer Details",
 				headerStyle: {
-					backgroundColor: "#222222",
+					backgroundColor: BACKGROUND_COLOR,
 				},
 				headerTitleStyle: {
-					color: "#fff"
+					color: TEXT_COLOR
 				},
-				headerTintColor: "#fff",
+				headerTintColor: TEXT_COLOR,
 				headerRight: () => {
 					return (
 						<StatusMenu navigation={navigation} route={route} onMenuItemPress={onMenuItemPress}/>
@@ -49,23 +50,23 @@ export default function HomeNavigator() {
 				headerBackButtonMenuEnabled: true,
 				headerTitle: "Add Assignment",
 				headerStyle: {
-					backgroundColor: "#222222",
+					backgroundColor: BACKGROUND_COLOR,
 				},
 				headerTitleStyle: {
-					color: "#fff"
+					color: TEXT_COLOR
 				},
-				headerTintColor: "#fff"
+				headerTintColor: TEXT_COLOR
 			}}/>
 			<Stack.Screen name={"SearchResults"} component={SearchResults} options={{
 				headerBackButtonMenuEnabled: true,
 				headerTitle: "Search Results",
 				headerStyle: {
-					backgroundColor: "#222222",
+					backgroundColor: BACKGROUND_COLOR,
 				},
 				headerTitleStyle: {
-					color: "#fff"
+					color: TEXT_COLOR
 				},
-				headerTintColor: "#fff"
+				headerTintColor: TEXT_COLOR
 			}}/>
 		</Stack.Navigator>
 	);

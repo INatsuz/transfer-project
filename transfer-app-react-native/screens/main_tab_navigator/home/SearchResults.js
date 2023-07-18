@@ -4,6 +4,7 @@ import {getWithAuth} from "../../../utils/Requester";
 import {useState} from "react";
 import {StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
+import {BACKGROUND_COLOR} from "../../../utils/Colors";
 
 export default function SearchResults({route, navigation}) {
 	let [assignments, setAssignments] = useState();
@@ -33,6 +34,6 @@ const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
 const styles = StyleSheet.create({
 	container: {
 		height: "100%",
-		backgroundColor: "#222222"
+		backgroundColor: BACKGROUND_COLOR
 	},
 })

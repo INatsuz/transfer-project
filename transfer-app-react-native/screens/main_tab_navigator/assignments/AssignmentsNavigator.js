@@ -5,6 +5,7 @@ import AddAssignment from "../../../components/AddAssignment/AddAssignment";
 import {StyleSheet} from "react-native";
 import {putWithAuth} from "../../../utils/Requester";
 import StatusMenu from "../../../components/StatusMenu/StatusMenu";
+import {BACKGROUND_COLOR, TEXT_COLOR} from "../../../utils/Colors";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,12 +34,12 @@ export default function AssignmentsNavigator() {
 				headerBackButtonMenuEnabled: true,
 				headerTitle: "Transfer Details",
 				headerStyle: {
-					backgroundColor: "#222222",
+					backgroundColor: BACKGROUND_COLOR,
 				},
 				headerTitleStyle: {
-					color: "#fff"
+					color: TEXT_COLOR
 				},
-				headerTintColor: "#fff",
+				headerTintColor: TEXT_COLOR,
 				headerRight: () => {
 					return (
 						<StatusMenu navigation={navigation} route={route} onMenuItemPress={onMenuItemPress}/>
@@ -49,12 +50,12 @@ export default function AssignmentsNavigator() {
 				headerBackButtonMenuEnabled: true,
 				headerTitle: "Add Assignment",
 				headerStyle: {
-					backgroundColor: "#222222",
+					backgroundColor: BACKGROUND_COLOR,
 				},
 				headerTitleStyle: {
-					color: "#fff"
+					color: TEXT_COLOR
 				},
-				headerTintColor: "#fff"
+				headerTintColor: TEXT_COLOR
 			}}/>
 		</Stack.Navigator>
 	);

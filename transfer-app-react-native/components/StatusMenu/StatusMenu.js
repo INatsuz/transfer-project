@@ -3,6 +3,7 @@ import {Menu, MenuOption, MenuOptions, MenuTrigger} from "react-native-popup-men
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import getStatusColor from "../../utils/StatusColor";
+import {BACKGROUND_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 export default function StatusMenu(props) {
 	return (
@@ -35,7 +36,7 @@ export default function StatusMenu(props) {
 const styles = StyleSheet.create({
 	menuOptions: {
 		width: "auto",
-		backgroundColor: "#222222"
+		backgroundColor: BACKGROUND_COLOR
 	},
 
 	menuOption: {
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		fontSize: 16,
 		fontWeight: "bold",
-		color: "white"
+		color: TEXT_COLOR
 	},
 
 	icon: {

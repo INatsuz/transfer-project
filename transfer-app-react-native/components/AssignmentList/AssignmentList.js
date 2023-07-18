@@ -3,8 +3,10 @@ import AssignmentListItem from "./AssignmentListItem";
 import React, {useEffect, useState} from "react";
 import {useIsFocused, useNavigation} from "@react-navigation/native";
 import {useSelector} from "react-redux";
+import "../../utils/Colors"
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SearchModal from "../SearchModal/SearchModal";
+import {ACCENT_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 export default function AssignmentList(props) {
 	const [refreshing, setRefreshing] = useState(true);
@@ -38,7 +40,7 @@ export default function AssignmentList(props) {
 				{
 				props.isSearchButtonVisible &&
 				<Pressable onPress={() => setIsSearchModalVisible(true)}>
-					<Ionicons name={"search"} color={"white"} size={22}/>
+					<Ionicons name={"search"} color={TEXT_COLOR} size={22}/>
 				</Pressable>
 				}
 			</View>
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		borderBottomColor: "#5F9EA0",
+		borderBottomColor: ACCENT_COLOR,
 		borderBottomWidth: 2,
 		borderStyle: "solid",
 		marginBottom: 10,
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
 	},
 
 	title: {
-		color: "#fff",
+		color: TEXT_COLOR,
 		fontSize: 20,
 		fontWeight: "bold",
 	}

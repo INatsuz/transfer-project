@@ -3,6 +3,7 @@ import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import {useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {getWithAuth} from "../../../utils/Requester";
+import {ACCENT_COLOR, BACKGROUND_COLOR, TEXT_COLOR} from "../../../utils/Colors";
 
 export default function Assignments(props) {
 	const [assignments, setAssignments] = useState([]);
@@ -27,7 +28,7 @@ export default function Assignments(props) {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: true})}>
-				<Ionicons name="add" size={22} color={"white"}/>
+				<Ionicons name="add" size={22} color={TEXT_COLOR}/>
 			</TouchableOpacity>
 			<View style={styles.section}>
 				<AssignmentList title={"All Assignments"} assignments={assignments} fetchAssignments={fetchAllAssignments} onItemPress={navigateToDetails} roundedTop={true}/>
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
 	container: {
 		paddingTop: statusBarHeight,
 		height: "100%",
-		backgroundColor: "#222222",
+		backgroundColor: BACKGROUND_COLOR,
 		position: "relative",
 	},
 
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
 		width: 50,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#5F9EA0",
+		backgroundColor: ACCENT_COLOR,
 		borderRadius: 25,
 		zIndex: 10
 	}

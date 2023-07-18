@@ -7,6 +7,7 @@ import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
 import {deleteTokens} from "../../utils/TokenManager";
+import {BACKGROUND_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 function ProfileSection(props) {
 	const dispatch = useDispatch();
@@ -156,25 +157,24 @@ function ProfileSection(props) {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: "#222222",
+		backgroundColor: BACKGROUND_COLOR,
 	},
 
 	nameSection: {
 		display: "flex",
+		borderBottomColor: "#474746",
 		flexDirection: "row",
+		padding: 6,
+		borderTopWidth: 1,
 	},
 
 	area: {
-		backgroundColor: "#181818",
-		marginVertical: 2,
+		backgroundColor: "#F0F0F0",
 		padding: 5,
-		borderWidth: 1,
-		borderColor: "#5F9EA0",
-		borderRadius: 5
 	},
 
 	textStyle: {
-		color: "white",
+		color: TEXT_COLOR,
 		fontSize: 18
 	}
 });

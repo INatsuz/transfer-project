@@ -4,7 +4,9 @@ import ProfileSection from "../../../components/ProfileSection/ProfileSection";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {getWithAuth} from "../../../utils/Requester";
+import "../../../utils/Colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {ACCENT_COLOR, ACTIVE_TAB_COLOR, BACKGROUND_COLOR, TEXT_COLOR} from "../../../utils/Colors";
 
 export default function Home(props) {
 	const userID = useSelector(state => state.login.userID);
@@ -58,10 +60,13 @@ export default function Home(props) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {isAdmin: userType === 1, userID: userID})}>
-				<Ionicons name="add" size={22} color={"white"}/>
+			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {
+				isAdmin: userType === 1,
+				userID: userID
+			})}>
+				<Ionicons name="add" size={22} color={TEXT_COLOR}/>
 			</TouchableOpacity>
-			<View style={styles.profileSectionContainer}>
+			<View>
 				<ProfileSection assignmentCount={assignments.length} userData={{
 					userType: userType,
 					name: name,
@@ -75,9 +80,7 @@ export default function Home(props) {
 				<TouchableOpacity style={selectedTab === 1 ? [styles.tab, styles.selected] : styles.tab} onPress={() => setSelectedTab(1)}>
 					<Text style={styles.tabText}>Today</Text>
 				</TouchableOpacity>
-				<TouchableOpacity style={selectedTab === 2 ? [styles.tab, styles.tabLast, styles.selected] : [styles.tab, styles.tabLast]} onPress={(event) => {
-					setSelectedTab(2);
-				}}>
+				<TouchableOpacity style={selectedTab === 2 ? [styles.tab, styles.tabLast, styles.selected] : [styles.tab, styles.tabLast]} onPress={(event) => setSelectedTab(2)}>
 					<Text style={styles.tabText}>Tomorrow</Text>
 				</TouchableOpacity>
 			</View>
@@ -94,28 +97,25 @@ const styles = StyleSheet.create({
 	container: {
 		paddingTop: statusBarHeight,
 		height: "100%",
-		backgroundColor: "#222222"
+		backgroundColor: BACKGROUND_COLOR
 	},
 
 	section: {
 		flex: 1
 	},
 
-	profileSectionContainer: {
-		marginBottom: 5,
-	},
-
 	tabs: {
 		width: "100%",
 		flexDirection: "row",
 		justifyContent: "space-evenly",
-		backgroundColor: "#5F9EA0",
-		padding: 0
+		backgroundColor: ACCENT_COLOR,
+		borderTopWidth: 1,
+		borderBottomWidth: 1,
 	},
 
 	tab: {
 		flexGrow: 1,
-		borderColor: "#222222",
+		borderColor: TEXT_COLOR,
 		borderEndWidth: 1,
 		paddingTop: 5,
 		paddingBottom: 5
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
 
 	tabText: {
 		textAlign: "center",
-		color: "white"
+		color: TEXT_COLOR
 	},
 
 	selected: {
-		backgroundColor: "#4C7E80"
+		backgroundColor: ACTIVE_TAB_COLOR
 	},
 
 	plusContainer: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
 		width: 50,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#5F9EA0",
+		backgroundColor: ACCENT_COLOR,
 		borderRadius: 25,
 		zIndex: 10
 	}

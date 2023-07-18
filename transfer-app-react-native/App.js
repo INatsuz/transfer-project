@@ -1,7 +1,7 @@
 import {StatusBar} from 'expo-status-bar';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import {Platform, StyleSheet, useColorScheme} from 'react-native';
+import {Platform, useColorScheme} from 'react-native';
 import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Login from "./screens/login/Login";
@@ -14,6 +14,7 @@ import {saveNotificationAction} from "./redux/actions/notificationActions";
 import {MenuProvider} from "react-native-popup-menu";
 import * as Linking from "expo-linking";
 import * as SplashScreen from 'expo-splash-screen';
+import {BACKGROUND_COLOR} from "./utils/Colors";
 
 const Stack = createNativeStackNavigator();
 
@@ -86,7 +87,7 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<MenuProvider>
-				<StatusBar backgroundColor="#222222" translucent={true}/>
+				<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
 				<NavigationContainer ref={navigationRef} linking={linking} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 					<Stack.Navigator>
 						<Stack.Screen

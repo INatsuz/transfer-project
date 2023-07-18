@@ -20,6 +20,7 @@ import Button from "../Button/Button";
 import {useSelector} from "react-redux";
 import {useNavigation} from "@react-navigation/native";
 import {useURL} from "expo-linking";
+import {ACCENT_COLOR, BACKGROUND_COLOR, DISABLED_TEXT_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 export default function AddAssignment(props) {
 	const userID = useSelector(state => state.login.userID);
@@ -211,8 +212,9 @@ export default function AddAssignment(props) {
 							inputAndroid: styles.pickerSelect,
 							inputIOS: styles.pickerSelect,
 							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							placeholder: styles.pickerPlaceholder
 						}} Icon={() => {
-							return (<Chevron size={1.5} color="gray"/>);
+							return (<Chevron size={1.5} color={DISABLED_TEXT_COLOR}/>);
 						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
@@ -265,8 +267,9 @@ export default function AddAssignment(props) {
 							inputAndroid: styles.pickerSelect,
 							inputIOS: styles.pickerSelect,
 							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							placeholder: styles.pickerPlaceholder
 						}} Icon={() => {
-							return (<Chevron size={1.5} color="gray"/>);
+							return (<Chevron size={1.5} color={DISABLED_TEXT_COLOR}/>);
 						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
@@ -300,8 +303,9 @@ export default function AddAssignment(props) {
 								...styles.input, ...(isAdmin ? {} : styles.disabledPicker),
 								justifyContent: "center"
 							},
+							placeholder: styles.pickerPlaceholder
 						}} Icon={() => {
-							return isAdmin ? (<Chevron size={1.5} color="gray"/>) : null;
+							return isAdmin ? (<Chevron size={1.5} color={DISABLED_TEXT_COLOR}/>) : null;
 						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
@@ -320,8 +324,9 @@ export default function AddAssignment(props) {
 							inputAndroid: styles.pickerSelect,
 							inputIOS: styles.pickerSelect,
 							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							placeholder: styles.pickerPlaceholder,
 						}} Icon={() => {
-							return (<Chevron size={1.5} color="gray"/>);
+							return (<Chevron size={1.5} color={DISABLED_TEXT_COLOR}/>);
 						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
@@ -340,8 +345,9 @@ export default function AddAssignment(props) {
 							inputAndroid: styles.pickerSelect,
 							inputIOS: styles.pickerSelect,
 							inputIOSContainer: {...styles.input, justifyContent: "center"},
+							placeholder: styles.pickerPlaceholder
 						}} Icon={() => {
-							return (<Chevron size={1.5} color="gray"/>);
+							return (<Chevron size={1.5} color={DISABLED_TEXT_COLOR}/>);
 						}} useNativeAndroidPickerStyle={false}/>
 					</View>
 
@@ -363,25 +369,30 @@ export default function AddAssignment(props) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#222222",
-		borderTopColor: "#5F9EA0",
+		backgroundColor: BACKGROUND_COLOR,
+		borderTopColor: ACCENT_COLOR,
 		borderTopWidth: 1,
 		borderStyle: "solid",
 		paddingVertical: 10,
 	},
 
 	text: {
-		color: "#fff",
+		color: TEXT_COLOR,
 		fontSize: 18
 	},
 
 	pickerSelect: {
-		color: "#fff",
+		color: TEXT_COLOR,
 		fontSize: 16
 	},
 
 	disabledPicker: {
-		color: "#A3A9AA",
+		color: DISABLED_TEXT_COLOR,
+		fontSize: 16
+	},
+
+	pickerPlaceholder:{
+		color: DISABLED_TEXT_COLOR,
 		fontSize: 16
 	},
 
@@ -391,14 +402,14 @@ const styles = StyleSheet.create({
 	},
 
 	input: {
-		backgroundColor: "#222222",
+		backgroundColor: BACKGROUND_COLOR,
 		borderRadius: 5,
-		borderColor: "#A3A9AA",
+		borderColor: ITEM_BORDER_COLOR,
 		borderStyle: "solid",
 		borderWidth: 2,
 		paddingVertical: 7,
 		paddingHorizontal: 10,
-		color: "white",
+		color: TEXT_COLOR,
 		fontSize: 16,
 		width: "100%",
 		alignSelf: "center"

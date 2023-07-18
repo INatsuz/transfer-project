@@ -22,6 +22,7 @@ import {getWithAuth, IP} from "../../utils/Requester";
 import Button from "../../components/Button/Button";
 import {openURL, useURL} from "expo-linking";
 import {StatusBar} from "expo-status-bar";
+import {BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 export default function Login({route, navigation}) {
 	const [isLoading, setIsLoading] = useState(true);
@@ -101,9 +102,7 @@ export default function Login({route, navigation}) {
 
 	return (
 		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
-			<StatusBar backgroundColor="#222222" translucent={true}/>
-			<ImageBackground source={require("../../assets/login_bg_2.png")} style={styles.background_image}>
-			</ImageBackground>
+			<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
 			{isLoading ? (
 				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
 					<ActivityIndicator size={"large"}/>
@@ -132,7 +131,8 @@ const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
 
 const styles = StyleSheet.create({
 	container: {
-		paddingTop: statusBarHeight
+		paddingTop: statusBarHeight,
+		backgroundColor: BACKGROUND_COLOR
 	},
 
 	content_container: {
@@ -147,24 +147,18 @@ const styles = StyleSheet.create({
 	},
 
 	input: {
-		backgroundColor: "#222222",
+		backgroundColor: BACKGROUND_COLOR,
 		borderRadius: 5,
-		borderColor: "#A3A9AA",
+		borderColor: ITEM_BORDER_COLOR,
 		borderStyle: "solid",
 		borderWidth: 2,
 		paddingVertical: 7,
 		paddingHorizontal: 10,
-		color: "#A3A9AA",
+		color: TEXT_COLOR,
 		fontSize: 16,
 		width: "100%",
 		marginBottom: 15,
 		alignSelf: "center"
-	},
-
-	background_image: {
-		position: "absolute",
-		height: dimension.height,
-		width: dimension.width
 	},
 
 	button: {
