@@ -15,7 +15,7 @@
         "buildType": "apk"
       },
       "env": {
-        "API_URL": "app.takemethere.pt"
+        "API_URL": "app.highclasschauffeurs.com"
       }
     }
   },
