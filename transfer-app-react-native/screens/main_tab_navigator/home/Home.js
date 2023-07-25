@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 
 	tab: {
 		flexGrow: 1,
-		borderColor: TEXT_COLOR,
+		borderColor: "#222222",
 		borderEndWidth: 1,
 		paddingTop: 5,
 		paddingBottom: 5

@@ -101,27 +101,29 @@ export default function Login({route, navigation}) {
 	};
 
 	return (
-		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
-			<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
-			{isLoading ? (
-				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
-					<ActivityIndicator size={"large"}/>
-				</View>
-			) : (
-				<ScrollView style={styles.container}>
-					<View style={styles.content_container}>
-						<Banner/>
-						<View style={styles.inputs_container}>
-							<TextInput autoCapitalize={"none"} keyboardType={"email-address"} textContentType={"username"} caretHidden={false} style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" autoComplete={"email"} importantForAutofill={"yes"} onChangeText={setEmail}/>
-							<TextInput secureTextEntry={true} textContentType={"password"} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" autoComplete={"password"} importantForAutofill={"yes"} onChangeText={text => password.current = text}/>
-							<View style={{width: "100%"}}>
-								<Button text={"Login"} onPress={handleLoginClick}/>
+		<View style={styles.bg}>
+			<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
+				<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
+				{isLoading ? (
+					<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
+						<ActivityIndicator size={"large"}/>
+					</View>
+				) : (
+					<ScrollView style={styles.container}>
+						<View style={styles.content_container}>
+							<Banner/>
+							<View style={styles.inputs_container}>
+								<TextInput autoCapitalize={"none"} keyboardType={"email-address"} textContentType={"username"} caretHidden={false} style={[styles.input, isValidStyling()]} placeholder="Email" placeholderTextColor="#A3A9AA" autoComplete={"email"} importantForAutofill={"yes"} onChangeText={setEmail}/>
+								<TextInput secureTextEntry={true} textContentType={"password"} style={styles.input} placeholder="Password" placeholderTextColor="#A3A9AA" autoComplete={"password"} importantForAutofill={"yes"} onChangeText={text => password.current = text}/>
+								<View style={{width: "100%"}}>
+									<Button text={"Login"} onPress={handleLoginClick}/>
+								</View>
 							</View>
 						</View>
-					</View>
-				</ScrollView>
-			)}
-		</KeyboardAvoidingView>
+					</ScrollView>
+				)}
+			</KeyboardAvoidingView>
+		</View>
 	);
 }
 
@@ -130,9 +132,13 @@ const {StatusBarManager} = NativeModules;
 const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
 
 const styles = StyleSheet.create({
+	bg: {
+		backgroundColor: BACKGROUND_COLOR,
+		flex: 1
+	},
+
 	container: {
-		paddingTop: statusBarHeight,
-		backgroundColor: BACKGROUND_COLOR
+		paddingTop: statusBarHeight
 	},
 
 	content_container: {
