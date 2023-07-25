@@ -7,35 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:681976179425:android:934421b7830d9d371025a0",
-        "android_client_info": {
-          "package_name": "com.inatsuz.highclasschauffeurs"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "681976179425-gurnj6fud0ojm967gnj7rvbcmq09booc.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDY5dm_ArbkKufqQ9MXk1gYbprt2M6dInk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "681976179425-gurnj6fud0ojm967gnj7rvbcmq09booc.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:681976179425:android:a567f23a1df665741025a0",
         "android_client_info": {
           "package_name": "com.inatsuz.takemethere"
