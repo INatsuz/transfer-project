@@ -101,7 +101,7 @@ export default function Login({route, navigation}) {
 	};
 
 	return (
-		<KeyboardAvoidingView keyboardVerticalOffset={20} behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1}}>
+		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1, backgroundColor: BACKGROUND_COLOR}}>
 			<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
 			{isLoading ? (
 				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
@@ -131,8 +131,7 @@ const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
 
 const styles = StyleSheet.create({
 	container: {
-		paddingTop: statusBarHeight,
-		backgroundColor: BACKGROUND_COLOR
+		paddingTop: statusBarHeight
 	},
 
 	content_container: {
