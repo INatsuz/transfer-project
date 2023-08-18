@@ -5,9 +5,6 @@ let expo = new Expo({});
 async function sendPushNotification(token, message) {
 	let messages = [];
 
-	console.log(token)
-	console.log(Expo.isExpoPushToken(token));
-
 	if (Expo.isExpoPushToken(token)) {
 		messages.push({
 			to: token,
