@@ -30,6 +30,7 @@ jobs:
           host: ${{ secrets.HIGHCLASS_HOST }}
           username: ${{ secrets.HIGHCLASS_USERNAME }}
           password: ${{ secrets.HIGHCLASS_PASSWORD }}
+          envs: DB_USERNAME,DB_PASSWORD
           script: |
             cd transfer-project
             git checkout HighClass
