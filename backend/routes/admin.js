@@ -660,11 +660,11 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 
 	db.query(`SELECT
 				DATE_FORMAT(DATE_ADD(transfer.transfer_time, INTERVAL ? MINUTE), '%d/%m/%Y %T') AS "Date/Time",
+				transfer.flight AS Flight,
 				transfer.origin AS Origin,
 				transfer.destination AS Destination,
 				transfer.person_name AS Name,
 				transfer.num_of_people AS Pax,
-				transfer.flight AS Flight,
 				serviceoperator.name AS Operator,
 				appuser.name AS Driver,
 				transfer.price AS Price,
