@@ -91,7 +91,7 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 		queryFilter = "WHERE " + clauses.join(" AND ");
 	}
 
-	db.query(`	SELECT transfer.ID, transfer.origin, transfer.destination, transfer.transfer_time, 
+	db.query(`	SELECT transfer.ID, transfer.flight, transfer.origin, transfer.destination, transfer.transfer_time, 
 					transfer.person_name, transfer.num_of_people, transfer.status, transfer.price, transfer.paid, transfer.seen, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
@@ -655,8 +655,6 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 	if (req.query.operator !== "null") {
 		clauseValues.push(req.query.operator);
 	}
-
-	console.log()
 
 	db.query(`SELECT
 				DATE_FORMAT(DATE_ADD(transfer.transfer_time, INTERVAL ? MINUTE), '%d/%m/%Y %T') AS "Date/Time",

@@ -54,6 +54,7 @@ mixin transfer_table(data)
             thead
                 tr
                     th Date/Time
+                    th Flight
                     th Origin
                     th Destination
                     th Name
@@ -69,6 +70,7 @@ mixin transfer_table(data)
                     +transfer_table_row(row)
                 tr
                     td
+                    td.dp-print-none
                     td
                     td
                     td
