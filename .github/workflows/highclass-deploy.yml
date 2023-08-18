@@ -23,13 +23,13 @@ jobs:
           
     - name: Build and run container
       uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+      env:
+        DB_USERNAME: ${{ secrets.HIGHCLASS_DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.HIGHCLASS_DB_PASSWORD }}
       with:
           host: ${{ secrets.HIGHCLASS_HOST }}
           username: ${{ secrets.HIGHCLASS_USERNAME }}
           password: ${{ secrets.HIGHCLASS_PASSWORD }}
-          env:
-            DB_USERNAME: ${{ secrets.HIGHCLASS_DB_USERNAME }}
-            DB_PASSWORD: ${{ secrets.HIGHCLASS_DB_PASSWORD }}
           script: |
             cd transfer-project
             git checkout HighClass
