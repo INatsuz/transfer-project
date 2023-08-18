@@ -8,6 +8,7 @@ mixin transfer_table_row(row)
             span.date-span= `${dateString}`
             | 
             span.time-span.fw-bold= `${timeString}`
+        td.align-middle= row.flight
         td.align-middle= row.origin
         td.align-middle= row.destination
         td.align-middle= row.person_name
