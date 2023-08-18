@@ -1,0 +1,40 @@
+name: Backend Pipeline
+
+on:
+  push:
+    branches: [ "HighClass" ]
+  pull_request:
+    branches: [ "HighClass" ]
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone or pull the changes
+      uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+      with:
+        host: ${{ secrets.HIGHCLASS_HOST }}
+        username: ${{ secrets.HIGHCLASS_USERNAME }}
+        password: ${{ secrets.HIGHCLASS_PASSWORD }}
+        script: |
+          cd transfer-project
+          git pull
+          
+    - name: Build and run container
+      uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+      with:
+          host: ${{ secrets.HIGHCLASS_HOST }}
+          username: ${{ secrets.HIGHCLASS_USERNAME }}
+          password: ${{ secrets.HIGHCLASS_PASSWORD }}
+          env:
+            DB_USERNAME: ${{ secrets.HIGHCLASS_DB_USERNAME }}
+            DB_PASSWORD: ${{ secrets.HIGHCLASS_DB_PASSWORD }}
+          script: |
+            cd transfer-project
+            git checkout HighClass
+            cd backend
+            docker build . -t transfer_app_backend
+            docker container stop transfer-app-backend
+            docker container prune -f
+            docker container run --name transfer-app-backend -e DB_HOST='172.17.0.1' -e DB_USERNAME='$DB_USERNAME' -e DB_PASSWORD='$DB_PASSWORD' --restart unless-stopped -d -p 443:443 -p 80:80 transfer_app_backend:latest
