@@ -92,7 +92,7 @@ function AssignmentListItem(props) {
 				<View style={styles.itemColumn}>
 					<View style={styles.topItemField}>
 						<Text style={styles.textStyle}>Person:</Text>
-						<Text style={styles.textStyle}>{props.data.person_name}</Text>
+						<Text style={styles.textStyle}>{props.data.person_name} || {props.data.num_of_people}</Text>
 					</View>
 					<View>
 						<Text style={styles.textStyle}>Destination:</Text>

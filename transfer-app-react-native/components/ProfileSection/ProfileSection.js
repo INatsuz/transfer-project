@@ -7,7 +7,7 @@ import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
 import {deleteTokens} from "../../utils/TokenManager";
-import {BACKGROUND_COLOR, TEXT_COLOR} from "../../utils/Colors";
+import {BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 function ProfileSection(props) {
 	const dispatch = useDispatch();
@@ -34,7 +34,7 @@ function ProfileSection(props) {
 		}
 		setActiveVehicle(value);
 
-		if (Platform.OS === "android"){
+		if (Platform.OS === "android") {
 			let vehicle = vehicles.find(el => el.ID === value);
 
 			Alert.alert(
@@ -129,12 +129,17 @@ function ProfileSection(props) {
 
 	return (
 		<View style={styles.container}>
-			<View style={[styles.area, styles.nameSection, {marginTop: 0}]}>
+			<View style={[styles.area, styles.nameSection]}>
 				<Text style={[styles.textStyle, {flex: 1}]}>Driver: {props.userData.name}</Text>
 				<Ionicons name="log-out" size={22} color={styles.textStyle.color} onPress={() => confirmLogoutDialog()}/>
 			</View>
+			<View style={[styles.area, styles.nameSection]}>
+				{
+					<Text style={[styles.textStyle, {flex: 1}]}>Total Received: €{parseFloat(props.assignments.reduce((sum, value) => sum + (value.payment_method === "CASH" ? value.paid : 0), 0)).toFixed(2)}</Text>
+				}
+			</View>
 			{userType === 2 &&
-				<View style={[styles.area, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
+				<View style={[styles.area, styles.carPickerArea]}>
 					<Text style={styles.textStyle}>Car: </Text>
 					<View style={{flex: 1}}>
 						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
@@ -160,12 +165,20 @@ const styles = StyleSheet.create({
 		backgroundColor: BACKGROUND_COLOR,
 	},
 
+	carPickerArea: {
+		borderTopWidth: 1,
+		borderTopColor: ITEM_BORDER_COLOR,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
+	},
+
 	nameSection: {
 		display: "flex",
-		borderBottomColor: "#474746",
+		borderTopColor: "#474746",
+		borderTopWidth: 1,
 		flexDirection: "row",
 		padding: 6,
-		borderTopWidth: 1,
 	},
 
 	area: {

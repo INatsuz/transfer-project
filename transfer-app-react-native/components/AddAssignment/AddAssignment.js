@@ -140,25 +140,25 @@ export default function AddAssignment(props) {
 					{/* Person Name field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Name: </Text>
-						<TextInput placeholder={"Name"} defaultValue={personName} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPersonName(value)}/>
+						<TextInput placeholder={"Name"} defaultValue={personName.toString()} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setPersonName(value)}/>
 					</View>
 
 					{/* Origin field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Origin: </Text>
-						<TextInput placeholder={"Origin"} defaultValue={origin} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setOrigin(value)}/>
+						<TextInput placeholder={"Origin"} defaultValue={origin.toString()} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setOrigin(value)}/>
 					</View>
 
 					{/* Destination field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Destination: </Text>
-						<TextInput placeholder={"Destination"} defaultValue={destination} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setDestination(value)}/>
+						<TextInput placeholder={"Destination"} defaultValue={destination.toString()} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setDestination(value)}/>
 					</View>
 
 					{/* Number of People field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Pax: </Text>
-						<TextInput placeholder={"Pax"} defaultValue={numberOfPeople} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
+						<TextInput placeholder={"Pax"} defaultValue={numberOfPeople.toString()} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setNumberOfPeople(value)}/>
 					</View>
 
 					{/* Time/Date field */}
@@ -221,13 +221,13 @@ export default function AddAssignment(props) {
 					{/* Flight field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Flight: </Text>
-						<TextInput placeholder={"Flight"} defaultValue={flight} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setFlight(value)}/>
+						<TextInput placeholder={"Flight"} defaultValue={flight.toString()} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => setFlight(value)}/>
 					</View>
 
 					{/* Price field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Price: </Text>
-						<TextInput keyboardType="numeric" defaultValue={price} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+						<TextInput keyboardType="numeric" defaultValue={price.toString()} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
 							let dotted_value = value.replace(",", ".");
 							setPrice(parseFloat(dotted_value));
 						}}/>
@@ -236,7 +236,7 @@ export default function AddAssignment(props) {
 					{/* Paid field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Paid: </Text>
-						<TextInput keyboardType="numeric" defaultValue={paid} placeholder="Paid" placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+						<TextInput keyboardType="numeric" defaultValue={paid.toString()} placeholder="Paid" placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
 							let dotted_value = value.replace(",", ".");
 							setPaid(parseFloat(dotted_value));
 						}}/>
@@ -353,7 +353,7 @@ export default function AddAssignment(props) {
 
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Observations: </Text>
-						<TextInput placeholder={"Observations"} defaultValue={observations} placeholderTextColor="#A3A9AA" multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
+						<TextInput placeholder={"Observations"} defaultValue={observations.toString()} placeholderTextColor="#A3A9AA" multiline numberOfLines={2} textAlignVertical={"top"} value={observations ? observations.toString() : ""} style={[styles.text, styles.input]} onChangeText={(value) => setObservations(value)}/>
 					</View>
 
 					{/* Add button */}
