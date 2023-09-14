@@ -668,7 +668,7 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 				serviceoperator.name AS Operator,
 				appuser.name AS Driver,
 				transfer.price AS Price,
-				IF(transfer.payment_method = "CASH", ROUND(transfer.paid, 2), 0) AS "Paid w/ Cash",
+				IF(transfer.payment_method = "CASH" OR transfer.payment_method IS NULL, ROUND(transfer.paid, 2), 0) AS "Paid w/ Cash",
 				IF(transfer.payment_method = "CARD" OR transfer.payment_method = "TRANSFER", ROUND(transfer.paid, 2), 0) AS "Paid w/ Card/Bank Transfer",
 				IF(ISNULL(transfer.payment_method), "", transfer.payment_method) AS "Payment Method",
 				ROUND(transfer.operatorCommission * 100, 2) AS "Operator Commission %",
