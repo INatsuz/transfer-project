@@ -112,33 +112,45 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 });
 
 router.get("/transfers/create", mustHaveSession, function (req, res) {
-	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ?", [USER_TYPES.ADMIN, USER_TYPES.DRIVER]);
-	let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
-	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
-
-	Promise.all([driverPromise, vehiclePromise, operatorPromise]).then(results => {
-		let driverRes = results[0];
-		let vehicleRes = results[1];
-		let operatorRes = results[2];
-
+	if (req.session.userType === USER_TYPES.HOTEL) {
 		res.render("transfer/transfer_create", {
 			userID: req.session.userID,
 			userType: req.session.userType,
 			username: req.session.username,
-			drivers: driverRes.result,
-			vehicles: vehicleRes.result,
-			operators: operatorRes.result,
+			drivers: [],
+			vehicles: [],
+			operators: [],
 			url: encodeURIComponent(req.query.returnLink)
 		});
-	}).catch(err => {
-		console.log(err);
-		res.render("transfer/transfer_create", {
-			userID: req.session.userID,
-			userType: req.session.userType,
-			username: req.session.username,
-			errorMessage: "Something went wrong getting the drivers/vehicles/operators"
+	} else {
+		let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ?", [USER_TYPES.ADMIN, USER_TYPES.DRIVER]);
+		let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
+		let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
+
+		Promise.all([driverPromise, vehiclePromise, operatorPromise]).then(results => {
+			let driverRes = results[0];
+			let vehicleRes = results[1];
+			let operatorRes = results[2];
+
+			res.render("transfer/transfer_create", {
+				userID: req.session.userID,
+				userType: req.session.userType,
+				username: req.session.username,
+				drivers: driverRes.result,
+				vehicles: vehicleRes.result,
+				operators: operatorRes.result,
+				url: encodeURIComponent(req.query.returnLink)
+			});
+		}).catch(err => {
+			console.log(err);
+			res.render("transfer/transfer_create", {
+				userID: req.session.userID,
+				userType: req.session.userType,
+				username: req.session.username,
+				errorMessage: "Something went wrong getting the drivers/vehicles/operators"
+			});
 		});
-	});
+	}
 });
 
 router.post("/transfers/create", mustHaveSession, function (req, res) {
