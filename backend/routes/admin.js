@@ -189,6 +189,20 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 			if (req.session.userType === USER_TYPES.HOTEL && result[0].createdBy !== req.session.userID) {
 				res.status(401).redirect("/admin/transfers");
 			} else {
+				if (req.session.userType === USER_TYPES.HOTEL) {
+					res.render("transfer/transfer_update", {
+						ID: req.params.id,
+						userID: req.session.userID,
+						userType: req.session.userType,
+						username: req.session.username,
+						drivers: [],
+						vehicles: [],
+						operators: [],
+						transfer: result[0],
+						url: encodeURIComponent(req.query.returnLink)
+					});
+				}
+
 				res.render("transfer/transfer_update", {
 					ID: req.params.id,
 					userID: req.session.userID,
