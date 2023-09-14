@@ -201,19 +201,19 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 						transfer: result[0],
 						url: encodeURIComponent(req.query.returnLink)
 					});
+				} else {
+					res.render("transfer/transfer_update", {
+						ID: req.params.id,
+						userID: req.session.userID,
+						userType: req.session.userType,
+						username: req.session.username,
+						drivers: driverRes.result,
+						vehicles: vehicleRes.result,
+						operators: operatorRes.result,
+						transfer: result[0],
+						url: encodeURIComponent(req.query.returnLink)
+					});
 				}
-
-				res.render("transfer/transfer_update", {
-					ID: req.params.id,
-					userID: req.session.userID,
-					userType: req.session.userType,
-					username: req.session.username,
-					drivers: driverRes.result,
-					vehicles: vehicleRes.result,
-					operators: operatorRes.result,
-					transfer: result[0],
-					url: encodeURIComponent(req.query.returnLink)
-				});
 			}
 		}).catch(err => {
 			console.log(err);
