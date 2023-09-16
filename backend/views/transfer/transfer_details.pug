@@ -31,13 +31,19 @@ block content
                     span.badge.text-bg-warning PENDING
             else if transfer.status === "IN PROGRESS"
                 td.align-middle
-                    span.badge.text-bg-success IN PROGRESS
+                    span.badge.text-bg-primary IN PROGRESS
             else if transfer.status === "FINISHED"
                 td.align-middle
                     span.badge.text-bg-secondary FINISHED
-            else if transfer.status === "REVIEW"
+            else if transfer.status === "NO SHOW"
                 td.align-middle
-                    span.badge.text-bg-danger REVIEW
+                    span.badge.text-bg-danger.bg-opacity-75 NO SHOW
+            else if transfer.status === "CANCELLED"
+                td.align-middle
+                    span.badge.text-bg-danger CANCELLED
+            else if transfer.status === "CONFIRMED"
+                td.align-middle
+                    span.badge.text-bg-success CONFIRMED
         tr
             th Flight
             td= transfer.flight
@@ -66,6 +72,10 @@ block content
                 td.align-middle
                     i.bi.bi-bank.text-primary
                     |  Bank Transfer
+            else if transfer.payment_method === "HOTEL BILLING"
+                td.align-middle
+                    i.bi.bi-bank.text-primary
+                    |  Hotel Billing
             else
                 td None
         tr

@@ -17,13 +17,19 @@ mixin transfer_table_row(row)
                 span.badge.text-bg-warning PENDING
         else if row.status === "IN PROGRESS"
             td.align-middle.d-print-none
-                span.badge.text-bg-success IN PROGRESS
+                span.badge.text-bg-primary IN PROGRESS
         else if row.status === "FINISHED"
             td.align-middle.d-print-none
                 span.badge.text-bg-secondary FINISHED
-        else if row.status === "REVIEW"
+        else if row.status === "NO SHOW"
             td.align-middle.d-print-none
-                span.badge.text-bg-danger REVIEW
+                span.badge.text-bg-danger.bg-opacity-75 NO SHOW
+        else if row.status === "CANCELLED"
+            td.align-middle.d-print-none
+                span.badge.text-bg-danger CANCELLED
+        else if row.status === "CONFIRMED"
+            td.align-middle.d-print-none
+                span.badge.text-bg-success CANCELLED
         if row.seen
             td.d-print-none.align-middle
                 span.badge.text-bg-success Yes

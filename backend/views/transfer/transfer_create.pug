@@ -26,7 +26,9 @@ block content
                         option(value="PENDING") PENDING
                         option(value="IN PROGRESS") IN PROGRESS
                         option(value="FINISHED") FINISHED
-                        option(value="REVIEW") REVIEW
+                        option(value="NO SHOW") NO SHOW
+                        option(value="CANCELLED") CANCELLED
+                        option(value="CONFIRMED") CONFIRMED
                 div.mb-3
                     label.form-label(for="flight") Flight
                     input.form-control#flight(type="text" name="flight")
@@ -43,6 +45,7 @@ block content
                         option(value="CASH") Cash
                         option(value="CARD") Card
                         option(value="TRANSFER") Bank Transfer
+                        option(value="HOTEL BILLING") Hotel Billing
                 div.mb-3
                     label.form-label(for="driver") Driver
                     select.form-select#driver(name="driver")

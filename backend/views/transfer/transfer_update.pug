@@ -27,7 +27,9 @@ block content
 						option(value="PENDING" selected=transfer.status === "PENDING") PENDING
 						option(value="IN PROGRESS" selected=transfer.status === "IN PROGRESS") IN PROGRESS
 						option(value="FINISHED" selected=transfer.status === "FINISHED") FINISHED
-						option(value="REVIEW" selected=transfer.status === "REVIEW") REVIEW
+						option(value="NO SHOW" selected=transfer.status === "NO SHOW") NO SHOW
+						option(value="CANCELLED" selected=transfer.status === "CANCELLED") CANCELLED
+						option(value="CONFIRMED" selected=transfer.status === "CONFIRMED") CONFIRMED
 				div.mb-3
 					label.form-label(for="flight") Flight
 					input.form-control#flight(type="text" name="flight" value=transfer.flight)
@@ -44,6 +46,7 @@ block content
 						option(value="CASH" selected=transfer.payment_method === "CASH") Cash
 						option(value="CARD" selected=transfer.payment_method === "CARD") Card
 						option(value="TRANSFER" selected=transfer.payment_method === "TRANSFER") Bank Transfer
+						option(value="TRANSFER" selected=transfer.payment_method === "HOTEL BILLING") Hotel Billing
 				div.mb-3
 					label.form-label(for="driver") Driver
 					select.form-select#driver(name="driver")
