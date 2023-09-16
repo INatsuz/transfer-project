@@ -46,7 +46,8 @@ block content
 						option(value="CASH" selected=transfer.payment_method === "CASH") Cash
 						option(value="CARD" selected=transfer.payment_method === "CARD") Card
 						option(value="TRANSFER" selected=transfer.payment_method === "TRANSFER") Bank Transfer
-						option(value="TRANSFER" selected=transfer.payment_method === "HOTEL BILLING") Hotel Billing
+						option(value="HOTEL BILLING" selected=transfer.payment_method === "HOTEL BILLING") Hotel Billing
+						option(value="ACCOUNT" selected=transfer.payment_method === "ACCOUNT") Account
 				div.mb-3
 					label.form-label(for="driver") Driver
 					select.form-select#driver(name="driver")

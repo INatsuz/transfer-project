@@ -92,7 +92,7 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 	}
 
 	db.query(`	SELECT transfer.ID, transfer.flight, transfer.origin, transfer.destination, transfer.transfer_time, 
-					transfer.person_name, transfer.num_of_people, transfer.status, transfer.price, transfer.paid, transfer.seen, appuser.name AS driver
+					transfer.person_name, transfer.num_of_people, transfer.status, transfer.price, transfer.paid, transfer.payment_method, transfer.seen, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
 					${queryFilter}

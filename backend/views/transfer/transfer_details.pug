@@ -74,8 +74,12 @@ block content
                     |  Bank Transfer
             else if transfer.payment_method === "HOTEL BILLING"
                 td.align-middle
-                    i.bi.bi-bank.text-primary
+                    i.bi.bi-building.text-primary
                     |  Hotel Billing
+            else if transfer.payment_method === "ACCOUNT"
+                td.align-middle
+                    i.bi.bi-briefcase.text-primary
+                    |  Account
             else
                 td None
         tr
