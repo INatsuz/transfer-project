@@ -199,9 +199,17 @@ export default function AddAssignment(props) {
 							value: "FINISHED",
 							key: "FINISHED"
 						}, {
-							label: "REVIEW",
-							value: "REVIEW",
-							key: "REVIEW"
+							label: "CONFIRMED",
+							value: "CONFIRMED",
+							key: "CONFIRMED"
+						}, {
+							label: "CANCELLED",
+							value: "CANCELLED",
+							key: "CANCELLED"
+						}, {
+							label: "NO SHOW",
+							value: "NO SHOW",
+							key: "NO SHOW"
 						}]} onValueChange={(value) => {
 							if (value !== status) {
 								setStatus(value);
@@ -257,6 +265,14 @@ export default function AddAssignment(props) {
 							label: "Bank Transfer",
 							value: "TRANSFER",
 							key: "TRANSFER"
+						}, {
+							label: "Hotel Billing",
+							value: "HOTEL BILLING",
+							key: "HOTEL BILLING"
+						}, {
+							label: "Account",
+							value: "ACCOUNT",
+							key: "ACCOUNT"
 						}]} onValueChange={(value) => {
 							if (value !== paymentMethod) {
 								setPaymentMethod(value);

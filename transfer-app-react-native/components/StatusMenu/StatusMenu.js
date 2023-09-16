@@ -24,9 +24,17 @@ export default function StatusMenu(props) {
 					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("FINISHED")}/></Text>
 					<Text style={styles.menuOptionText}>Finished</Text>
 				</MenuOption>
-				<MenuOption style={styles.menuOption} onSelect={() => props.onMenuItemPress(props.navigation, props.route, "REVIEW")}>
-					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("REVIEW")}/></Text>
-					<Text style={styles.menuOptionText}>Review</Text>
+				<MenuOption style={styles.menuOption} onSelect={() => props.onMenuItemPress(props.navigation, props.route, "CONFIRMED")}>
+					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("CONFIRMED")}/></Text>
+					<Text style={styles.menuOptionText}>Confirmed</Text>
+				</MenuOption>
+				<MenuOption style={styles.menuOption} onSelect={() => props.onMenuItemPress(props.navigation, props.route, "CANCELLED")}>
+					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("CANCELLED")}/></Text>
+					<Text style={styles.menuOptionText}>Cancelled</Text>
+				</MenuOption>
+				<MenuOption style={styles.menuOption} onSelect={() => props.onMenuItemPress(props.navigation, props.route, "NO SHOW")}>
+					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("NO SHOW")}/></Text>
+					<Text style={styles.menuOptionText}>No Show</Text>
 				</MenuOption>
 			</MenuOptions>
 		</Menu>

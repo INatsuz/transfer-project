@@ -217,6 +217,14 @@ export default function AssignmentDetails(props) {
 							label: "Bank Transfer",
 							value: "TRANSFER",
 							key: "TRANSFER"
+						}, {
+							label: "Hotel Billing",
+							value: "HOTEL BILLING",
+							key: "HOTEL BILLING"
+						}, {
+							label: "Account",
+							value: "ACCOUNT",
+							key: "ACCOUNT"
 						}]} onValueChange={(value) => {
 							if (value !== paymentMethod) {
 								setPaymentMethod(value);
