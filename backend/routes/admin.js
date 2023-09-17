@@ -91,10 +91,11 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 		queryFilter = "WHERE " + clauses.join(" AND ");
 	}
 
-	db.query(`	SELECT transfer.ID, transfer.flight, transfer.origin, transfer.destination, transfer.transfer_time, 
+	db.query(`	SELECT transfer.ID, transfer.flight, transfer.origin, transfer.destination, transfer.transfer_time, creator.name as createdBy, 
 					transfer.person_name, transfer.num_of_people, transfer.status, transfer.price, transfer.paid, transfer.payment_method, transfer.seen, appuser.name AS driver
 					FROM transfer
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
+					LEFT JOIN appuser creator ON transfer.createdBy = creator.ID
 					${queryFilter}
 					ORDER BY transfer.transfer_time ${req.query.startDate ? "ASC" : "DESC"}`, queryVariables).then(({result}) => {
 		res.render("transfer/transfers", {
@@ -259,13 +260,14 @@ router.post("/transfers/update/:id", mustHaveSession, function (req, res) {
 
 router.get("/transfers/details/:id", mustHaveSession, function (req, res) {
 	db.query(`SELECT 
-					transfer.ID, transfer.person_name, transfer.num_of_people, transfer.origin, transfer.destination,
+					transfer.ID, transfer.person_name, transfer.num_of_people, transfer.origin, transfer.destination, creator.name as createdBy,
 				 	transfer.transfer_time, transfer.status, transfer.flight, transfer.price, transfer.operatorCommission, transfer.driverCommission, transfer.paid,
 				 	transfer.observations, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicle,
-				 	appuser.name as driver, serviceoperator.name as service_operator, transfer.seen, transfer.payment_method, transfer.createdBy
+				 	appuser.name as driver, serviceoperator.name as service_operator, transfer.seen, transfer.payment_method
 					FROM transfer
 					LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
 					LEFT JOIN appuser ON transfer.driver = appuser.ID
+					LEFT JOIN appuser creator ON transfer.createdBy = creator.ID
 					LEFT JOIN vehicle ON transfer.vehicle = vehicle.ID
 					WHERE transfer.ID = ?`, [req.params.id]).then(({result}) => {
 		if (req.session.userType === USER_TYPES.HOTEL && result[0].createdBy !== req.session.userID) {
@@ -689,8 +691,9 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 				transfer.destination AS Destination,
 				transfer.person_name AS Name,
 				transfer.num_of_people AS Pax,
-				serviceoperator.name AS Operator,
-				appuser.name AS Driver,
+				IF(ISNULL(serviceoperator.name), "", serviceoperator.name) AS Operator,
+				IF(ISNULL(creator.name), "", creator.name) AS "Created By",
+				IF(ISNULL(appuser.name), "", appuser.name) AS Driver,
 				transfer.price AS Price,
 				IF(transfer.payment_method = "CASH", ROUND(transfer.paid, 2), 0) AS "Paid w/ Cash",
 				IF(transfer.payment_method = "CARD" OR transfer.payment_method = "TRANSFER", ROUND(transfer.paid, 2), 0) AS "Paid w/ Card/Bank Transfer",
@@ -703,6 +706,7 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 				transfer.observations AS Observations
 				FROM transfer
 				LEFT JOIN appuser ON transfer.driver = appuser.ID
+				LEFT JOIN appuser creator ON transfer.createdBy = creator.ID
 				LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
 				WHERE transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z') AND transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')
 				${req.query.driver === "null" ? "" : " AND transfer.driver = ?"}
