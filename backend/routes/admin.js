@@ -694,6 +694,7 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 				IF(ISNULL(serviceoperator.name), "", serviceoperator.name) AS Operator,
 				IF(ISNULL(creator.name), "", creator.name) AS "Created By",
 				IF(ISNULL(appuser.name), "", appuser.name) AS Driver,
+				IF(ISNULL(transfer.vehicle), "", CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')')) AS Vehicle,
 				transfer.price AS Price,
 				IF(transfer.payment_method = "CASH", ROUND(transfer.paid, 2), 0) AS "Paid w/ Cash",
 				IF(transfer.payment_method = "CARD" OR transfer.payment_method = "TRANSFER", ROUND(transfer.paid, 2), 0) AS "Paid w/ Card/Bank Transfer",
@@ -708,6 +709,7 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 				LEFT JOIN appuser ON transfer.driver = appuser.ID
 				LEFT JOIN appuser creator ON transfer.createdBy = creator.ID
 				LEFT JOIN serviceoperator ON transfer.service_operator = serviceoperator.ID
+				LEFT JOIN vehicle ON transfer.vehicle = vehicle.ID
 				WHERE transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z') AND transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')
 				${req.query.driver === "null" ? "" : " AND transfer.driver = ?"}
 				${req.query.operator === "null" ? "" : " AND transfer.service_operator = ?"}
