@@ -82,6 +82,20 @@ router.get("/transfers", mustHaveSession, function (req, res) {
 		queryVariables.push(`%${req.query.person}%`);
 	}
 
+	if (req.query.status && req.query.status !== "null") {
+		console.log("transfer.status = ?");
+		console.log(req.query.status);
+		clauses.push("transfer.status = ?");
+		queryVariables.push(req.query.status);
+	}
+
+	if (req.query.paymentMethod && req.query.paymentMethod !== "null") {
+		console.log("transfer.payment_method = ?");
+		console.log(req.query.paymentMethod);
+		clauses.push("transfer.payment_method = ?");
+		queryVariables.push(req.query.paymentMethod);
+	}
+
 	if (req.session.userType === USER_TYPES.HOTEL) {
 		clauses.push("transfer.createdBy = ?");
 		queryVariables.push(req.session.userID);
