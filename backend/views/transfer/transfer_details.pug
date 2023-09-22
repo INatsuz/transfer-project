@@ -35,9 +35,15 @@ block content
             else if transfer.status === "FINISHED"
                 td.align-middle
                     span.badge.text-bg-secondary FINISHED
+            else if transfer.status === "CONFIRMED"
+                td.align-middle
+                    span.badge.text-bg-primary CONFIRMED
+            else if transfer.status === "CANCELLED"
+                td.align-middle
+                    span.badge.text-bg-danger CANCELLED
             else if transfer.status === "REVIEW"
                 td.align-middle
-                    span.badge.text-bg-danger REVIEW
+                    span.badge.bg-purple REVIEW
         tr
             th Flight
             td= transfer.flight

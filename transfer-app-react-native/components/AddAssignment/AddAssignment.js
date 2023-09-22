@@ -199,6 +199,14 @@ export default function AddAssignment(props) {
 							value: "FINISHED",
 							key: "FINISHED"
 						}, {
+							label: "CONFIRMED",
+							value: "CONFIRMED",
+							key: "CONFIRMED"
+						}, {
+							label: "CANCELLED",
+							value: "CANCELLED",
+							key: "CANCELLED"
+						}, {
 							label: "REVIEW",
 							value: "REVIEW",
 							key: "REVIEW"

@@ -74,11 +74,14 @@ function AssignmentListItem(props) {
 						</Pressable>
 					</View>
 				}
-				<View style={styles.shareIconContainer}>
-					<Pressable onPress={onSharePress}>
-						<Ionicons name={"share-social"} size={16} color={TEXT_COLOR}/>
-					</Pressable>
-				</View>
+				{
+					isAdmin &&
+					<View style={styles.shareIconContainer}>
+						<Pressable onPress={onSharePress}>
+							<Ionicons name={"share-social"} size={16} color={TEXT_COLOR}/>
+						</Pressable>
+					</View>
+				}
 				<View style={styles.itemColumn}>
 					<View style={styles.topItemField}>
 						<Text style={styles.textStyle}>Date/Time:</Text>
@@ -91,8 +94,8 @@ function AssignmentListItem(props) {
 				</View>
 				<View style={styles.itemColumn}>
 					<View style={styles.topItemField}>
-						<Text style={styles.textStyle}>Person:</Text>
-						<Text style={styles.textStyle}>{props.data.person_name}</Text>
+						<Text style={styles.textStyle}>Person | Pax:</Text>
+						<Text style={styles.textStyle}>{props.data.person_name} | {props.data.num_of_people}</Text>
 					</View>
 					<View>
 						<Text style={styles.textStyle}>Destination:</Text>

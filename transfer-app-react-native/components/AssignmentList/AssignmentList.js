@@ -54,6 +54,7 @@ export default function AssignmentList(props) {
 						setRefreshing(false);
 					});
 				}}
+				ListFooterComponent={() => <View style={{height: 65}}></View>}
 			/>
 		</SafeAreaView>
 	);

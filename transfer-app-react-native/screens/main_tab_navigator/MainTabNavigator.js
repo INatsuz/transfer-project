@@ -6,7 +6,13 @@ import AssignmentsNavigator from "./assignments/AssignmentsNavigator";
 import HomeNavigator from "./home/HomeNavigator";
 import {StatusBar} from "expo-status-bar";
 import React from "react";
-import {ACCENT_COLOR, BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
+import {
+	ACCENT_COLOR,
+	BACKGROUND_COLOR,
+	INACTIVE_TAB_ICON_COLOR,
+	ITEM_BORDER_COLOR,
+	TEXT_COLOR
+} from "../../utils/Colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +24,7 @@ export default function MainTabNavigator() {
 			<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
 			<Tab.Navigator screenOptions={{
 				tabBarActiveTintColor: TEXT_COLOR,
-				tabBarInactiveTintColor: ITEM_BORDER_COLOR,
+				tabBarInactiveTintColor: INACTIVE_TAB_ICON_COLOR,
 				tabBarStyle: {
 					backgroundColor: ACCENT_COLOR,
 					borderTopColor: ACCENT_COLOR,

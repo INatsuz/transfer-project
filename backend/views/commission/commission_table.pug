@@ -34,6 +34,6 @@ mixin commission_table(data)
 				td
 				td
 				td
-				td
+				td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.price, 0).toFixed(2))}€`
 				td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.operatorCommissionValue, 0).toFixed(2))}€`
 				td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.driverCommissionValue, 0).toFixed(2))}€`

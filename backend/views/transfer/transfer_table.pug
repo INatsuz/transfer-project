@@ -20,9 +20,15 @@ mixin transfer_table_row(row)
         else if row.status === "FINISHED"
             td.align-middle.d-print-none
                 span.badge.text-bg-secondary FINISHED
+        else if row.status === "CONFIRMED"
+            td.align-middle.d-print-none
+                span.badge.text-bg-primary CONFIRMED
+        else if row.status === "CANCELLED"
+            td.align-middle.d-print-none
+                span.badge.text-bg-danger CANCELLED
         else if row.status === "REVIEW"
             td.align-middle.d-print-none
-                span.badge.text-bg-danger REVIEW
+                span.badge.bg-purple REVIEW
         if row.seen
             td.d-print-none.align-middle
                 span.badge.text-bg-success Yes

@@ -7,7 +7,7 @@ import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
 import {deleteTokens} from "../../utils/TokenManager";
-import {BACKGROUND_COLOR, ITEM_BACKGROUND_COLOR, TEXT_COLOR} from "../../utils/Colors";
+import {ACCENT_COLOR, BACKGROUND_COLOR, ITEM_BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 function ProfileSection(props) {
 	const dispatch = useDispatch();
@@ -129,12 +129,17 @@ function ProfileSection(props) {
 
 	return (
 		<View style={styles.container}>
-			<View style={[styles.area, styles.nameSection, {marginTop: 0}]}>
+			<View style={[styles.area, styles.nameSection]}>
 				<Text style={[styles.textStyle, {flex: 1}]}>Driver: {props.userData.name}</Text>
 				<Ionicons name="log-out" size={22} color={styles.textStyle.color} onPress={() => confirmLogoutDialog()}/>
 			</View>
+			<View style={[styles.area, styles.nameSection]}>
+				{
+					<Text style={[styles.textStyle, {flex: 1}]}>Total Received: €{parseFloat(props.assignments.reduce((sum, value) => sum + (value.payment_method === "CASH" ? value.paid : 0), 0)).toFixed(2)}</Text>
+				}
+			</View>
 			{userType === 2 &&
-				<View style={[styles.area, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
+				<View style={[styles.area, styles.carPickerArea, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
 					<Text style={styles.textStyle}>Car: </Text>
 					<View style={{flex: 1}}>
 						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
@@ -162,10 +167,18 @@ const styles = StyleSheet.create({
 
 	nameSection: {
 		display: "flex",
-		borderBottomColor: "#474746",
+		borderTopWidth: 1,
+		borderTopColor: ACCENT_COLOR,
 		flexDirection: "row",
 		padding: 6,
+	},
+
+	carPickerArea: {
 		borderTopWidth: 1,
+		borderTopColor: ACCENT_COLOR,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
 	},
 
 	area: {

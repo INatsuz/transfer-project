@@ -27,6 +27,8 @@ block content
 						option(value="PENDING" selected=transfer.status === "PENDING") PENDING
 						option(value="IN PROGRESS" selected=transfer.status === "IN PROGRESS") IN PROGRESS
 						option(value="FINISHED" selected=transfer.status === "FINISHED") FINISHED
+						option(value="CONFIRMED" selected=transfer.status === "CONFIRMED") CONFIRMED
+						option(value="CANCELLED" selected=transfer.status === "CANCELLED") CANCELLED
 						option(value="REVIEW" selected=transfer.status === "REVIEW") REVIEW
 				div.mb-3
 					label.form-label(for="flight") Flight
