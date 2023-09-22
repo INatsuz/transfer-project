@@ -20,6 +20,22 @@ block content
 						div.mb-3
 							label.form-label(for="person-filter") Person
 							input.form-control#person-filter(type="text" name="person")
+						div.mb-3
+							label.form-label(for="status") Status
+							select#status.form-select(name="status")
+								option(value='null') All Statuses
+								option(value='PENDING') PENDING
+								option(value='IN PROGRESS') IN PROGRESS
+								option(value='FINISHED') FINISHED
+								option(value='CONFIRMED') CONFIRMED
+								option(value='CANCELLED') CANCELLED
+						div.mb-3
+							label.form-label(for="payment-method") Payment Method
+							select#payment-method.form-select(name="paymentMethod")
+								option(value='null') All Payment Methods
+								option(value="CASH") Cash
+								option(value="CARD") Card
+								option(value="TRANSFER") Bank Transfer
 					div.modal-footer
 						button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close
 						button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Search
