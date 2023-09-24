@@ -7,20 +7,29 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {BACKGROUND_COLOR, DISABLED_TEXT_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function SearchModal(props) {
-	let [searchInput, setSearchInput] = useState("");
+export default function CalendarSearchModal(props) {
+	const [date, setDate] = useState(new Date());
+
+	const [pickingDate, setPickingDate] = useState(false);
+
+	let dateString = date ? String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0") + "/" + date.getFullYear() : "--/--/----";
 
 	let navigation = useNavigation();
 
 	function onSearchButtonPress() {
+		date.setHours(0, 0, 0, 0)
+		let endDate = new Date(date.getTime())
+		endDate.setDate(date.getDate() + 1)
 		props.setIsVisible(false);
 		navigation.navigate("SearchResults", {
-			name: searchInput
+			startDate: date.toISOString(),
+			endDate: endDate.toISOString()
 		});
 	}
 
 	function onClosePress() {
-		setSearchInput("");
+		setPickingDate(false);
+		setDate(new Date());
 
 		props.setIsVisible(false);
 	}
@@ -29,7 +38,7 @@ export default function SearchModal(props) {
 		if (Platform.OS === "android") {
 			setDate(new Date());
 
-			if (!pickingDate && !pickingTime) setPickingDate(true);
+			if (!pickingDate) setPickingDate(true);
 		}
 	}
 
@@ -42,14 +51,37 @@ export default function SearchModal(props) {
 			onBackdropPress={onClosePress}
 			onModalHide={onClosePress}
 		>
+			{pickingDate && Platform.OS === "android" &&
+				<DateTimePicker value={date} mode="date" onChange={(event, date) => {
+					setPickingDate(false);
+					setDate(date);
+				}}/>}
 			<View style={styles.container}>
 				<Pressable onPress={onClosePress} style={styles.closeIcon}>
 					<Ionicons name={"close"} color={TEXT_COLOR} size={22}/>
 				</Pressable>
-				<View style={styles.section}>
-					<Text style={[styles.text, styles.title]}>Name: </Text>
-					<TextInput style={[styles.input, styles.text]} placeholder={"eg. John Wick"} placeholderTextColor={DISABLED_TEXT_COLOR} value={searchInput} onChangeText={value => setSearchInput(value)}/>
-				</View>
+				{
+					Platform.OS === "ios" ?
+						<View style={styles.section}>
+							<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+								<View>
+									<Text style={[styles.text, styles.title, {
+										paddingBottom: 0
+									}]}>Date: </Text>
+								</View>
+								<DateTimePicker value={date} mode="date" onChange={(event, datetime) => {
+									setDate(datetime);
+								}}/>
+							</View>
+						</View>
+						:
+						<View>
+							<Text style={[styles.text, styles.title]}>Date: </Text>
+							<Pressable onPress={onTimePress}>
+								<TextInput pointerEvents={"none"} editable={false} value={dateString} style={[styles.text, styles.input]}/>
+							</Pressable>
+						</View>
+				}
 				<Button text={"Search"} onPress={onSearchButtonPress}/>
 			</View>
 		</Modal>
@@ -81,7 +113,7 @@ const styles = StyleSheet.create({
 	},
 
 	section: {
-		marginBottom: 5,
+		marginBottom: 15,
 	},
 
 	input: {

@@ -34,7 +34,7 @@ function ProfileSection(props) {
 		}
 		setActiveVehicle(value);
 
-		if (Platform.OS === "android"){
+		if (Platform.OS === "android") {
 			let vehicle = vehicles.find(el => el.ID === value);
 
 			Alert.alert(
@@ -133,13 +133,19 @@ function ProfileSection(props) {
 				<Text style={[styles.textStyle, {flex: 1}]}>Driver: {props.userData.name}</Text>
 				<Ionicons name="log-out" size={22} color={styles.textStyle.color} onPress={() => confirmLogoutDialog()}/>
 			</View>
-			<View style={[styles.area, styles.nameSection]}>
-				{
-					<Text style={[styles.textStyle, {flex: 1}]}>Total Received: €{parseFloat(props.assignments.reduce((sum, value) => sum + (value.payment_method === "CASH" ? value.paid : 0), 0)).toFixed(2)}</Text>
-				}
-			</View>
+			{
+				userType === 2 &&
+				<View style={[styles.area, styles.nameSection]}>
+					<Text style={[styles.textStyle, {flex: 1}]}>Total Received:
+						€{parseFloat(props.assignments.reduce((sum, value) => sum + (value.payment_method === "CASH" ? value.paid : 0), 0)).toFixed(2)}</Text>
+				</View>
+			}
 			{userType === 2 &&
-				<View style={[styles.area, styles.carPickerArea, {display: "flex", flexDirection: "row", alignItems: "center"}]}>
+				<View style={[styles.area, styles.carPickerArea, {
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center"
+				}]}>
 					<Text style={styles.textStyle}>Car: </Text>
 					<View style={{flex: 1}}>
 						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {

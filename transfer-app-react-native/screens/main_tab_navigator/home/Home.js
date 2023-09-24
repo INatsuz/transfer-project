@@ -85,7 +85,7 @@ export default function Home(props) {
 				</TouchableOpacity>
 			</View>
 			<View style={styles.section}>
-				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails} isSearchButtonVisible={userType !== 3}/>
+				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails} isSearchButtonVisible={userType !== 3} isCalendarButtonVisible={userType === 1}/>
 			</View>
 		</SafeAreaView>
 	)

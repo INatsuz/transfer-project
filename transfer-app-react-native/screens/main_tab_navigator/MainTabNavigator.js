@@ -38,16 +38,16 @@ export default function MainTabNavigator() {
 						<Ionicons name="home" size={size} color={color}/>
 					)
 				}}/>
-				{
-					userType === 1 &&
-					<Tab.Screen name={"AssignmentsNavigator"} component={AssignmentsNavigator} options={{
-						headerShown: false,
-						tabBarIcon: ({color, size}) => (
-							<Ionicons name="car" size={size} color={color}/>
-						),
-						title: "Assignments"
-					}}/>
-				}
+				{/*{*/}
+				{/*	userType === 1 &&*/}
+				{/*	<Tab.Screen name={"AssignmentsNavigator"} component={AssignmentsNavigator} options={{*/}
+				{/*		headerShown: false,*/}
+				{/*		tabBarIcon: ({color, size}) => (*/}
+				{/*			<Ionicons name="car" size={size} color={color}/>*/}
+				{/*		),*/}
+				{/*		title: "Assignments"*/}
+				{/*	}}/>*/}
+				{/*}*/}
 			</Tab.Navigator>
 		</View>
 	);

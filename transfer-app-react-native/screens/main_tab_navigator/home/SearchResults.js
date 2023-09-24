@@ -1,8 +1,7 @@
-import {Platform, SafeAreaView, StatusBar, View} from "react-native";
+import {StyleSheet, View} from "react-native";
 import AssignmentList from "../../../components/AssignmentList/AssignmentList";
 import {getWithAuth} from "../../../utils/Requester";
 import {useState} from "react";
-import {StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import {BACKGROUND_COLOR} from "../../../utils/Colors";
 
@@ -11,7 +10,7 @@ export default function SearchResults({route, navigation}) {
 	const userType = useSelector(state => state.login.userType);
 
 	function fetchSearchAssignments() {
-		return getWithAuth(`api/searchTransfers?name=${route.params.name}`).then(res => {
+		return getWithAuth(`api/searchTransfers?name=${route.params.name}&startDate=${route.params.startDate}&endDate=${route.params.endDate}`).then(res => {
 			setAssignments(res.data.transfers);
 		}).catch(err => {
 			console.log(err);
@@ -28,8 +27,6 @@ export default function SearchResults({route, navigation}) {
 		</View>
 	);
 };
-
-const statusBarHeight = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
 
 const styles = StyleSheet.create({
 	container: {

@@ -56,12 +56,12 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 
 	if (startDate) {
 		clauses.push("transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
-		queryVariables.push(req.query.startDate);
+		queryVariables.push(startDate);
 	}
 
 	if (endDate) {
 		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
-		queryVariables.push(req.query.endDate);
+		queryVariables.push(endDate);
 	}
 
 	if (clauses.length > 0) {
@@ -91,6 +91,36 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 });
 
 router.get("/searchTransfers", mustBeAuthenticated, function (req, res) {
+	let {startDate, endDate, name} = req.query;
+
+	let clauses = [];
+	let queryVariables = [];
+
+	let queryFilter = "";
+
+	console.log(name);
+
+	if (name && name !== "undefined") {
+		clauses.push("transfer.person_name LIKE ?");
+		queryVariables.push(`%${req.query.name}%`);
+	}
+
+	if (startDate && startDate !== "undefined") {
+		clauses.push("transfer.transfer_time >= STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		queryVariables.push(startDate);
+	}
+
+	if (endDate && endDate !== "undefined") {
+		clauses.push("transfer.transfer_time < STR_TO_DATE(?, '%Y-%m-%dT%T.000Z')");
+		queryVariables.push(endDate);
+	}
+
+	if (clauses.length > 0) {
+		queryFilter = "WHERE " + clauses.join(" AND ");
+	}
+
+	console.log(queryFilter);
+
 	db.query(`	SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
 					FROM transfer 
 					LEFT JOIN appuser
@@ -99,9 +129,9 @@ router.get("/searchTransfers", mustBeAuthenticated, function (req, res) {
 					ON transfer.service_operator = serviceoperator.ID
 					LEFT JOIN vehicle
 					ON transfer.vehicle = vehicle.ID
-					WHERE transfer.person_name LIKE ?
+					${queryFilter}
 					${req.tokenPayload.userType === USER_TYPES.DRIVER ? " AND (transfer.driver IS NULL OR transfer.driver = ?)" : ""}
-					ORDER BY transfer.transfer_time DESC`, [`%${req.query.name}%`, ...(req.tokenPayload.userType === USER_TYPES.DRIVER ? [req.tokenPayload.ID] : [])]).then(({result: transfers}) => {
+					ORDER BY transfer.transfer_time DESC`, [...queryVariables, ...(req.tokenPayload.userType === USER_TYPES.DRIVER ? [req.tokenPayload.ID] : [])]).then(({result: transfers}) => {
 		if (transfers) {
 			res.status(200).json({transfers: transfers});
 		} else {
