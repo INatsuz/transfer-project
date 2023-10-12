@@ -67,7 +67,7 @@ export default function Home(props) {
 				<Ionicons name="add" size={22} color={TEXT_COLOR}/>
 			</TouchableOpacity>
 			<View>
-				<ProfileSection assignments={assignments} userData={{
+				<ProfileSection assignments={filterAssignments()} userData={{
 					userType: userType,
 					name: name,
 					email: email
