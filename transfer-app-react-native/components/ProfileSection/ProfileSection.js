@@ -15,6 +15,7 @@ function ProfileSection(props) {
 	const [activeVehicle, setActiveVehicle] = useState(null);
 	const originalVehicle = useRef()
 	const userType = useSelector(state => state.login.userType);
+	const userID = useSelector(state => state.login.userID);
 
 	function updateActiveVehicle(vehicle) {
 		let data = {vehicle: vehicle};
@@ -111,7 +112,7 @@ function ProfileSection(props) {
 		getWithAuth("api/getVehicles").then(res => {
 			setVehicles(res.data.vehicles);
 			if (res.data.vehicles.length > 0) {
-				if (res.data.vehicles[0].userID !== null) {
+				if (res.data.vehicles[0].userID === userID) {
 					setActiveVehicle(res.data.vehicles[0].ID);
 					originalVehicle.current = res.data.vehicles[0].ID;
 				}

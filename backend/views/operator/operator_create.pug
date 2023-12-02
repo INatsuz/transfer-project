@@ -10,6 +10,9 @@ block content
                 div.mb-3
                     label.form-label(for="commission") Commission (in %)
                     input.form-control#commission(type="number" name="commission" step=0.01)
+                div.mb-3
+                    label.form-label(for="color") Color
+                    input.form-control.form-control-color#color(type="color" name="color" value="#000000" title="Choose a color to match the partner")
 
                 button.btn.btn-success(type="submit")
                     i.bi.bi-plus-lg

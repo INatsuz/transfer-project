@@ -19,6 +19,12 @@ block content
                         option(value="1") Admin
                         option(value="2") Driver
                         option(value="3") Hotel
+                div.d-none#operator-div
+                    label.form-label(for="operator") Operator
+                    select.form-select#operator(name="operator")
+                        option(value="null") No operator
+                            each operator in operators
+                                option(value=operator.ID)= operator.name
                 div.mb-3
                     label.form-label(for="color") Color
                     input.form-control.form-control-color#color(type="color" name="color" title="Choose a color to match the driver")
@@ -35,3 +41,16 @@ block content
                 button.btn.btn-success(type="submit")
                     i.bi.bi-plus-lg
                     |  Create
+
+block scripts
+    script.
+        document.getElementById("user-type").addEventListener("change", event => {
+            if (event.target.value === "3") {
+                document.getElementById("operator-div").classList.remove("d-none");
+                document.getElementById("operator-div").classList.add("mb-3");
+            } else {
+                document.getElementById("operator").value = "null";
+                document.getElementById("operator-div").classList.add("d-none");
+                document.getElementById("operator-div").classList.remove("mb-3");
+            }
+        });

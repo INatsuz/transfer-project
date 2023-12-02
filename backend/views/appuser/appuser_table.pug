@@ -9,6 +9,7 @@ mixin appuser_table_row(row)
         td.align-middle= row.vehicle
         td.align-middle= row.userType
         td.align-middle= `${parseFloat((row.commission * 100).toFixed(2))}%`
+        td.align-middle= row.operator
         td.align-middle
             div.ms-auto.me-auto(style=`background-color: ${row.color}; width: 30px; height: 30px; border: 1px solid gray; border-radius: 3px`)
         td.text-nowrap.align-middle
@@ -33,7 +34,8 @@ mixin appuser_table(data)
                 th Active Vehicle
                 th Type
                 th Commission
-                th Color
+                th Operator
+                th.text-center Color
                 th
         tbody
             each row in data

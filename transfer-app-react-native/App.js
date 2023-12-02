@@ -66,6 +66,8 @@ export default function App() {
 	useEffect(() => {
 		registerForPushNotificationsAsync().then(token => {
 			store.dispatch(saveNotificationAction(token));
+		}).catch(err => {
+			console.log(err);
 		});
 
 		// This listener is fired whenever a notification is received while the app is foregrounded
@@ -132,7 +134,7 @@ async function registerForPushNotificationsAsync() {
 	let token;
 
 	if (Platform.OS === 'android') {
-		Notifications.setNotificationChannelAsync('default', {
+		await Notifications.setNotificationChannelAsync('default', {
 			name: 'default',
 			importance: Notifications.AndroidImportance.MAX,
 			vibrationPattern: [0, 250, 250, 250],

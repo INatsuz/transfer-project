@@ -19,7 +19,8 @@ function AssignmentListItem(props) {
 
 	let variableStyles = StyleSheet.create({
 		statusBorderColor: {
-			borderRightColor: getStatusColor(props.data.status)
+			borderRightColor: getStatusColor(props.data.status),
+			borderLeftColor: props.data.operatorColor
 		}
 	});
 
@@ -112,8 +113,8 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		borderWidth: 1,
 		borderRightWidth: 4,
+		borderLeftWidth: 10,
 		borderTopColor: ITEM_BORDER_COLOR,
-		borderLeftColor: ITEM_BORDER_COLOR,
 		borderBottomColor: ITEM_BORDER_COLOR,
 		marginVertical: 2,
 		marginHorizontal: 10,

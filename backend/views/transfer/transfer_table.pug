@@ -6,7 +6,7 @@ mixin transfer_table_row(row)
         input.datetime(type="hidden" value=row.transfer_time)
         td.align-middle.datetime-field
             span.date-span= `${dateString}`
-            | 
+            | &nbsp;
             span.time-span.fw-bold= `${timeString}`
         td.align-middle= row.flight
         td.align-middle= row.origin
@@ -42,7 +42,7 @@ mixin transfer_table_row(row)
         td.align-middle.d-none.d-print-table-cell= row.payment_method
         td.align-middle.d-print-none= `${parseFloat((row.paid).toFixed(2))}€`
 
-        td.text-nowrap.align-middle.d-print-none
+        td.text-nowrap.align-middle.d-print-none.text-center
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/transfers/details/${row.ID}`)
                 | &nbsp;
                 i.bi.bi-list
@@ -51,10 +51,11 @@ mixin transfer_table_row(row)
                 | &nbsp;
                 i.bi.bi-pencil
                 | &nbsp;
-            a.btn.btn-sm.btn-danger.ms-1(href=`/admin/transfers/delete/${row.ID}?returnLink=${url}`)
-                | &nbsp;
-                i.bi.bi-trash
-                | &nbsp;
+            if userType === 1
+                a.btn.btn-sm.btn-danger.ms-1(href=`/admin/transfers/delete/${row.ID}?returnLink=${url}`)
+                    | &nbsp;
+                    i.bi.bi-trash
+                    | &nbsp;
 
         td.align-middle.d-print-none= row.createdBy
 

@@ -237,7 +237,11 @@ export default function AddAssignment(props) {
 						<Text style={[styles.text, styles.title]}>Price: </Text>
 						<TextInput keyboardType="numeric" defaultValue={price.toString()} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
 							let dotted_value = value.replace(",", ".");
-							setPrice(parseFloat(dotted_value));
+							if (!isNaN(parseFloat(dotted_value))) {
+								setPrice(parseFloat(dotted_value));
+							} else {
+								setPrice("");
+							}
 						}}/>
 					</View>
 
