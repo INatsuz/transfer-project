@@ -25,11 +25,12 @@ block content
 					label.form-label(for="status") Status
 					select.form-select#status(name="status")
 						option(value="PENDING" selected=transfer.status === "PENDING") PENDING
-						option(value="IN PROGRESS" selected=transfer.status === "IN PROGRESS") IN PROGRESS
-						option(value="FINISHED" selected=transfer.status === "FINISHED") FINISHED
-						option(value="NO SHOW" selected=transfer.status === "NO SHOW") NO SHOW
-						option(value="CANCELLED" selected=transfer.status === "CANCELLED") CANCELLED
-						option(value="CONFIRMED" selected=transfer.status === "CONFIRMED") CONFIRMED
+						unless userType === 3
+							option(value="IN PROGRESS") IN PROGRESS
+							option(value="FINISHED") FINISHED
+							option(value="NO SHOW") NO SHOW
+							option(value="CANCELLED") CANCELLED
+							option(value="CONFIRMED") CONFIRMED
 				div.mb-3
 					label.form-label(for="flight") Flight
 					input.form-control#flight(type="text" name="flight" value=transfer.flight)
