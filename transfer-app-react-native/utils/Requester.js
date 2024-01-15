@@ -30,6 +30,8 @@ export async function logOff() {
 			index: 0,
 			routes: [{name: "Login"}]
 		});
+	}).catch(err => {
+		console.log(err);
 	});
 }
 
@@ -64,6 +66,8 @@ export function getWithAuth(endpoint) {
 					reject(err);
 				}
 			});
+		}).catch(err => {
+			console.log(err);
 		});
 	});
 }
@@ -101,7 +105,9 @@ export function postWithAuth(endpoint, data) {
 					reject(err);
 				}
 			});
-		});
+		}).catch(err => {
+			console.log(err);
+		});;
 	});
 }
 
@@ -137,7 +143,9 @@ export function putWithAuth(endpoint, data) {
 					reject(err);
 				}
 			});
-		});
+		}).catch(err => {
+			console.log(err);
+		});;
 	});
 }
 
@@ -173,6 +181,8 @@ export function deleteWithAuth(endpoint) {
 					reject(err);
 				}
 			});
-		});
+		}).catch(err => {
+			console.log(err);
+		});;
 	});
 }

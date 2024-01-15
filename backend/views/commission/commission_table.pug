@@ -3,37 +3,44 @@ mixin commission_table_row(row)
 	- let timeString = String(row.transfer_time.getHours()).padStart(2, "0") + ":" + String(row.transfer_time.getMinutes()).padStart(2, "0");
 
 	tr
-		td.align-middle= row.driverName
-		td.align-middle= row.operatorName
-		td.align-middle= row.origin
-		td.align-middle= row.destination
 		input.datetime(type="hidden" value=row.transfer_time)
 		td.align-middle.datetime-field= `${dateString} ${timeString}`
+		td.align-middle= row.origin
+		td.align-middle= row.destination
+		td.align-middle= row.person_name
+		td.align-middle= row.driverName
+		td.align-middle= row.operatorName
 		td.align-middle= `${row.price}€`
 		td.align-middle= `${parseFloat((row.operatorCommissionValue).toFixed(2))}€`
 		td.align-middle= `${parseFloat((row.driverCommissionValue).toFixed(2))}€`
+		td.align-middle= `${parseFloat((row.price - row.driverCommissionValue - row.operatorCommissionValue).toFixed(2))}€`
 
 mixin commission_table(data)
-	table.table.table-striped.table-hover
-		thead
-			tr
-				th Driver
-				th Operator
-				th Origin
-				th Destination
-				th Date/Time
-				th Price
-				th.text-nowrap Op (€)
-				th.text-nowrap Driver (€)
-		tbody
-			each row in data
-				+commission_table_row(row)
-			tr
-				td
-				td
-				td
-				td
-				td
-				td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.price, 0).toFixed(2))}€`
-				td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.operatorCommissionValue, 0).toFixed(2))}€`
-				td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.driverCommissionValue, 0).toFixed(2))}€`
+	div.table-responsive
+		table.table.table-striped.table-hover
+			thead
+				tr
+					th Date/Time
+					th Origin
+					th Destination
+					th Name
+					th Operator
+					th Driver
+					th Price
+					th.text-nowrap Op (€)
+					th.text-nowrap Driver (€)
+					th.text-nowrap NET
+			tbody
+				each row in data
+					+commission_table_row(row)
+				tr
+					td
+					td
+					td
+					td
+					td
+					td
+					td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.price, 0).toFixed(2))}€`
+					td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.operatorCommissionValue, 0).toFixed(2))}€`
+					td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.driverCommissionValue, 0).toFixed(2))}€`
+					td= `${parseFloat(commissions.reduce((previousValue, currentValue) => previousValue + currentValue.price - currentValue.driverCommissionValue - currentValue.operatorCommissionValue, 0).toFixed(2))}€`

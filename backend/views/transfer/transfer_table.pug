@@ -6,7 +6,7 @@ mixin transfer_table_row(row)
         input.datetime(type="hidden" value=row.transfer_time)
         td.align-middle.datetime-field
             span.date-span= `${dateString}`
-            | 
+            |
             span.time-span.fw-bold= `${timeString}`
         td.align-middle= row.origin
         td.align-middle= row.destination
@@ -55,7 +55,7 @@ mixin transfer_table_row(row)
                 | &nbsp;
 
 mixin transfer_table(data)
-    div.table-responsive
+
         table.table.table-striped.table-hover
             thead
                 tr
@@ -83,5 +83,5 @@ mixin transfer_table(data)
                     td
                     td.d-print-none
                     td= `${parseFloat(data.reduce((sum, row) => sum + row.price, 0).toFixed(2))}€`
-                    td.d-print-none
+                    td.d-print-none= `${parseFloat(data.reduce((sum, row) => sum + row.paid, 0).toFixed(2))}€`
                     td.d-print-none

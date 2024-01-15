@@ -133,35 +133,30 @@ function ProfileSection(props) {
 				<Text style={[styles.textStyle, {flex: 1}]}>Driver: {props.userData.name}</Text>
 				<Ionicons name="log-out" size={22} color={styles.textStyle.color} onPress={() => confirmLogoutDialog()}/>
 			</View>
-			{
-				userType === 2 &&
-				<View style={[styles.area, styles.nameSection]}>
-					<Text style={[styles.textStyle, {flex: 1}]}>Total Received:
-						€{parseFloat(props.assignments.reduce((sum, value) => sum + (value.payment_method === "CASH" ? value.paid : 0), 0)).toFixed(2)}</Text>
+			<View style={[styles.area, styles.nameSection]}>
+				<Text style={[styles.textStyle, {flex: 1}]}>Total Received:
+					€{parseFloat(props.assignments.reduce((sum, value) => sum + (value.payment_method === "CASH" ? value.paid : 0), 0)).toFixed(2)}</Text>
+			</View>
+			<View style={[styles.area, styles.carPickerArea, {
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center"
+			}]}>
+				<Text style={styles.textStyle}>Car: </Text>
+				<View style={{flex: 1}}>
+					<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+						return {key: item.ID, label: item.displayName, value: item.ID}
+					})} onValueChange={onVehicleValueChange} Icon={() => {
+						return <Chevron size={1.5} color="gray"/>;
+					}} useNativeAndroidPickerStyle={false} style={{
+						iconContainer: {justifyContent: "center", padding: 10},
+						inputAndroid: styles.textStyle,
+						inputAndroidContainer: {padding: 0, justifyContent: "center"},
+						inputIOS: styles.textStyle,
+						inputIOSContainer: {padding: 0, justifyContent: "center"},
+					}} onClose={onVehicleSelectClose}/>
 				</View>
-			}
-			{userType === 2 &&
-				<View style={[styles.area, styles.carPickerArea, {
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center"
-				}]}>
-					<Text style={styles.textStyle}>Car: </Text>
-					<View style={{flex: 1}}>
-						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
-							return {key: item.ID, label: item.displayName, value: item.ID}
-						})} onValueChange={onVehicleValueChange} Icon={() => {
-							return <Chevron size={1.5} color="gray"/>;
-						}} useNativeAndroidPickerStyle={false} style={{
-							iconContainer: {justifyContent: "center", padding: 10},
-							inputAndroid: styles.textStyle,
-							inputAndroidContainer: {padding: 0, justifyContent: "center"},
-							inputIOS: styles.textStyle,
-							inputIOSContainer: {padding: 0, justifyContent: "center"},
-						}} onClose={onVehicleSelectClose}/>
-					</View>
-				</View>
-			}
+			</View>
 		</View>
 	);
 };

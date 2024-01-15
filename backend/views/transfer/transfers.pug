@@ -18,7 +18,7 @@ block content
 							input.form-control#end-date-filter-input(type="date")
 							input#end-date-filter(type="hidden" name="endDate")
 						div.mb-3
-							label.form-label(for="person-filter") Person
+							label.form-label(for="person-filter") Name
 							input.form-control#person-filter(type="text" name="person")
 						div.mb-3
 							label.form-label(for="status") Status
@@ -36,6 +36,8 @@ block content
 								option(value="CASH") Cash
 								option(value="CARD") Card
 								option(value="TRANSFER") Bank Transfer
+								option(value="CC") CC
+								option(value="RETURN") Return
 					div.modal-footer
 						button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close
 						button.btn.btn-primary(type="submit" data-bs-dismiss="modal") Search

@@ -42,6 +42,9 @@ block content
                     button.btn.btn-primary(type="submit")
                         i.bi.bi-file-earmark-arrow-down
                         | Export
+                    button.ms-2.btn.btn-primary(type="button" onclick="window.print();")
+                        i.bi.bi-printer
+                        |  Print
         div.row.g-0.mt-3
             div.col-12
                 +commission_table(commissions)

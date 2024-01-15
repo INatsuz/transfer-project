@@ -438,13 +438,18 @@ router.post("/appusers/create", mustHaveAdminSession, function (req, res) {
 });
 
 router.get("/appusers/update/:id", mustHaveAdminSession, function (req, res) {
-	db.query("SELECT email, name, birthday, userType, commission, color FROM appuser WHERE ID = ?", [req.params.id]).then(({result}) => {
-		res.render("appuser/appuser_update", {
-			ID: req.params.id,
-			userID: req.session.userID,
-			userType: req.session.userType,
-			username: req.session.username,
-			appuser: result[0]
+	db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle").then(({result: vehicles}) => {
+		db.query("SELECT email, name, birthday, userType, commission, color, activeVehicle FROM appuser WHERE ID = ?", [req.params.id]).then(({result}) => {
+			res.render("appuser/appuser_update", {
+				ID: req.params.id,
+				userID: req.session.userID,
+				userType: req.session.userType,
+				username: req.session.username,
+				appuser: result[0],
+				vehicles: vehicles
+			});
+		}).catch(err => {
+			console.log(err);
 		});
 	}).catch(err => {
 		console.log(err);
@@ -452,10 +457,17 @@ router.get("/appusers/update/:id", mustHaveAdminSession, function (req, res) {
 });
 
 router.post("/appusers/update/:id", mustHaveAdminSession, function (req, res) {
-	db.query("UPDATE appuser SET email = ?, name = ?, birthday = ?, userType = ?, commission = ?, color = ? WHERE ID = ?", [req.body.email, req.body.name, req.body.birthday, req.body.userType, req.body.commission / 100, req.body.color, req.params.id]).then(() => {
-		res.redirect("/admin/appusers");
+	const vehicle = req.body.vehicle;
+
+	db.query("UPDATE appuser SET activeVehicle = NULL WHERE activeVehicle = ?", [vehicle]).then(() => {
+		db.query("UPDATE appuser SET email = ?, name = ?, birthday = ?, userType = ?, commission = ?, color = ?, activeVehicle = ? WHERE ID = ?", [req.body.email, req.body.name, req.body.birthday, req.body.userType, req.body.commission / 100, req.body.color, vehicle, req.params.id]).then(() => {
+			res.redirect("/admin/appusers");
+		}).catch(err => {
+			console.log(err);
+		});
 	}).catch(err => {
 		console.log(err);
+		res.status(406).json({err: "Something went wrong with the query"});
 	});
 });
 
@@ -613,6 +625,7 @@ router.get("/commissions", mustHaveAdminSession, function (req, res) {
 						serviceoperator.name AS operatorName,
 						transfer.origin,
 						transfer.destination,
+						transfer.person_name,
 						transfer.transfer_time,
 						transfer.price,
 						transfer.operatorCommission,

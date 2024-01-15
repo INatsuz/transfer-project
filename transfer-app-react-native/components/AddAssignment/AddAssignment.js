@@ -54,7 +54,7 @@ export default function AddAssignment(props) {
 	const [time, setTime] = useState(props.route.params && props.route.params.datetime ? new Date(props.route.params.datetime) : new Date());
 	const [status, setStatus] = useState(props.route.params && props.route.params.status ? props.route.params.status : "PENDING");
 	const [flight, setFlight] = useState(props.route.params && props.route.params.flight ? props.route.params.flight : "");
-	const [driver, setDriver] = useState(userID ?? null);
+	const [driver, setDriver] = useState(isAdmin ? null : userID ?? null);
 	const [vehicle, setVehicle] = useState(null);
 	const [operator, setOperator] = useState(null);
 	const [observations, setObservations] = useState(props.route.params && props.route.params.observations ? props.route.params.observations : "");
@@ -265,6 +265,14 @@ export default function AddAssignment(props) {
 							label: "Bank Transfer",
 							value: "TRANSFER",
 							key: "TRANSFER"
+						}, {
+							label: "CC",
+							value: "CC",
+							key: "CC"
+						}, {
+							label: "Return",
+							value: "RETURN",
+							key: "RETURN"
 						}]} onValueChange={(value) => {
 							if (value !== paymentMethod) {
 								setPaymentMethod(value);

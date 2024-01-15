@@ -72,6 +72,14 @@ block content
                 td.align-middle
                     i.bi.bi-bank.text-primary
                     |  Bank Transfer
+            else if transfer.payment_method === "CC"
+                td.align-middle
+                    i.bi.bi-bank.text-primary
+                    |  CC
+            else if transfer.payment_method === "RETURN"
+                td.align-middle
+                    i.bi.bi-bank.text-primary
+                    |  Return
             else
                 td None
         tr

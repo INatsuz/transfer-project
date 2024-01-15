@@ -61,7 +61,7 @@ export default function Login({route, navigation}) {
 				}
 			}).catch(err => {
 				console.log(err);
-				deleteTokens();
+				deleteTokens().catch(err => console.log(err));
 				setIsLoading(false);
 			});
 		}).catch(err => {

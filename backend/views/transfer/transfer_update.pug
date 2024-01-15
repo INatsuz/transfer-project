@@ -46,6 +46,8 @@ block content
 						option(value="CASH" selected=transfer.payment_method === "CASH") Cash
 						option(value="CARD" selected=transfer.payment_method === "CARD") Card
 						option(value="TRANSFER" selected=transfer.payment_method === "TRANSFER") Bank Transfer
+						option(value="CC" selected=transfer.payment_method === "CC") CC
+						option(value="RETURN" selected=transfer.payment_method === "RETURN") Return
 				div.mb-3
 					label.form-label(for="driver") Driver
 					select.form-select#driver(name="driver")
