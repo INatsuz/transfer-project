@@ -3,9 +3,8 @@ import store from "../redux/setupStore";
 import {navigationRef} from "./RootNavigation";
 import {logoffAction} from "../redux/actions/loginActions";
 import {deleteTokens, getTokens, saveTokens} from "./TokenManager";
-import {API_URL} from '@env';
 
-export const IP = process.env.API_URL ?? API_URL;
+export const IP = process.env.EXPO_PUBLIC_API_URL;
 console.log(IP);
 
 export async function refreshTokens(refreshToken) {

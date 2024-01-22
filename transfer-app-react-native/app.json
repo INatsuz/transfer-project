@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "notification":{
-      "icon":"./assets/notification-icon.png"
+    "notification": {
+      "icon": "./assets/notification-icon.png"
     },
     "scheme": "vrtransfer",
     "splash": {
@@ -41,6 +41,9 @@
       "eas": {
         "projectId": "3dedffb7-52db-46df-b54d-f6c0b36fa79c"
       }
-    }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }

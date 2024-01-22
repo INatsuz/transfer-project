@@ -20,6 +20,10 @@ function AssignmentListItem(props) {
 	let variableStyles = StyleSheet.create({
 		statusBorderColor: {
 			borderRightColor: getStatusColor(props.data.status)
+		},
+
+		operatorBorderColor: {
+			borderLeftColor: props.data.operatorColor
 		}
 	});
 
@@ -52,7 +56,7 @@ function AssignmentListItem(props) {
 
 	return (
 		<TouchableOpacity delayPressIn={20} onPress={() => props.onItemPress(props.data)}>
-			<View style={[styles.listItemContainer, variableStyles.statusBorderColor]}>
+			<View style={[styles.listItemContainer, variableStyles.statusBorderColor, variableStyles.operatorBorderColor]}>
 				{
 					isAdmin && props.data.driver &&
 					<View style={styles.driverIconPosition}>
@@ -115,6 +119,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		borderWidth: 1,
 		borderRightWidth: 4,
+		borderLeftWidth: 4,
 		borderTopColor: ITEM_BORDER_COLOR,
 		borderLeftColor: ITEM_BORDER_COLOR,
 		borderBottomColor: ITEM_BORDER_COLOR,

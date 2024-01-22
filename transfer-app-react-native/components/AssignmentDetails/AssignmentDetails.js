@@ -217,6 +217,14 @@ export default function AssignmentDetails(props) {
 							label: "Bank Transfer",
 							value: "TRANSFER",
 							key: "TRANSFER"
+						}, {
+							label: "CC",
+							value: "CC",
+							key: "CC"
+						}, {
+							label: "Return",
+							value: "RETURN",
+							key: "RETURN"
 						}]} onValueChange={(value) => {
 							if (value !== paymentMethod) {
 								setPaymentMethod(value);

@@ -7,7 +7,7 @@ import {logoffAction} from "../../redux/actions/loginActions";
 import {Chevron} from "react-native-shapes";
 import {getWithAuth, putWithAuth} from "../../utils/Requester";
 import {deleteTokens} from "../../utils/TokenManager";
-import {ACCENT_COLOR, BACKGROUND_COLOR, ITEM_BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/Colors";
+import {ACCENT_COLOR, BACKGROUND_COLOR, ITEM_BACKGROUND_COLOR, TEXT_COLOR} from "../../utils/Colors";
 
 function ProfileSection(props) {
 	const dispatch = useDispatch();
@@ -122,9 +122,7 @@ function ProfileSection(props) {
 	}
 
 	useEffect(() => {
-		if (userType === 2) {
-			fetchVehicles();
-		}
+		fetchVehicles();
 	}, []);
 
 	return (
