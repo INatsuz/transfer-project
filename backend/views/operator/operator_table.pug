@@ -3,6 +3,8 @@ mixin operator_table_row(row)
         td.align-middle= row.ID
         td.align-middle= row.name
         td.align-middle= `${parseFloat((row.commission * 100).toFixed(2))}%`
+        td.align-middle
+            div.ms-auto.me-auto(style=`background-color: ${row.color}; width: 30px; height: 30px; border: 1px solid gray; border-radius: 3px`)
         td.text-nowrap.align-middle
             a.btn.btn-sm.btn-warning.me-1.ms-1(href=`/admin/operators/update/${row.ID}`)
                 i.bi.bi-pencil
@@ -18,6 +20,7 @@ mixin operator_table(data)
                 th ID
                 th Name
                 th Commission
+                th.text-center Color
                 th
         tbody
             each row in data

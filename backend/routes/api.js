@@ -27,7 +27,7 @@ router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
 		queryFilter = "WHERE " + clauses.join(" AND ");
 	}
 
-	db.query(`SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')' ) as vehicleName
+	db.query(`SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, serviceoperator.color as operatorColor, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')' ) as vehicleName
 					FROM transfer
 					LEFT JOIN appuser
 					ON transfer.driver = appuser.ID
@@ -68,7 +68,7 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 		queryFilter = "AND " + clauses.join(" AND ");
 	}
 
-	db.query(`SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
+	db.query(`SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, serviceoperator.color as operatorColor, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
 					FROM transfer 
 					INNER JOIN appuser
 					ON transfer.driver = appuser.ID
@@ -121,7 +121,7 @@ router.get("/searchTransfers", mustBeAuthenticated, function (req, res) {
 
 	console.log(queryFilter);
 
-	db.query(`	SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
+	db.query(`	SELECT transfer.*, appuser.name as driverName, appuser.color, serviceoperator.name as operatorName, serviceoperator.color as operatorColor, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as vehicleName
 					FROM transfer 
 					LEFT JOIN appuser
 					ON transfer.driver = appuser.ID
@@ -159,7 +159,7 @@ router.get("/getDrivers", mustBeAuthenticated, function (req, res, next) {
 
 // GET getOperators
 router.get("/getOperators", mustBeAuthenticated, function (req, res, next) {
-	db.query(`SELECT ID, name, commission FROM serviceoperator`, []).then(({result: operators}) => {
+	db.query(`SELECT ID, name, commission, color FROM serviceoperator`, []).then(({result: operators}) => {
 		res.status(200).json({operators: operators});
 	}).catch(err => {
 		console.log(err);

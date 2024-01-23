@@ -48,26 +48,51 @@ block content
 						option(value="TRANSFER" selected=transfer.payment_method === "TRANSFER") Bank Transfer
 						option(value="CC" selected=transfer.payment_method === "CC") CC
 						option(value="RETURN" selected=transfer.payment_method === "RETURN") Return
-				div.mb-3
-					label.form-label(for="driver") Driver
-					select.form-select#driver(name="driver")
-						option(value="null") No driver
-						each driver in drivers
-							option(value=driver.ID selected=driver.ID === transfer.driver)= driver.name
-					input#driver-commission(type="hidden" name="driverCommission" value="0")
-				div.mb-3
+				if userType === 3
+					div.mb-3
+						label.form-label(for="driver") Driver
+						select.form-select#driver(name="driver")
+							if drivers[0] !== undefined
+								each driver in drivers
+									option(value=driver.ID selected=driver.ID === transfer.driver)= driver.name
+							else
+								option(value="null") No driver
+						input#driver-commission(type="hidden" name="driverCommission" value="0")
+				else
+					div.mb-3
+						label.form-label(for="driver") Driver
+						select.form-select#driver(name="driver")
+							option(value="null") No driver
+							each driver in drivers
+								option(value=driver.ID selected=driver.ID === transfer.driver)= driver.name
+						input#driver-commission(type="hidden" name="driverCommission" value="0")
+				if userType === 3
+					div.mb-3
+						label.form-label(for="vehicle") Vehicle
+						select.form-select#vehicle(name="vehicle")
+							if vehicles[0] !== undefined
+								each vehicle in vehicles
+									option(value=vehicle.ID selected = vehicle.ID === transfer.vehicle)= vehicle.name
+							else
+								option(value="null") No vehicle
+				else
 					label.form-label(for="vehicle") Vehicle
-					select.form-select#vehicle(name="vehicle")
-						option(value="null") No vehicle
-						each vehicle in vehicles
-							option(value=vehicle.ID selected = vehicle.ID === transfer.vehicle)= vehicle.name
+						select.form-select#vehicle(name="vehicle")
+							option(value="null") No vehicle
+							each vehicle in vehicles
+								option(value=vehicle.ID selected = vehicle.ID === transfer.vehicle)= vehicle.name
+
 				div.mb-3
 					label.form-label(for="operator") Operator
 					select.form-select#operator(name="operator")
-						option(value="null") No operator
+						unless userType === 3
+							option(value="null") No operator
 						each operator in operators
 							option(value=operator.ID selected = operator.ID === transfer.service_operator)= operator.name
-					input#operator-commission(type="hidden" name="operatorCommission" value="0")
+					if userType === 3
+						input#operator-commission(type="hidden" name="operatorCommission" value=`${operators[0].commission}`)
+					else
+						input#operator-commission(type="hidden" name="operatorCommission" value="0")
 				div.mb-3
 					label.form-label(for="observations") Observations
 					textarea.form-control#observations(name="observations" rows=2)= transfer.observations

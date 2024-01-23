@@ -8,8 +8,8 @@ mixin commission_table_row(row)
 		td.align-middle= row.origin
 		td.align-middle= row.destination
 		td.align-middle= row.person_name
-		td.align-middle= row.driverName
 		td.align-middle= row.operatorName
+		td.align-middle= row.driverName
 		td.align-middle= `${row.price}€`
 		td.align-middle= `${parseFloat((row.operatorCommissionValue).toFixed(2))}€`
 		td.align-middle= `${parseFloat((row.driverCommissionValue).toFixed(2))}€`

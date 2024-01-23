@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "nodemon --env-file=.env ./bin/www"
+    "debug": "nodemon ./bin/www",
+    "debug-linux": "nodemon --env-file=.env ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -15,9 +16,9 @@
     "express-session": "^1.17.3",
     "http-errors": "~1.6.3",
     "ical-generator": "^5.0.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "9.0.0",
     "morgan": "~1.9.1",
-    "mysql": "^2.18.1",
+    "mysql2": "^3.7.1",
     "pug": "2.0.0-beta11"
   },
   "devDependencies": {

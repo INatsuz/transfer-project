@@ -10,7 +10,9 @@ block content
                 div.mb-3
                     label.form-label(for="commission") Commission
                     input.form-control#commission(type="number" name="commission" step=0.01 value=(operator.commission * 100).toFixed(2))
-
+                div.mb-3
+                    label.form-label(for="color") Color
+                    input.form-control.form-control-color#color(type="color" name="color" value=`${operator.color}` title="Choose a color to match the operator")
                 button.btn.btn-success(type="submit")
                     i.bi.bi-pencil
                     |  Update
