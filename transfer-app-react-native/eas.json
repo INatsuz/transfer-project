@@ -15,7 +15,7 @@
         "buildType": "apk"
       },
       "env": {
-        "API_URL": "app.takemethere.pt"
+        "EXPO_PUBLIC_API_URL": "app.takemethere.pt"
       }
     }
   },
