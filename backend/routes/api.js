@@ -131,7 +131,7 @@ router.get("/searchTransfers", mustBeAuthenticated, function (req, res) {
 					ON transfer.vehicle = vehicle.ID
 					${queryFilter}
 					${req.tokenPayload.userType === USER_TYPES.DRIVER ? " AND (transfer.driver IS NULL OR transfer.driver = ?)" : ""}
-					ORDER BY transfer.transfer_time DESC`, [...queryVariables, ...(req.tokenPayload.userType === USER_TYPES.DRIVER ? [req.tokenPayload.ID] : [])]).then(({result: transfers}) => {
+					ORDER BY transfer.transfer_time ${startDate && startDate !== "undefined" ? "ASC" : "DESC"}`, [...queryVariables, ...(req.tokenPayload.userType === USER_TYPES.DRIVER ? [req.tokenPayload.ID] : [])]).then(({result: transfers}) => {
 		if (transfers) {
 			res.status(200).json({transfers: transfers});
 		} else {
