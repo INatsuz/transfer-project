@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "High Class Chauffeurs",
-    "slug": "HighClassChauffeurs",
+    "name": "All Aboard Chauffeurs",
+    "slug": "allaboardchauffeurs",
     "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,7 +23,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.inatsuz.highclasschauffeurs"
+      "bundleIdentifier": "com.inatsuz.allaboardchauffeurs"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -32,14 +32,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.inatsuz.highclasschauffeurs"
+      "package": "com.inatsuz.allaboardchauffeurs"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "02e52b4e-ff13-441a-bc8e-9412f71ce35c"
+        "projectId": "f0e82b79-24f7-4263-951c-e491b084c20e"
       }
     }
   }

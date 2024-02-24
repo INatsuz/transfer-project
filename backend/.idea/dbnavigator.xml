@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DBNavigator.Project.DDLFileAttachmentManager">
+    <mappings />
+    <preferences />
+  </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
     <value-preview-text-wrapping value="false" />
@@ -29,11 +33,11 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="31762e80-0e6f-4bb1-9fca-ff5ef66936fa">
-      <console name="Transfer App DB" type="STANDARD" schema="transfer_app" session="Main"><![CDATA[SELECT transfer.*, appuser.name as driverName
+      <console name="Transfer App DB" type="STANDARD" schema="transfer_app" session="Main">SELECT transfer.*, appuser.name as driverName
 FROM transfer
 LEFT JOIN appuser
 ON transfer.driver = appuser.ID
-WHERE status <> 'FINISHED';
+WHERE status &lt;&gt; 'FINISHED';
 
 SELECT *
 FROM appuser;
@@ -58,7 +62,7 @@ LEFT JOIN serviceoperator
 ON transfer.service_operator = serviceoperator.ID
 LEFT JOIN vehicle
 ON transfer.vehicle = vehicle.ID
-WHERE transfer.status <> 'FINISHED'
+WHERE transfer.status &lt;&gt; 'FINISHED'
 AND appuser.ID = 2;
 
 SELECT transfer.*, appuser.name as driverName, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as displayName
@@ -67,7 +71,7 @@ LEFT JOIN appuser
 ON transfer.driver = appuser.ID 
 LEFT JOIN vehicle
 ON transfer.vehicle = vehicle.ID
-WHERE transfer.status <> 'FINISHED';
+WHERE transfer.status &lt;&gt; 'FINISHED';
 
 UPDATE appuser SET activeVehicle = 2 WHERE ID = 2;
 
@@ -120,7 +124,7 @@ FROM transfer
 INNER JOIN appuser ON transfer.driver = appuser.ID
 UNION
 SELECT '', '', '', '', '', '', '', SUM(transfer.commission * transfer.price) 
-FROM transfer;]]></console>
+FROM transfer;</console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -179,13 +183,15 @@ FROM transfer;]]></console>
           <database-type value="MYSQL" />
           <config-type value="BASIC" />
           <database-version value="5.5" />
-          <driver-source value="BUILTIN" />
+          <driver-source value="BUNDLED" />
           <driver-library value="" />
           <driver value="" />
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="3306" />
           <database value="transfer_app" />
+          <tns-folder value="" />
+          <tns-profile value="" />
           <type value="USER_PASSWORD" />
           <user value="inatsuz" />
           <deprecated-pwd value="VlJhbWluaG9zMjUwOQ==" />
@@ -225,8 +231,16 @@ FROM transfer;]]></console>
           <max-connection-pool-size value="7" />
           <alternative-statement-delimiter value="" />
         </details>
-        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
-          <object-type-filter>
+        <debugger>
+          <compile-dependencies value="true" />
+          <tcp-driver-tunneling value="false" />
+          <tcp-host-address value="" />
+          <tcp-port-from value="4000" />
+          <tcp-port-to value="4999" />
+          <debugger-type value="JDBC" />
+        </debugger>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
+          <object-type-filter use-master-settings="true">
             <object-type name="SCHEMA" enabled="true" />
             <object-type name="USER" enabled="true" />
             <object-type name="ROLE" enabled="true" />
@@ -404,6 +418,7 @@ FROM transfer;]]></console>
       <confirmations>
         <save-changes value="false" />
         <revert-changes value="true" />
+        <exit-on-changes value="ASK" />
       </confirmations>
     </code-editor-settings>
     <code-completion-settings>
@@ -602,10 +617,6 @@ FROM transfer;]]></console>
         <compile-dependencies value="ASK" />
         <always-show-controls value="false" />
       </compiler>
-      <debugger>
-        <debugger-type value="JDBC" />
-        <use-generic-runners value="true" />
-      </debugger>
     </operation-settings>
     <ddl-file-settings>
       <extensions>

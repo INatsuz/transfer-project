@@ -15,7 +15,7 @@
         "buildType": "apk"
       },
       "env": {
-        "API_URL": "app.highclasschauffeurs.com"
+        "API_URL": "app.allaboardportugal.com"
       }
     }
   },
