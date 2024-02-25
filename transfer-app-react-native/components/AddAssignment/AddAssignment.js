@@ -24,7 +24,7 @@ import {ACCENT_COLOR, BACKGROUND_COLOR, DISABLED_TEXT_COLOR, ITEM_BORDER_COLOR, 
 
 export default function AddAssignment(props) {
 	const userID = useSelector(state => state.login.userID);
-	const isAdmin = useSelector(state => state.login.userType === 1);
+	const isAdmin = useSelector(state => state.login.userType === 1 || state.login.userType === 4);
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
 	const navigation = useNavigation();
 
@@ -235,7 +235,7 @@ export default function AddAssignment(props) {
 					{/* Price field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Price: </Text>
-						<TextInput keyboardType="numeric" defaultValue={price} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+						<TextInput keyboardType="numeric" defaultValue={price.toString()} placeholder={"Price"} placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
 							let dotted_value = value.replace(",", ".");
 							setPrice(parseFloat(dotted_value));
 						}}/>
@@ -244,7 +244,7 @@ export default function AddAssignment(props) {
 					{/* Paid field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Paid: </Text>
-						<TextInput keyboardType="numeric" defaultValue={paid} placeholder="Paid" placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
+						<TextInput keyboardType="numeric" defaultValue={paid.toString()} placeholder="Paid" placeholderTextColor="#A3A9AA" style={[styles.textStyle, styles.input]} onChangeText={(value) => {
 							let dotted_value = value.replace(",", ".");
 							setPaid(parseFloat(dotted_value));
 						}}/>

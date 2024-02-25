@@ -26,7 +26,7 @@ router.get("/", function (req, res) {
 					start,
 					end,
 					summary: `${result[i].person_name} : ${result[i].num_of_people} | ${result[i].origin} → ${result[i].destination}`,
-					description: `Person: ${result[i].person_name}\nPax: ${result[i].num_of_people}\nOrigin: ${result[i].origin}\nDestination: ${result[i].destination}\nFlight: ${result[i].flight}\nObservations: ${result[i].observations}`,
+					description: `Name: ${result[i].person_name}\nPax: ${result[i].num_of_people}\nOrigin: ${result[i].origin}\nDestination: ${result[i].destination}\nPrice: ${result[i].price}\nFlight: ${result[i].flight}\nObservations: ${result[i].observations}`,
 					id: result[i].ID
 				}
 			);

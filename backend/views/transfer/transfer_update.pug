@@ -76,7 +76,8 @@ block content
 							else
 								option(value="null") No vehicle
 				else
-					label.form-label(for="vehicle") Vehicle
+					div.mb-3
+						label.form-label(for="vehicle") Vehicle
 						select.form-select#vehicle(name="vehicle")
 							option(value="null") No vehicle
 							each vehicle in vehicles

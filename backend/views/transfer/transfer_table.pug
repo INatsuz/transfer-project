@@ -38,7 +38,8 @@ mixin transfer_table_row(row)
         td.align-middle= row.num_of_people
         td.align-middle.d-print-none= row.driver
         td.align-middle= `${parseFloat((row.price).toFixed(2))}€`
-        td.align-middle.d-print-none= `${parseFloat((row.paid).toFixed(2))}€`
+        unless userType === 3
+            td.align-middle.d-print-none= `${parseFloat((row.paid).toFixed(2))}€`
 
         td.text-nowrap.align-middle.d-print-none.text-center
             a.btn.btn-sm.btn-primary.me-1(href=`/admin/transfers/details/${row.ID}`)
@@ -49,7 +50,7 @@ mixin transfer_table_row(row)
                 | &nbsp;
                 i.bi.bi-pencil
                 | &nbsp;
-            if userType === 1
+            unless userType === 3
                 a.btn.btn-sm.btn-danger.ms-1(href=`/admin/transfers/delete/${row.ID}?returnLink=${url}`)
                     | &nbsp;
                     i.bi.bi-trash
@@ -69,20 +70,22 @@ mixin transfer_table(data)
                     th Pax
                     th.d-print-none Driver
                     th Price
-                    th.d-print-none Paid
+                    unless userType === 3
+                        th.d-print-none Paid
                     th.d-print-none
             tbody
                 each row in data
                     +transfer_table_row(row)
-                tr
-                    td
-                    td
-                    td
-                    td
-                    td.d-print-none
-                    td.d-print-none
-                    td
-                    td.d-print-none
-                    td= `${parseFloat(data.reduce((sum, row) => sum + row.price, 0).toFixed(2))}€`
-                    td.d-print-none= `${parseFloat(data.reduce((sum, row) => sum + row.paid, 0).toFixed(2))}€`
-                    td.d-print-none
+                if userType === 1
+                    tr
+                        td
+                        td
+                        td
+                        td
+                        td.d-print-none
+                        td.d-print-none
+                        td
+                        td.d-print-none
+                        td= `${parseFloat(data.reduce((sum, row) => sum + row.price, 0).toFixed(2))}€`
+                        td.d-print-none= `${parseFloat(data.reduce((sum, row) => sum + row.paid, 0).toFixed(2))}€`
+                        td.d-print-none

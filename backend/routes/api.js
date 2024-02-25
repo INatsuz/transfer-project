@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const {mustBeAuthenticated, mustBeAdmin, USER_TYPES} = require("../utils/authentication");
+const {mustBeAuthenticated, mustBeAdmin, USER_TYPES, mustBeUserType} = require("../utils/authentication");
 const db = require('../utils/db');
 const {sendPushNotification} = require("../utils/PushNotificationManager");
 
 // GET getAllTransfers
-router.get("/getAllTransfers", mustBeAdmin, function (req, res, next) {
+router.get("/getAllTransfers", mustBeUserType(USER_TYPES.ADMIN, USER_TYPES.MANAGER), function (req, res, next) {
 	let {startDate, endDate} = req.query;
 
 	let clauses = [];

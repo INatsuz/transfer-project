@@ -7,7 +7,7 @@ const JWT_SECRET = "w5JVIErNaQ";
 const ACCESS_TOKEN_DURATION = "30m";
 const REFRESH_TOKEN_DURATION = "7d";
 
-const USER_TYPES = {ADMIN: 1, DRIVER: 2, HOTEL: 3}
+const USER_TYPES = {ADMIN: 1, DRIVER: 2, HOTEL: 3, MANAGER: 4};
 
 function verifyLoginCredentials(email, password, ...types) {
 	console.log(types);
@@ -95,7 +95,10 @@ function generateTokens(payload) {
 				reject(err);
 			}
 
-			jwt.sign({...payload, isRefreshToken: true}, JWT_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}, function (err, refreshToken) {
+			jwt.sign({
+				...payload,
+				isRefreshToken: true
+			}, JWT_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}, function (err, refreshToken) {
 				if (err) {
 					console.log(err);
 					reject(err);
@@ -122,16 +125,7 @@ function refreshAccessToken(refreshToken) {
 }
 
 function mustBeAuthenticated(req, res, next) {
-	let authHeader = req.header("Authorization");
-
-	if (!authHeader) {
-		res.status(401).json({err: "Unauthorized"});
-	}
-
-	if (!authHeader.startsWith("Bearer ")) {
-		res.status(401).json({err: "Unauthorized"});
-	}
-	let accessToken = authHeader.slice(7);
+	let accessToken = extractToken(req, res);
 
 	jwt.verify(accessToken, JWT_SECRET, {}, function (err, payload) {
 		if (err) {
@@ -150,16 +144,7 @@ function mustBeAuthenticated(req, res, next) {
 }
 
 function mustBeAdmin(req, res, next) {
-	let authHeader = req.header("Authorization");
-
-	if (!authHeader) {
-		res.status(401).json({err: "Unauthorized"});
-	}
-
-	if (!authHeader.startsWith("Bearer ")) {
-		res.status(401).json({err: "Unauthorized"});
-	}
-	let accessToken = authHeader.slice(7);
+	let accessToken = extractToken(req, res);
 
 	jwt.verify(accessToken, JWT_SECRET, {}, function (err, payload) {
 		if (err) {
@@ -175,6 +160,27 @@ function mustBeAdmin(req, res, next) {
 		req.tokenPayload = payload;
 		next();
 	});
+}
+
+function mustBeUserType(...types) {
+	return (req, res, next) => {
+		let accessToken = extractToken(req, res);
+
+		jwt.verify(accessToken, JWT_SECRET, {}, function (err, payload) {
+			if (err) {
+				res.status(401).json({err: "Unauthorized"});
+				return;
+			}
+
+			if (!types.includes(payload.userType)) {
+				res.status(403).json({err: "Not an authorized user type"});
+				return;
+			}
+
+			req.tokenPayload = payload;
+			next();
+		});
+	}
 }
 
 function mustHaveSession(req, res, next) {
@@ -200,6 +206,20 @@ function mustHaveAdminSession(req, res, next) {
 	next();
 }
 
+function extractToken(req, res) {
+	let authHeader = req.header("Authorization");
+
+	if (!authHeader) {
+		res.status(401).json({err: "Unauthorized"});
+	}
+
+	if (!authHeader.startsWith("Bearer ")) {
+		res.status(401).json({err: "Unauthorized"});
+	}
+
+	return authHeader.slice(7);
+}
+
 module.exports.USER_TYPES = USER_TYPES;
 module.exports.verifyLoginCredentials = verifyLoginCredentials;
 module.exports.verifyLoginAndGenerateTokens = verifyLoginAndGenerateTokens;
@@ -207,5 +227,6 @@ module.exports.verifyToken = verifyToken;
 module.exports.generateTokens = generateTokens;
 module.exports.mustBeAuthenticated = mustBeAuthenticated;
 module.exports.mustBeAdmin = mustBeAdmin;
+module.exports.mustBeUserType = mustBeUserType;
 module.exports.mustHaveSession = mustHaveSession;
 module.exports.mustHaveAdminSession = mustHaveAdminSession;

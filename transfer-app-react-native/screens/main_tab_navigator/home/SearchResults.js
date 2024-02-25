@@ -18,7 +18,7 @@ export default function SearchResults({route, navigation}) {
 	}
 
 	const navigateToDetails = function (assignment) {
-		navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: userType === 1})
+		navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: userType === 1 || userType === 4})
 	};
 
 	return(

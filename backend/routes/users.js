@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
 
 // Login POST method
 router.post('/login', function (req, res, next) {
-	verifyLoginAndGenerateTokens(req.body.email, req.body.password).then(({accessToken, refreshToken, payload}) => {
+	verifyLoginAndGenerateTokens(req.body.email, req.body.password, USER_TYPES.DRIVER, USER_TYPES.ADMIN, USER_TYPES.MANAGER).then(({accessToken, refreshToken, payload}) => {
 		res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, user: payload});
 
 		db.query(`UPDATE appuser SET notificationToken = ? WHERE email = ?`, [req.body.notificationToken, req.body.email]).then(() => {

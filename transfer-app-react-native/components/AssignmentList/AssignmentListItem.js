@@ -11,7 +11,7 @@ import {ITEM_BACKGROUND_COLOR, ITEM_BORDER_COLOR, TEXT_COLOR} from "../../utils/
 function AssignmentListItem(props) {
 	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
-	const isAdmin = useSelector(state => state.login.userType === 1);
+	const isAdmin = useSelector(state => state.login.userType === 1 || state.login.userType === 4);
 
 	let datetime = new Date(props.data.transfer_time);
 	const dateString = String(datetime.getDate()).padStart(2, "0") + "/" + String(datetime.getMonth() + 1).padStart(2, "0") + "/" + datetime.getFullYear();

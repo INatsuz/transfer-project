@@ -41,7 +41,7 @@ export default function Home(props) {
 			let day_after_tomorrow = new Date(today.getTime());
 			day_after_tomorrow.setDate(day_after_tomorrow.getDate() + 2);
 
-			let endpoint = userType === 1 ? "api/getAllTransfers" : "api/getAssignedTransfers";
+			let endpoint = userType === 1 || userType === 4 ? "api/getAllTransfers" : "api/getAssignedTransfers";
 
 			getWithAuth(`${endpoint}?startDate=${yesterday.toISOString()}&endDate=${day_after_tomorrow.toISOString()}`).then(res => {
 				setAssignments(res.data.transfers);
@@ -55,13 +55,13 @@ export default function Home(props) {
 	}
 
 	function navigateToDetails(assignment) {
-		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: userType === 1})
+		props.navigation.navigate("AssignmentDetails", {assignment: assignment, isAdmin: userType === 1 || userType === 4})
 	}
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {
-				isAdmin: userType === 1,
+				isAdmin: userType === 1 || userType === 4,
 				userID: userID
 			})}>
 				<Ionicons name="add" size={22} color={TEXT_COLOR}/>
@@ -85,7 +85,7 @@ export default function Home(props) {
 				</TouchableOpacity>
 			</View>
 			<View style={styles.section}>
-				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails} isSearchButtonVisible={userType !== 3} isCalendarButtonVisible={userType === 1}/>
+				<AssignmentList assignments={filterAssignments()} fetchAssignments={fetchAssignments} onItemPress={navigateToDetails} isSearchButtonVisible={userType !== 3} isCalendarButtonVisible={userType === 1 || userType === 4}/>
 			</View>
 		</SafeAreaView>
 	)

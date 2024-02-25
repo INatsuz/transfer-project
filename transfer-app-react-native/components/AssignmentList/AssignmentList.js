@@ -51,6 +51,7 @@ export default function AssignmentList(props) {
 				</View>
 			</View>
 			<FlatList
+				contentContainerStyle={{flexGrow: 1}}
 				data={props.assignments}
 				renderItem={({item}) => <AssignmentListItem key={item.id} data={item} onItemPress={props.onItemPress}/>}
 				refreshing={refreshing}

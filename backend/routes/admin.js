@@ -39,7 +39,7 @@ router.post("/login", function (req, res) {
 		return;
 	}
 
-	verifyLoginCredentials(req.body.email, req.body.password, USER_TYPES.ADMIN, USER_TYPES.HOTEL).then(result => {
+	verifyLoginCredentials(req.body.email, req.body.password, USER_TYPES.ADMIN, USER_TYPES.HOTEL, USER_TYPES.MANAGER).then(result => {
 		req.session.email = result.email;
 		req.session.userID = result.ID;
 		req.session.username = result.name;
@@ -320,31 +320,39 @@ router.get("/transfers/details/:id", mustHaveSession, function (req, res) {
 	});
 });
 
-router.get("/transfers/delete/:id", mustHaveAdminSession, function (req, res) {
-	res.render("transfer/transfer_delete", {
-		ID: req.params.id,
-		userID: req.session.userID,
-		userType: req.session.userType,
-		username: req.session.username,
-		url: encodeURIComponent(req.query.returnLink)
-	});
+router.get("/transfers/delete/:id", mustHaveSession, function (req, res) {
+	if (req.session.userType === USER_TYPES.HOTEL) {
+		res.redirect("/admin");
+	} else {
+		res.render("transfer/transfer_delete", {
+			ID: req.params.id,
+			userID: req.session.userID,
+			userType: req.session.userType,
+			username: req.session.username,
+			url: encodeURIComponent(req.query.returnLink)
+		});
+	}
 });
 
-router.post("/transfers/delete", mustHaveAdminSession, function (req, res) {
-	if (!req.body.id) {
-		res.status(400).redirect("/admin/transfers");
-		return;
+router.post("/transfers/delete", mustHaveSession, function (req, res) {
+	if (req.session.userType === USER_TYPES.HOTEL) {
+		res.redirect("/admin");
+	} else {
+		if (!req.body.id) {
+			res.status(400).redirect("/admin/transfers");
+			return;
+		}
+
+		let query = "DELETE FROM transfer WHERE ID = ?";
+		let queryVariables = [req.body.id];
+
+		db.query(query, queryVariables).then(() => {
+		}).catch(err => {
+			console.log(err);
+		}).finally(() => {
+			res.redirect(req.query.returnLink);
+		});
 	}
-
-	let query = "DELETE FROM transfer WHERE ID = ?";
-	let queryVariables = [req.body.id];
-
-	db.query(query, queryVariables).then(() => {
-	}).catch(err => {
-		console.log(err);
-	}).finally(() => {
-		res.redirect(req.query.returnLink);
-	});
 });
 
 // Vehicle routes
