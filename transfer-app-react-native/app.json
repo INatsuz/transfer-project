@@ -5,9 +5,9 @@
     "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
-    "notification":{
-      "icon":"./assets/notification-icon.png"
+    "userInterfaceStyle": "light",
+    "notification": {
+      "icon": "./assets/notification-icon.png"
     },
     "scheme": "vrtransfer",
     "splash": {
@@ -30,7 +30,7 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#1D1D1D"
       },
       "package": "com.inatsuz.allaboardchauffeurs"
     },
@@ -41,6 +41,9 @@
       "eas": {
         "projectId": "f0e82b79-24f7-4263-951c-e491b084c20e"
       }
-    }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }
