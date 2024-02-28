@@ -102,7 +102,7 @@ export default function Login({route, navigation}) {
 
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"} style={{flex: 1, backgroundColor: BACKGROUND_COLOR}}>
-			<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
+			<StatusBar backgroundColor={BACKGROUND_COLOR} style={"dark"} translucent={true}/>
 			{isLoading ? (
 				<View style={[styles.container, {justifyContent: "center", alignItems: "center", height: "100%"}]}>
 					<ActivityIndicator size={"large"}/>

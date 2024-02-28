@@ -15,7 +15,7 @@ export default function MainTabNavigator() {
 
 	return (
 		<View style={styles.container}>
-			<StatusBar backgroundColor={BACKGROUND_COLOR} translucent={true}/>
+			<StatusBar backgroundColor={BACKGROUND_COLOR} style={"dark"} translucent={true}/>
 			<Tab.Navigator screenOptions={{
 				tabBarActiveTintColor: TEXT_COLOR,
 				tabBarInactiveTintColor: ITEM_BORDER_COLOR,
