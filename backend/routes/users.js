@@ -11,6 +11,8 @@ router.post('/login', function (req, res, next) {
 	verifyLoginAndGenerateTokens(req.body.email, req.body.password).then(({accessToken, refreshToken, payload}) => {
 		res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, user: payload});
 
+		console.log(req.body.notificationToken);
+
 		db.query(`UPDATE appuser SET notificationToken = ? WHERE email = ?`, [req.body.notificationToken, req.body.email]).then(() => {
 			console.log("Updated notification token on login for " + req.body.email);
 		}).catch(err => {
