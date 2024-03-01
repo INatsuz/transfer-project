@@ -15,6 +15,7 @@ import {MenuProvider} from "react-native-popup-menu";
 import * as Linking from "expo-linking";
 import * as SplashScreen from 'expo-splash-screen';
 import {BACKGROUND_COLOR} from "./utils/Colors";
+import Constants from "expo-constants";
 
 const Stack = createNativeStackNavigator();
 
@@ -132,7 +133,7 @@ async function registerForPushNotificationsAsync() {
 	let token;
 
 	if (Platform.OS === 'android') {
-		await Notifications.setNotificationChannelAsync('default', {
+		Notifications.setNotificationChannelAsync('default', {
 			name: 'default',
 			importance: Notifications.AndroidImportance.MAX,
 			vibrationPattern: [0, 250, 250, 250],
@@ -141,21 +142,23 @@ async function registerForPushNotificationsAsync() {
 	}
 
 	if (Device.isDevice) {
-		const {status: existingStatus} = await Notifications.getPermissionsAsync();
+		const { status: existingStatus } = await Notifications.getPermissionsAsync();
 		let finalStatus = existingStatus;
 		if (existingStatus !== 'granted') {
-			const {status} = await Notifications.requestPermissionsAsync();
+			const { status } = await Notifications.requestPermissionsAsync();
 			finalStatus = status;
 		}
 		if (finalStatus !== 'granted') {
 			alert('Failed to get push token for push notification!');
 			return;
 		}
-		token = (await Notifications.getExpoPushTokenAsync()).data;
+		token = await Notifications.getExpoPushTokenAsync({
+			projectId: Constants.expoConfig.extra.eas.projectId,
+		});
 		console.log(token);
 	} else {
 		alert('Must use physical device for Push Notifications');
 	}
 
-	return token;
+	return token.data;
 }
