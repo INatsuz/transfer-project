@@ -736,6 +736,7 @@ router.get("/genCommissionCSV", mustHaveAdminSession, function (req, res, next) 
 				transfer.destination AS Destination,
 				transfer.person_name AS Name,
 				transfer.num_of_people AS Pax,
+				transfer.status AS Status,
 				IF(ISNULL(serviceoperator.name), "", serviceoperator.name) AS Operator,
 				IF(ISNULL(creator.name), "", creator.name) AS "Created By",
 				DATE_FORMAT(transfer.createdOn, '%d/%m/%Y %T UTC') AS "Created On",
