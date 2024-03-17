@@ -140,7 +140,7 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 			});
 		});
 	} else {
-		let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ?", [USER_TYPES.ADMIN, USER_TYPES.DRIVER]);
+		let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ? OR userType = ? ORDER BY appuser.birthday", [USER_TYPES.ADMIN, USER_TYPES.DRIVER, USER_TYPES.MANAGER]);
 		let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
 		let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
 
@@ -208,7 +208,7 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 });
 
 router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
-	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ?", [USER_TYPES.ADMIN, USER_TYPES.DRIVER]);
+	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ? OR userType = ? ORDER BY appuser.birthday", [USER_TYPES.ADMIN, USER_TYPES.DRIVER, USER_TYPES.MANAGER]);
 	let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
 	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
 

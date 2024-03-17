@@ -149,7 +149,8 @@ router.get("/getDrivers", mustBeAuthenticated, function (req, res, next) {
 			FROM appuser 
 			LEFT JOIN vehicle 
 			ON vehicle.ID = appuser.activeVehicle
-			WHERE appuser.userType = ? OR appuser.userType = ?`, [USER_TYPES.ADMIN, USER_TYPES.DRIVER]).then(({result: drivers}) => {
+			WHERE appuser.userType = ? OR appuser.userType = ? OR appuser.userType = ?
+			ORDER BY appuser.birthday`, [USER_TYPES.ADMIN, USER_TYPES.DRIVER, USER_TYPES.MANAGER]).then(({result: drivers}) => {
 		res.status(200).json({drivers: drivers});
 	}).catch(err => {
 		console.log(err);
