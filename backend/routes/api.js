@@ -356,6 +356,8 @@ router.post("/addTransfer", mustBeAuthenticated, function (req, res, next) {
 		observations
 	} = req.body;
 
+	console.log(datetime);
+
 	if (person_name && num_of_people && price !== undefined && paid !== undefined && origin && destination && flight !== undefined && datetime && status && observations !== undefined) {
 		db.query(`INSERT INTO 
 						transfer(person_name, num_of_people, price, paid, payment_method, origin, destination, flight, transfer_time, status, driver, vehicle, service_operator, observations, driverCommission, operatorCommission, createdBy) 

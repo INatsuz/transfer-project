@@ -24,7 +24,8 @@ import {ACCENT_COLOR, BACKGROUND_COLOR, DISABLED_TEXT_COLOR, ITEM_BORDER_COLOR, 
 
 export default function AddAssignment(props) {
 	const userID = useSelector(state => state.login.userID);
-	const isAdmin = useSelector(state => state.login.userType === 1 || state.login.userType === 4);
+	const userType = useSelector(state => state.login.userType);
+	const isAdmin = userType === 1 || userType === 4;
 	const isLoggedIn = useSelector(state => state.login.loggedIn);
 	const navigation = useNavigation();
 
@@ -54,7 +55,7 @@ export default function AddAssignment(props) {
 	const [time, setTime] = useState(props.route.params && props.route.params.datetime ? new Date(props.route.params.datetime) : new Date());
 	const [status, setStatus] = useState(props.route.params && props.route.params.status ? props.route.params.status : "PENDING");
 	const [flight, setFlight] = useState(props.route.params && props.route.params.flight ? props.route.params.flight : "");
-	const [driver, setDriver] = useState(isAdmin ? null : userID ?? null);
+	const [driver, setDriver] = useState(userType === 1 ? null : userID ?? null);
 	const [vehicle, setVehicle] = useState(null);
 	const [operator, setOperator] = useState(null);
 	const [observations, setObservations] = useState(props.route.params && props.route.params.observations ? props.route.params.observations : "");
@@ -87,6 +88,8 @@ export default function AddAssignment(props) {
 	}, [operators])
 
 	function onAddPress() {
+		date.setHours(time.getHours(), time.getMinutes());
+
 		let data = {
 			person_name: personName,
 			num_of_people: numberOfPeople,
@@ -96,7 +99,7 @@ export default function AddAssignment(props) {
 			paid: isNaN(parseFloat(paid)) ? 0 : paid,
 			paymentMethod,
 			flight,
-			datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:00`,
+			datetime: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:00`,
 			status,
 			driver,
 			driverCommission: drivers.find(value => value.ID === driver) ? drivers.find(value => value.ID === driver).commission : 0,

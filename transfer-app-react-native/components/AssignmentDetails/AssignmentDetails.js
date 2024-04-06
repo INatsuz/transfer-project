@@ -61,6 +61,8 @@ export default function AssignmentDetails(props) {
 	}, []);
 
 	function onSavePress() {
+		date.setHours(time.getHours(), time.getMinutes());
+
 		putWithAuth("api/updateTransfer", {
 			ID: assignment.ID,
 			person_name: personName,
@@ -71,7 +73,7 @@ export default function AssignmentDetails(props) {
 			price: isNaN(parseFloat(price)) ? 0 : price,
 			paid: isNaN(parseFloat(paid)) ? 0 : paid,
 			paymentMethod,
-			time: `${datetime.getUTCFullYear()}-${datetime.getUTCMonth() + 1}-${datetime.getUTCDate()} ${datetime.getUTCHours()}:${datetime.getUTCMinutes()}:00`,
+			time: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:00`,
 			driver: driver,
 			driverCommission: drivers.find(value => value.ID === driver) ? drivers.find(value => value.ID === driver).commission : 0,
 			vehicle: activeVehicle,

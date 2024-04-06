@@ -60,10 +60,7 @@ export default function Home(props) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment", {
-				isAdmin: userType === 1 || userType === 4,
-				userID: userID
-			})}>
+			<TouchableOpacity style={styles.plusContainer} onPress={() => props.navigation.navigate("AddAssignment")}>
 				<Ionicons name="add" size={22} color={TEXT_COLOR}/>
 			</TouchableOpacity>
 			<View>
