@@ -2,7 +2,7 @@ const db = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "w5JVIErNaQ";
+const JWT_SECRET = "naNrdh7vkW7spp53ISGLc7qyVTIJBbvk";
 
 const ACCESS_TOKEN_DURATION = "30m";
 const REFRESH_TOKEN_DURATION = "7d";
