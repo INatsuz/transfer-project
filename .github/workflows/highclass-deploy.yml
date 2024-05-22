@@ -38,4 +38,4 @@ jobs:
             docker build . -t transfer_app_backend
             docker container stop transfer-app-backend
             docker container prune -f
-            docker container run --name transfer-app-backend -e DB_HOST='172.17.0.1' -v /home/vasco/ssl:/usr/app/backend/ssl -e DB_USERNAME="$DB_USERNAME" -e DB_PASSWORD="$DB_PASSWORD" --restart unless-stopped -d -p 443:443 -p 80:80 transfer_app_backend:latest
+            docker container run --name transfer-app-backend -e DB_HOST='172.17.0.1' -v /home/vasco/ssl/app.highclasschauffeurs.com:/usr/app/backend/ssl -e DB_USERNAME="$DB_USERNAME" -e DB_PASSWORD="$DB_PASSWORD" --restart unless-stopped -d -p 443:443 -p 80:80 transfer_app_backend:latest
