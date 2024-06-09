@@ -90,7 +90,7 @@ router.get("/getAssignedTransfers", mustBeAuthenticated, function (req, res, nex
 	});
 });
 
-router.get("/searchTransfers", mustBeAuthenticated, function (req, res) {
+router.get("/searchTransfers", mustBeAdmin, function (req, res) {
 	let {startDate, endDate, name} = req.query;
 
 	let clauses = [];
