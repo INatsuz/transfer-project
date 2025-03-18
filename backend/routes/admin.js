@@ -129,7 +129,7 @@ router.get("/transfers", mustHaveSession, async function (req, res) {
 
 router.get("/transfers/create", mustHaveSession, function (req, res) {
 	if (req.session.userType === USER_TYPES.HOTEL) {
-		db.query("SELECT ID, name, commission FROM serviceoperator WHERE ID = ?", [req.session.operatorID]).then(({result}) => {
+		db.query("SELECT ID, name, commission FROM serviceoperator WHERE ID = ? ORDER BY name", [req.session.operatorID]).then(({result}) => {
 			res.render("transfer/transfer_create", {
 				userID: req.session.userID,
 				userType: req.session.userType,
@@ -143,7 +143,7 @@ router.get("/transfers/create", mustHaveSession, function (req, res) {
 	} else {
 		let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ?", [USER_TYPES.ADMIN, USER_TYPES.DRIVER]);
 		let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
-		let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
+		let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator ORDER BY name");
 
 		Promise.all([driverPromise, vehiclePromise, operatorPromise]).then(results => {
 			let driverRes = results[0];
@@ -211,7 +211,7 @@ router.post("/transfers/create", mustHaveSession, function (req, res) {
 router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser WHERE userType = ? OR userType = ?", [USER_TYPES.ADMIN, USER_TYPES.DRIVER]);
 	let vehiclePromise = db.query("SELECT ID, CONCAT(vehicle.brand, ' ', vehicle.name, ' (', vehicle.license_plate, ')') as name FROM vehicle");
-	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
+	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator ORDER BY name");
 
 	Promise.all([driverPromise, vehiclePromise, operatorPromise]).then(results => {
 		let driverRes = results[0];
@@ -223,7 +223,7 @@ router.get("/transfers/update/:id", mustHaveSession, function (req, res) {
 				res.status(401).redirect("/admin/transfers");
 			} else {
 				if (req.session.userType === USER_TYPES.HOTEL) {
-					db.query("SELECT ID, name, commission FROM serviceoperator WHERE ID = ?", [req.session.operatorID]).then(({result: operator}) => {
+					db.query("SELECT ID, name, commission FROM serviceoperator WHERE ID = ? ORDER BY name", [req.session.operatorID]).then(({result: operator}) => {
 						res.render("transfer/transfer_update", {
 							ID: req.params.id,
 							userID: req.session.userID,
@@ -461,7 +461,7 @@ router.get("/appusers", mustHaveAdminSession, function (req, res) {
 });
 
 router.get("/appusers/create", mustHaveAdminSession, function (req, res) {
-	db.query(`SELECT ID, name FROM serviceoperator`).then(({result}) => {
+	db.query(`SELECT ID, name FROM serviceoperator ORDER BY name`).then(({result}) => {
 		res.render("appuser/appuser_create", {
 			userID: req.session.userID,
 			userType: req.session.userType,
@@ -495,7 +495,7 @@ router.post("/appusers/create", mustHaveAdminSession, function (req, res) {
 
 router.get("/appusers/update/:id", mustHaveAdminSession, function (req, res) {
 	db.query("SELECT email, name, birthday, userType, commission, color, operatorID FROM appuser WHERE ID = ?", [req.params.id]).then(({result: appusers}) => {
-		db.query(`SELECT ID, name FROM serviceoperator`).then(({result: operators}) => {
+		db.query(`SELECT ID, name FROM serviceoperator ORDER BY name`).then(({result: operators}) => {
 			res.render("appuser/appuser_update", {
 				ID: req.params.id,
 				userID: req.session.userID,
@@ -568,7 +568,7 @@ router.post("/appusers/delete", mustHaveAdminSession, function (req, res) {
 
 // operator routes
 router.get("/operators", mustHaveAdminSession, function (req, res) {
-	db.query(`SELECT ID, name, commission, color FROM serviceoperator`).then(({result}) => {
+	db.query(`SELECT ID, name, commission, color FROM serviceoperator ORDER BY name`).then(({result}) => {
 		res.render("operator/operators", {
 			userID: req.session.userID,
 			userType: req.session.userType,
@@ -603,7 +603,7 @@ router.post("/operators/create", mustHaveAdminSession, function (req, res) {
 });
 
 router.get("/operators/update/:id", mustHaveAdminSession, function (req, res) {
-	db.query("SELECT name, commission, color FROM serviceoperator WHERE ID = ?", [req.params.id]).then(({result}) => {
+	db.query("SELECT name, commission, color FROM serviceoperator WHERE ID = ? ORDER BY name", [req.params.id]).then(({result}) => {
 		res.render("operator/operator_update", {
 			ID: req.params.id,
 			userID: req.session.userID,
@@ -647,7 +647,7 @@ router.post("/operators/delete", mustHaveAdminSession, function (req, res) {
 
 router.get("/commissions", mustHaveAdminSession, function (req, res) {
 	let driverPromise = db.query("SELECT ID, name, commission, activeVehicle FROM appuser");
-	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator");
+	let operatorPromise = db.query("SELECT ID, name, commission FROM serviceoperator ORDER BY name");
 
 	Promise.all([driverPromise, operatorPromise]).then(results => {
 		let drivers = results[0].result;

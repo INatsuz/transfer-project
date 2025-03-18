@@ -129,7 +129,7 @@ router.get("/getDrivers", mustBeAuthenticated, function (req, res, next) {
 
 // GET getOperators
 router.get("/getOperators", mustBeAuthenticated, function (req, res, next) {
-	db.query(`SELECT ID, name, commission, color FROM serviceoperator`, []).then(({result: operators}) => {
+	db.query(`SELECT ID, name, commission, color FROM serviceoperator ORDER BY name`, []).then(({result: operators}) => {
 		res.status(200).json({operators: operators});
 	}).catch(err => {
 		console.log(err);
