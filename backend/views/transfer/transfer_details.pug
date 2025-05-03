@@ -35,12 +35,12 @@ block content
             else if transfer.status === "FINISHED"
                 td.align-middle
                     span.badge.text-bg-secondary FINISHED
-            else if transfer.status === "NO SHOW"
+            else if transfer.status === "OUTSOURCE"
                 td.align-middle
-                    span.badge.text-bg-danger.bg-opacity-75 NO SHOW
-            else if transfer.status === "CANCELLED"
+                    span.badge.text-bg-danger.bg-opacity-75 OUTSOURCE
+            else if transfer.status === "BUS"
                 td.align-middle
-                    span.badge.text-bg-danger CANCELLED
+                    span.badge.text-bg-danger BUS
             else if transfer.status === "CONFIRMED"
                 td.align-middle
                     span.badge.text-bg-success CONFIRMED

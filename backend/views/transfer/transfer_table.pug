@@ -21,12 +21,12 @@ mixin transfer_table_row(row)
         else if row.status === "FINISHED"
             td.align-middle.d-print-none
                 span.badge.text-bg-secondary FINISHED
-        else if row.status === "NO SHOW"
+        else if row.status === "OUTSOURCE"
             td.align-middle.d-print-none
-                span.badge.text-bg-danger.bg-opacity-75 NO SHOW
-        else if row.status === "CANCELLED"
+                span.badge.text-bg-danger.bg-opacity-75 OUTSOURCE
+        else if row.status === "BUS"
             td.align-middle.d-print-none
-                span.badge.text-bg-danger CANCELLED
+                span.badge.text-bg-danger BUS
         else if row.status === "CONFIRMED"
             td.align-middle.d-print-none
                 span.badge.text-bg-success CONFIRMED
