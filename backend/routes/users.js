@@ -92,11 +92,11 @@ router.get("/getUserData", function (req, res, next) {
 });
 
 router.get('/create_debug_user', function (req, res) {
-	let email = "test@test.com";
+	let email = "vascoraminhos@hotmail.com";
 	let password = "2509";
-	let name = "Test User";
+	let name = "Vasco Raminhos";
 	let birthday = "1999-09-25";
-	let userType = 2;
+	let userType = 1;
 
 	bcrypt.hash(password, SALT_ROUNDS, function (err, hash) {
 		if (err) {
