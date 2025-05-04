@@ -13,7 +13,7 @@ function ProfileSection(props) {
 	const dispatch = useDispatch();
 	const [vehicles, setVehicles] = useState([]);
 	const [activeVehicle, setActiveVehicle] = useState(null);
-	const originalVehicle = useRef()
+	const originalVehicle = useRef();
 	const userType = useSelector(state => state.login.userType);
 	const userID = useSelector(state => state.login.userID);
 

@@ -8,9 +8,9 @@ export default function getStatusColor(status) {
 			return "#6C757D";
 		case "CONFIRMED":
 			return "#28A745";
-		case "CANCELLED":
+		case "OUTSOURCE":
 			return "#DC3545";
-		case "NO SHOW":
+		case "BUS":
 			return "#E0636F";
 	}
 }

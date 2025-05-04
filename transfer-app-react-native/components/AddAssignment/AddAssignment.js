@@ -203,13 +203,13 @@ export default function AddAssignment(props) {
 							value: "CONFIRMED",
 							key: "CONFIRMED"
 						}, {
-							label: "CANCELLED",
-							value: "CANCELLED",
-							key: "CANCELLED"
+							label: "OUTSOURCE",
+							value: "OUTSOURCE",
+							key: "OUTSOURCE"
 						}, {
-							label: "NO SHOW",
-							value: "NO SHOW",
-							key: "NO SHOW"
+							label: "BUS",
+							value: "BUS",
+							key: "BUS"
 						}]} onValueChange={(value) => {
 							if (value !== status) {
 								setStatus(value);
