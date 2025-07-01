@@ -11,7 +11,7 @@ export default function StatusMenu(props) {
 			<MenuTrigger>
 				<Ionicons name={"chevron-down-circle"} size={40} color={getStatusColor(props.route.params.assignment.status)}/>
 			</MenuTrigger>
-			<MenuOptions optionsContainerStyle={styles.menuOptions}>
+			<MenuOptions customStyles={styles.menuOptions}>
 				<MenuOption style={styles.menuOption} onSelect={() => props.onMenuItemPress(props.navigation, props.route, "PENDING")}>
 					<Text><Ionicons name={"ellipse"} size={styles.icon.fontSize} color={getStatusColor("PENDING")}/></Text>
 					<Text style={styles.menuOptionText}>Pending</Text>
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		paddingHorizontal: 20,
+		backgroundColor: BACKGROUND_COLOR,
 	},
 
 	menuOptionText: {

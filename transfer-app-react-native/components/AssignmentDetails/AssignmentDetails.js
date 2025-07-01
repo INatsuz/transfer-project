@@ -207,7 +207,7 @@ export default function AssignmentDetails(props) {
 					{/* Payment method field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Payment method: </Text>
-						<RNPickerSelect value={paymentMethod} items={[{
+						<RNPickerSelect textInputProps={{pointerEvents: "none"}} value={paymentMethod} items={[{
 							label: "Cash",
 							value: "CASH",
 							key: "CASH"
@@ -246,7 +246,7 @@ export default function AssignmentDetails(props) {
 					{/* Drivers field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Driver: </Text>
-						<RNPickerSelect disabled={!isAdmin} value={driver} items={drivers.map(item => {
+						<RNPickerSelect disabled={!isAdmin} value={driver} textInputProps={{pointerEvents: "none"}} items={drivers.map(item => {
 							return {key: item.ID, label: item.name, value: item.ID};
 						})} onValueChange={(value) => {
 							if (value !== driver) {
@@ -282,7 +282,7 @@ export default function AssignmentDetails(props) {
 					{/* Vehicles field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Vehicle: </Text>
-						<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+						<RNPickerSelect value={activeVehicle} textInputProps={{pointerEvents: "none"}} items={vehicles.map(item => {
 							return {key: item.ID, label: item.displayName, value: item.ID};
 						})} onValueChange={(value, index) => {
 							if (value !== activeVehicle) {
@@ -303,7 +303,7 @@ export default function AssignmentDetails(props) {
 					{/* Operators field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Operator: </Text>
-						<RNPickerSelect value={operator} items={operators.map(item => {
+						<RNPickerSelect value={operator} textInputProps={{pointerEvents: "none"}} items={operators.map(item => {
 							return {key: item.ID, label: item.name, value: item.ID};
 						})} onValueChange={(value) => {
 							if (value !== operator) {

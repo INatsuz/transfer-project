@@ -189,7 +189,7 @@ export default function AddAssignment(props) {
 					{/* Status field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Status: </Text>
-						<RNPickerSelect value={status} placeholder={{}} items={[{
+						<RNPickerSelect value={status} textInputProps={{pointerEvents: "none"}} placeholder={{}} items={[{
 							label: "PENDING",
 							value: "PENDING",
 							key: "PENDING"
@@ -256,7 +256,7 @@ export default function AddAssignment(props) {
 					{/* Payment method field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Payment method: </Text>
-						<RNPickerSelect value={paymentMethod} items={[{
+						<RNPickerSelect value={paymentMethod} textInputProps={{pointerEvents: "none"}} items={[{
 							label: "Cash",
 							value: "CASH",
 							key: "CASH"
@@ -295,7 +295,7 @@ export default function AddAssignment(props) {
 					{/* Drivers field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Driver: </Text>
-						<RNPickerSelect disabled={!isAdmin} value={driver} items={drivers.map(item => {
+						<RNPickerSelect disabled={!isAdmin} value={driver} textInputProps={{pointerEvents: "none"}} items={drivers.map(item => {
 							return {key: item.ID, label: item.name, value: item.ID};
 						})} onValueChange={(value) => {
 							if (value !== driver) {
@@ -331,7 +331,7 @@ export default function AddAssignment(props) {
 					{/* Vehicles field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Vehicle: </Text>
-						<RNPickerSelect value={vehicle} items={vehicles.map(item => {
+						<RNPickerSelect value={vehicle} textInputProps={{pointerEvents: "none"}} items={vehicles.map(item => {
 							return {key: item.ID, label: item.displayName, value: item.ID};
 						})} onValueChange={(value) => {
 							if (value !== vehicle) {
@@ -352,7 +352,7 @@ export default function AddAssignment(props) {
 					{/* Operators field */}
 					<View style={styles.section}>
 						<Text style={[styles.text, styles.title]}>Operator: </Text>
-						<RNPickerSelect value={operator} items={operators.map(item => {
+						<RNPickerSelect value={operator} textInputProps={{pointerEvents: "none"}} items={operators.map(item => {
 							return {key: item.ID, label: item.name, value: item.ID};
 						})} onValueChange={(value) => {
 							if (value !== operator) {

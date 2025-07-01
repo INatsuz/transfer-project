@@ -78,7 +78,7 @@ export default function Login({route, navigation}) {
 			if (Platform.OS === "android") {
 				ToastAndroid.show("Logging in...", ToastAndroid.SHORT);
 			}
-
+			console.log(`https://${IP}/users/login`);
 			axios.post(`https://${IP}/users/login`, {
 				email: email,
 				password: password.current,

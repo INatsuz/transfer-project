@@ -14,7 +14,7 @@ function ProfileSection(props) {
 	const [vehicles, setVehicles] = useState([]);
 	const [activeVehicle, setActiveVehicle] = useState(null);
 	const originalVehicle = useRef();
-	const userType = useSelector(state => state.login.userType);
+	const userID = useSelector(state => state.login.userID);
 
 	function updateActiveVehicle(vehicle) {
 		let data = {vehicle: vehicle};
@@ -109,12 +109,17 @@ function ProfileSection(props) {
 
 	async function fetchVehicles() {
 		getWithAuth("api/getVehicles").then(res => {
+			console.log(res.data);
+			console.log(res.data.vehicle, "===");
 			setVehicles(res.data.vehicles);
 			if (res.data.vehicles.length > 0) {
-				if (res.data.vehicles[0].userID !== null) {
-					setActiveVehicle(res.data.vehicles[0].ID);
-					originalVehicle.current = res.data.vehicles[0].ID;
-				}
+				res.data.vehicles.forEach(vehicle => {
+					if (vehicle.userID === userID) {
+						setActiveVehicle(vehicle.ID);
+						originalVehicle.current = vehicle.ID;
+						console.log(vehicle.ID);
+					}
+				})
 			}
 		}).catch(err => {
 			console.log(err);
@@ -124,6 +129,8 @@ function ProfileSection(props) {
 	useEffect(() => {
 		fetchVehicles();
 	}, []);
+	console.log(activeVehicle);
+	console.log(props);
 
 	return (
 		<View style={styles.container}>
@@ -138,20 +145,22 @@ function ProfileSection(props) {
 			<View style={[styles.area, styles.carPickerArea, {
 				display: "flex",
 				flexDirection: "row",
-				alignItems: "center"
+				alignItems: "center",
+				paddingVertical: 0,
+				margin: 0
 			}]}>
 				<Text style={styles.textStyle}>Car: </Text>
 				<View style={{flex: 1}}>
-					<RNPickerSelect value={activeVehicle} items={vehicles.map(item => {
+					<RNPickerSelect value={activeVehicle} textInputProps={{pointerEvents: "none"}} items={vehicles.map(item => {
 						return {key: item.ID, label: item.displayName, value: item.ID}
 					})} onValueChange={onVehicleValueChange} Icon={() => {
 						return <Chevron size={1.5} color="gray"/>;
 					}} useNativeAndroidPickerStyle={false} style={{
 						iconContainer: {justifyContent: "center", padding: 10},
 						inputAndroid: styles.textStyle,
-						inputAndroidContainer: {padding: 0, justifyContent: "center"},
-						inputIOS: styles.textStyle,
-						inputIOSContainer: {padding: 0, justifyContent: "center"},
+						inputAndroidContainer: {justifyContent: "center", paddingVertical: 5},
+						inputIOS: {...styles.textStyle, paddingVertical: 7,},
+						inputIOSContainer: {justifyContent: "center"},
 					}} onClose={onVehicleSelectClose}/>
 				</View>
 			</View>
@@ -182,12 +191,13 @@ const styles = StyleSheet.create({
 
 	area: {
 		backgroundColor: ITEM_BACKGROUND_COLOR,
-		padding: 5,
+		paddingHorizontal: 5,
 	},
 
 	textStyle: {
 		color: TEXT_COLOR,
-		fontSize: 18
+		fontSize: 18,
+		paddingVertical: 2
 	}
 });
 

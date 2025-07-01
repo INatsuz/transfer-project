@@ -13,7 +13,7 @@ const cert = fs.readFileSync(process.env.ENVIRONMENT === "DEV" ? "./ssl/cert.pem
  */
 
 let https_port = normalizePort(process.env.PORT || '443');
-let http_port = 80;
+let http_port = process.env.PORT + 1 || '80';
 
 app.set('port', https_port);
 
